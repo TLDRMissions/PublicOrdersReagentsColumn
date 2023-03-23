@@ -1,3 +1,7 @@
+-- This code adapted from Blizzard_Professions\Blizzard_ProfessionsCrafterOrderPage.lua
+-- The existing function ProfessionsFrame.OrdersPage:SetupTable() hides the Reagents column for Public Orders
+-- This code simply shows it again.
+
 local OrderBrowseType = EnumUtil.MakeEnum("Flat", "Bucketed", "None");
 
 hooksecurefunc(ProfessionsFrame.OrdersPage, "SetupTable", function(self)
