@@ -1,0 +1,8 @@
+## Interface: 100007
+## Title: Public Orders Reagents Column
+## Version: 10.0-001
+## Notes: Adds the Reagents Column to Public Orders
+## Author: Teelo
+## X-Curse-Project-ID: 841061
+
+PublicOrdersReagentsColumn.lua
