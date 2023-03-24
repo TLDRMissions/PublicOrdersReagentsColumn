@@ -1,6 +1,6 @@
 ## Interface: 100007
-## Title: Public Orders Reagents Column
-## Version: 10.0-002
+## Title: No Mats; No Make
+## Version: 10.0-003
 ## Notes: Adds the Reagents Column to Public Orders, and optional: hides orders that don't provide all the materials
 ## Author: Teelo
 ## X-Curse-Project-ID: 841061
