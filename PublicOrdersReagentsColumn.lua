@@ -1,13 +1,11 @@
 -- This code adapted from Blizzard_Professions\Blizzard_ProfessionsCrafterOrderPage.lua
 -- The existing function ProfessionsFrame.OrdersPage:SetupTable() hides the Reagents column for Public Orders
 -- This code simply shows it again.
-local OrderBrowseType = EnumUtil.MakeEnum("Flat", "Bucketed", "None");
-
 hooksecurefunc(ProfessionsFrame.OrdersPage, "SetupTable", function(self)
     local browseType = self:GetBrowseType();
     local PTC = ProfessionsTableConstants;
 
-    if browseType == OrderBrowseType.Flat then
+    if browseType == 1 then
         if self.orderType == Enum.CraftingOrderType.Public then
             self.tableBuilder:AddFixedWidthColumn(self, PTC.NoPadding, PTC.Reagents.Width, PTC.Reagents.LeftCellPadding,
                 PTC.Reagents.RightCellPadding, ProfessionsSortOrder.Reagents, "ProfessionsCrafterTableCellReagentsTemplate");
@@ -19,24 +17,90 @@ end)
 -- The existing function ProfessionsFrame.OrdersPage:ShotGeneric is called on the results from clicking the Search button
 -- This will hide results without reagents if the option is selected
 hooksecurefunc(ProfessionsFrame.OrdersPage, "ShowGeneric", function(self, orders, browseType, offset, isSorted)
-    if browseType ~= 1 then return end
+    if self.orderType ~= 0 then return end
     if not PublicOrdersReagentsDB.hideOrdersWithoutMaterials then return end
     
-    local dataProvider = self.BrowseFrame.OrderList.ScrollBox:GetDataProvider()
-
-    function recursion()
-        local collection = dataProvider:GetCollection()
-        for i = 1, #collection do
-            if collection[i].option.reagentState ~= 0 then
-                if (PublicOrdersReagentsDB.minimumCommission == 0) or ((collection[i].option.tipAmount/10000) < PublicOrdersReagentsDB.minimumCommission) then
-                    dataProvider:Remove(collection[i])
-                    recursion()
-                    return
+    if browseType == 1 then -- OrderBrowseType.Flat, small number of items, or player clicked into an item
+        local dataProvider = self.BrowseFrame.OrderList.ScrollBox:GetDataProvider()
+    
+        function recursion()
+            local collection = dataProvider:GetCollection()
+            for i = 1, #collection do
+                if collection[i].option.reagentState ~= 0 then
+                    if (PublicOrdersReagentsDB.minimumCommission == 0) or ((collection[i].option.tipAmount/10000) < PublicOrdersReagentsDB.minimumCommission) then
+                        dataProvider:Remove(collection[i])
+                        recursion()
+                        return
+                    end
                 end
             end
         end
+        recursion()
+    elseif browseType == 2 then -- OrderBrowseType.Bucketed, a list of items showing number of orders for that item
+        local dataProvider = self.BrowseFrame.OrderList.ScrollBox:GetDataProvider()
+        
+        local i = 1
+        
+        local function recursion()
+            local collection = dataProvider:GetCollection()
+            if i > #collection then return end
+            
+            local option = collection[i].option
+            
+            local request =
+            {
+                orderType = Enum.CraftingOrderType.Public,
+                selectedSkillLineAbility = option.skillLineAbilityID,
+                searchFavorites = false,
+                initialNonPublicSearch = false,
+                offset = 0,
+                forCrafter = true,
+                profession = Enum.Profession.Jewelcrafting,--self.professionInfo.profession,
+                primarySort = {
+                    sortType = Enum.CraftingOrderSortType.ItemName,
+                    reversed = false,
+                },
+                secondarySort = {
+                    sortType = Enum.CraftingOrderSortType.MaxTip,
+                    reversed = false,
+                },
+                callback = C_FunctionContainers.CreateCallback( 
+                    function(result, orderType, displayBuckets, expectMoreRows, offset, isSorted)
+                        if orderType ~= Enum.CraftingOrderType.Public then return end
+                        if displayBuckets then return end
+
+                        --self.expectMoreRows = expectMoreRows; TODO: handle more than 100 results
+                    
+                        local orders = C_CraftingOrders.GetCrafterOrders()
+                        local acceptableFound = false
+                        
+                        for j = 1, #orders do
+                            if orders[j].reagentState == 0 then
+                                acceptableFound = true
+                                break
+                            end
+                            if (PublicOrdersReagentsDB.minimumCommission == 0) or ((orders[j].tipAmount/10000) < PublicOrdersReagentsDB.minimumCommission) then
+                                -- order meets all the exclusion requirements
+                            else
+                                acceptableFound = true
+                                break
+                            end
+                        end
+                        
+                        if acceptableFound then
+                            i = i + 1
+                        else
+                            dataProvider:Remove(collection[i])
+                            i = 1
+                        end
+                        
+                        recursion()
+                    end),
+            }
+            C_CraftingOrders.RequestCrafterOrders(request)
+        end
+        recursion()
     end
-    recursion()
 end)
 
 -- adds a checkbox to the crafting orders frame
