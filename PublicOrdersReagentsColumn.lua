@@ -55,10 +55,10 @@ hooksecurefunc(ProfessionsFrame.OrdersPage, "ShowGeneric", function(self, orders
                 initialNonPublicSearch = false,
                 offset = 0,
                 forCrafter = true,
-                profession = Enum.Profession.Jewelcrafting,--self.professionInfo.profession,
+                profession = self.professionInfo.profession,
                 primarySort = {
-                    sortType = Enum.CraftingOrderSortType.ItemName,
-                    reversed = false,
+                    sortType = Enum.CraftingOrderSortType.Reagents,
+                    reversed = true,
                 },
                 secondarySort = {
                     sortType = Enum.CraftingOrderSortType.MaxTip,
@@ -178,4 +178,4 @@ commissionFrame:SetScript("OnLeave", function()
     if (not checkBox:IsMouseOver()) and (not PublicOrdersReagentsColumnMinimumCommissionFrame:IsMouseOver()) then
         commissionFrame:Hide()
     end
-end)     
+end)
