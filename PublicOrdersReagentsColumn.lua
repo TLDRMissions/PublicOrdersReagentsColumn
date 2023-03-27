@@ -111,6 +111,7 @@ checkBox:HookScript("OnEvent", function(self, event, ...)
     if event == "PLAYER_ENTERING_WORLD" then
         checkBox:UnregisterEvent("PLAYER_ENTERING_WORLD")
         if not PublicOrdersReagentsDB then PublicOrdersReagentsDB = {} end
+        if not PublicOrdersReagentsDB.minimumCommission then PublicOrdersReagentsDB.minimumCommission = 0 end
         checkBox:SetChecked(PublicOrdersReagentsDB.hideOrdersWithoutMaterials)
         
         -- addon RECraft moves the arrow to the same spot I have the checkbox, compensate
