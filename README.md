@@ -1,4 +1,4 @@
-# PublicOrdersReagentsColumn
+# Public Orders Reagents Column
 Adds the Reagents Columns to Public Orders, and allows you to hide all the results that do not provide materials.
 
 ![image](https://user-images.githubusercontent.com/49792789/227489902-0ed5bedc-045b-4b83-8a52-a3e4cf7ae035.png)
