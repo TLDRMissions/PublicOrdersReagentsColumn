@@ -6,3 +6,5 @@ Adds the Reagents Columns to Public Orders, and allows you to hide all the resul
 ![image](https://user-images.githubusercontent.com/49792789/227490271-e4b6ebee-4d24-42b9-a77a-b682af32b067.png)
 
 ![image](https://user-images.githubusercontent.com/49792789/227490536-544571ba-3eb3-456a-a372-9328fa34efd4.png)
+
+https://user-images.githubusercontent.com/49792789/227812954-95673b37-8688-4280-b20b-671caba9ede8.mp4
