@@ -1,0 +1,4 @@
+<Ui>
+    <Script file="PublicOrdersReagentsColumn.lua"/>
+    <Frame name="ProfessionsCrafterTableCellMaxMatsProvidedCommissionTemplate" mixin="ProfessionsCrafterTableCellMaxMatsProvidedCommissionMixin" inherits="ProfessionsTableCellTextTemplate" virtual="true"/>
+</Ui>

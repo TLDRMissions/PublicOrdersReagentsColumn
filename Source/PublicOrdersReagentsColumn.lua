@@ -8,22 +8,28 @@ hooksecurefunc(ProfessionsFrame.OrdersPage, "SetupTable", function(self)
     if browseType == 1 then
         if self.orderType == Enum.CraftingOrderType.Public then
             self.tableBuilder:AddFixedWidthColumn(self, PTC.NoPadding, PTC.Reagents.Width, PTC.Reagents.LeftCellPadding,
-                PTC.Reagents.RightCellPadding, ProfessionsSortOrder.Reagents, "ProfessionsCrafterTableCellReagentsTemplate");
+                PTC.Reagents.RightCellPadding, ProfessionsSortOrder.Reagents, "ProfessionsCrafterTableCellReagentsTemplate")
         end
-        self.tableBuilder:Arrange();
+        self.tableBuilder:Arrange()
+    elseif browseType == 2 then
+        local column = self.tableBuilder:AddFixedWidthColumn(self, PTC.NoPadding, 50, PTC.Tip.LeftCellPadding,
+            PTC.Tip.RightCellPadding, nil, "ProfessionsCrafterTableCellMaxMatsProvidedCommissionTemplate")
+        column:ConstructHeader("BUTTON", "ProfessionsCrafterTableHeaderStringTemplate", self, "Mats?")
+        self.tableBuilder:Arrange()
     end
 end)
 
 local pendingCallback
 local busy
+local orderToCell = {}
 
 -- The existing function ProfessionsFrame.OrdersPage:ShotGeneric is called on the results from clicking the Search button
 -- This will hide results without reagents if the option is selected
 hooksecurefunc(ProfessionsFrame.OrdersPage, "ShowGeneric", function(self, orders, browseType, offset, isSorted)
     if self.orderType ~= 0 then return end
-    if not PublicOrdersReagentsDB.hideOrdersWithoutMaterials then return end
     
     if browseType == 1 then -- OrderBrowseType.Flat, small number of items, or player clicked into an item
+        if not PublicOrdersReagentsDB.hideOrdersWithoutMaterials then return end
         local dataProvider = self.BrowseFrame.OrderList.ScrollBox:GetDataProvider()
     
         function recursion()
@@ -73,25 +79,42 @@ hooksecurefunc(ProfessionsFrame.OrdersPage, "ShowGeneric", function(self, orders
                     
                         local orders = C_CraftingOrders.GetCrafterOrders()
                         local acceptableFound = false
+                        local maxTip = 0
                         
                         -- with sorting by reagents availability, probably only need to check the first result
                         for j = 1, #orders do
                             if orders[j].reagentState == 0 then
                                 acceptableFound = true
-                                break
+                                if orders[j].tipAmount > maxTip then
+                                    maxTip = orders[j].tipAmount
+                                end
                             end
                             if (PublicOrdersReagentsDB.minimumCommission == 0) or ((orders[j].tipAmount/10000) < PublicOrdersReagentsDB.minimumCommission) then
                                 -- order meets all the exclusion requirements
                             else
                                 acceptableFound = true
-                                break
+                                if orders[j].maxTip > maxTip then
+                                    maxTip = orders[j].maxTip
+                                end
                             end
                         end
                         
                         if acceptableFound then
+                            local o = orderToCell[option]
+                            if o then -- cells off the bottom of the screen wont yet be initialised
+                                ProfessionsTableCellTextMixin.SetText(o, math.floor(maxTip/10000)..GOLD_AMOUNT_SYMBOL)
+                            end
                             i = i + 1
                         else
-                            dataProvider:Remove(collection[i])
+                            if PublicOrdersReagentsDB.hideOrdersWithoutMaterials then
+                                dataProvider:Remove(collection[i])
+                            else
+                                local o = orderToCell[option]
+                                if o then
+                                    ProfessionsTableCellTextMixin.SetText(o, "None")
+                                end
+                                i = i + 1
+                            end
                         end
                         
                         pendingCallback = nil
@@ -192,3 +215,12 @@ commissionFrame:SetScript("OnLeave", function()
         commissionFrame:Hide()
     end
 end)
+
+-- the max commission for mats provided column during bucket view
+ProfessionsCrafterTableCellMaxMatsProvidedCommissionMixin = CreateFromMixins(TableBuilderCellMixin);
+
+function ProfessionsCrafterTableCellMaxMatsProvidedCommissionMixin:Populate(rowData, dataIndex)
+    local order = rowData.option
+    orderToCell[order] = self
+    ProfessionsTableCellTextMixin.SetText(self, "?")
+end
