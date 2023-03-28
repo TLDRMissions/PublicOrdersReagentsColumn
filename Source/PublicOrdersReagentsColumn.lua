@@ -41,11 +41,10 @@ hooksecurefunc(ProfessionsFrame.OrdersPage, "ShowGeneric", function(self, orders
         recursion()
     elseif browseType == 2 then -- OrderBrowseType.Bucketed, a list of items showing number of orders for that item
         local dataProvider = self.BrowseFrame.OrderList.ScrollBox:GetDataProvider()
-        
         local i = 1
+        local collection = dataProvider:GetCollection()
         
         local function recursion()
-            local collection = dataProvider:GetCollection()
             if i > #collection then return end
             
             local option = collection[i].option
@@ -71,12 +70,11 @@ hooksecurefunc(ProfessionsFrame.OrdersPage, "ShowGeneric", function(self, orders
                     function(result, orderType, displayBuckets, expectMoreRows, offset, isSorted)
                         if orderType ~= Enum.CraftingOrderType.Public then return end
                         if displayBuckets then return end
-
-                        --self.expectMoreRows = expectMoreRows; TODO: handle more than 100 results
                     
                         local orders = C_CraftingOrders.GetCrafterOrders()
                         local acceptableFound = false
                         
+                        -- with sorting by reagents availability, probably only need to check the first result
                         for j = 1, #orders do
                             if orders[j].reagentState == 0 then
                                 acceptableFound = true
@@ -94,7 +92,6 @@ hooksecurefunc(ProfessionsFrame.OrdersPage, "ShowGeneric", function(self, orders
                             i = i + 1
                         else
                             dataProvider:Remove(collection[i])
-                            i = 1
                         end
                         
                         pendingCallback = nil
