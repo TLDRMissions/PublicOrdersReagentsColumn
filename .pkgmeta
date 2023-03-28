@@ -1,0 +1,8 @@
+package-as: PublicOrdersReagentsColumn
+
+move-folders:
+ PublicOrdersReagentsColumn/Source: PublicOrdersReagentsColumn
+
+ignore:
+ - LICENCE.md
+ - README.md
