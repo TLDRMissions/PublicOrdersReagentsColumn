@@ -14,6 +14,9 @@ hooksecurefunc(ProfessionsFrame.OrdersPage, "SetupTable", function(self)
     end
 end)
 
+local pendingCallback
+local busy
+
 -- The existing function ProfessionsFrame.OrdersPage:ShotGeneric is called on the results from clicking the Search button
 -- This will hide results without reagents if the option is selected
 hooksecurefunc(ProfessionsFrame.OrdersPage, "ShowGeneric", function(self, orders, browseType, offset, isSorted)
@@ -94,12 +97,24 @@ hooksecurefunc(ProfessionsFrame.OrdersPage, "ShowGeneric", function(self, orders
                             i = 1
                         end
                         
+                        pendingCallback = nil
+                        
                         recursion()
                     end),
             }
+            pendingCallback = request.callback
+            busy = true
             C_CraftingOrders.RequestCrafterOrders(request)
+            busy = false
         end
         recursion()
+    end
+end)
+
+-- workaround for if a player clicks into an item during Bucket View before filtering has finished
+hooksecurefunc(C_CraftingOrders, "RequestCrafterOrders", function()
+    if pendingCallback and (not busy) then
+        pendingCallback:Cancel()
     end
 end)
 
