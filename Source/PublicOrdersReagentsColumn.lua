@@ -26,10 +26,11 @@ local orderToCell = {}
 -- The existing function ProfessionsFrame.OrdersPage:ShotGeneric is called on the results from clicking the Search button
 -- This will hide results without reagents if the option is selected
 hooksecurefunc(ProfessionsFrame.OrdersPage, "ShowGeneric", function(self, orders, browseType, offset, isSorted)
-    if self.orderType ~= 0 then return end
-    
     if browseType == 1 then -- OrderBrowseType.Flat, small number of items, or player clicked into an item
-        if not PublicOrdersReagentsDB.hideOrdersWithoutMaterials then return end
+        if (self.orderType == 0) and (not PublicOrdersReagentsDB.hideOrdersWithoutMaterials) then return end
+        if (self.orderType == 1) and (not PublicOrdersReagentsDB.hideGuildOrdersWithoutMaterials) then return end
+        if (self.orderType == 2) and (not PublicOrdersReagentsDB.hidePrivateOrdersWithoutMaterials) then return end
+        
         local dataProvider = self.BrowseFrame.OrderList.ScrollBox:GetDataProvider()
     
         function recursion()
@@ -106,8 +107,10 @@ hooksecurefunc(ProfessionsFrame.OrdersPage, "ShowGeneric", function(self, orders
                             end
                             i = i + 1
                         else
-                            if PublicOrdersReagentsDB.hideOrdersWithoutMaterials then
-                                dataProvider:Remove(collection[i])
+                            if  ((self.orderType == 0) and PublicOrdersReagentsDB.hideOrdersWithoutMaterials) or
+                                ((self.orderType == 1) and PublicOrdersReagentsDB.hideGuildOrdersWithoutMaterials) or
+                                ((self.orderType == 2) and PublicOrdersReagentsDB.hidePrivateOrdersWithoutMaterials) then
+                                    dataProvider:Remove(collection[i])
                             else
                                 local o = orderToCell[option]
                                 if o then
@@ -139,45 +142,60 @@ hooksecurefunc(C_CraftingOrders, "RequestCrafterOrders", function()
 end)
 
 -- adds a checkbox to the crafting orders frame
-local checkBox = CreateFrame("CheckButton", "PublicOrdersReagentsColumnHideOrdersWithoutMaterialsCheckButton", ProfessionsFrame.OrdersPage, "UICheckButtonTemplate")
-checkBox:SetPoint("LEFT", ProfessionsFrame.OrdersPage.BrowseFrame.SearchButton, "RIGHT", 28, 0)
-checkBox:RegisterEvent("PLAYER_ENTERING_WORLD")
-checkBox:HookScript("OnEvent", function(self, event, ...)
+local function createCheckBox(variableName)
+    local checkBox = CreateFrame("CheckButton", nil, ProfessionsFrame.OrdersPage, "UICheckButtonTemplate")
+    checkBox:SetPoint("LEFT", ProfessionsFrame.OrdersPage.BrowseFrame.SearchButton, "RIGHT", 28, 0)
+    checkBox:SetScript("OnClick", function()
+        PublicOrdersReagentsDB[variableName] = checkBox:GetChecked()
+    end)
+    checkBox:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
+        GameTooltip:SetText("Hide orders that do not provide all the materials")
+        PublicOrdersReagentsColumnMinimumCommissionFrame:Show()
+    end)
+    checkBox:SetScript("OnLeave", function()
+        GameTooltip:Hide()
+        
+        if not PublicOrdersReagentsColumnMinimumCommissionFrame:IsMouseOver() then
+            PublicOrdersReagentsColumnMinimumCommissionFrame:Hide()
+        end
+    end)
+    return checkBox
+end
+
+local publicCheckBox = createCheckBox("hideOrdersWithoutMaterials")
+local guildCheckBox = createCheckBox("hideGuildOrdersWithoutMaterials")
+local privateCheckBox = createCheckBox("hidePersonalOrdersWithoutMaterials")
+local activeCheckBox = publicCheckBox
+guildCheckBox:Hide()
+privateCheckBox:Hide()
+
+publicCheckBox:RegisterEvent("PLAYER_ENTERING_WORLD")
+publicCheckBox:HookScript("OnEvent", function(self, event, ...)
     if event == "PLAYER_ENTERING_WORLD" then
-        checkBox:UnregisterEvent("PLAYER_ENTERING_WORLD")
+        publicCheckBox:UnregisterEvent("PLAYER_ENTERING_WORLD")
         if not PublicOrdersReagentsDB then PublicOrdersReagentsDB = {} end
         if not PublicOrdersReagentsDB.minimumCommission then PublicOrdersReagentsDB.minimumCommission = 0 end
-        checkBox:SetChecked(PublicOrdersReagentsDB.hideOrdersWithoutMaterials)
+        publicCheckBox:SetChecked(PublicOrdersReagentsDB.hideOrdersWithoutMaterials)
+        guildCheckBox:SetChecked(PublicOrdersReagentsDB.hideGuildOrdersWithoutMaterials)
+        privateCheckBox:SetChecked(PublicOrdersReagentsDB.hidePrivateOrdersWithoutMaterials)
         
         -- addon RECraft moves the arrow to the same spot I have the checkbox, compensate
         if IsAddOnLoaded("RECraft") then
-            checkBox:SetPoint("LEFT", ProfessionsFrame.OrdersPage.BrowseFrame.SearchButton, "RIGHT", 28, 22)
+            publicCheckBox:SetPoint("LEFT", ProfessionsFrame.OrdersPage.BrowseFrame.SearchButton, "RIGHT", 28, 22)
+            guildCheckBox:SetPoint("LEFT", ProfessionsFrame.OrdersPage.BrowseFrame.SearchButton, "RIGHT", 28, 22)
+            privateCheckBox:SetPoint("LEFT", ProfessionsFrame.OrdersPage.BrowseFrame.SearchButton, "RIGHT", 28, 22)
         end
         
         PublicOrdersReagentsColumnMinimumCommissionSlider:SetValue(PublicOrdersReagentsDB.minimumCommission or 0)
     end
 end)
-checkBox:SetScript("OnClick", function()
-    PublicOrdersReagentsDB.hideOrdersWithoutMaterials = checkBox:GetChecked()
-end)
-checkBox:SetScript("OnEnter", function(self)
-    GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
-    GameTooltip:SetText("Hide listings that do not provide all the materials")
-    PublicOrdersReagentsColumnMinimumCommissionFrame:Show()
-end)
-checkBox:SetScript("OnLeave", function()
-    GameTooltip:Hide()
-    
-    if not PublicOrdersReagentsColumnMinimumCommissionFrame:IsMouseOver() then
-        PublicOrdersReagentsColumnMinimumCommissionFrame:Hide()
-    end
-end)
 
 -- minimum commission frame with slider
-local commissionFrame = CreateFrame("Frame", "PublicOrdersReagentsColumnMinimumCommissionFrame", PublicOrdersReagentsColumnHideOrdersWithoutMaterialsCheckButton)
+local commissionFrame = CreateFrame("Frame", "PublicOrdersReagentsColumnMinimumCommissionFrame", activeCheckBox)
 commissionFrame:Hide()
 commissionFrame:SetSize(330, 100)
-commissionFrame:SetPoint("TOP", checkBox, "BOTTOM")
+commissionFrame:SetPoint("TOP", activeCheckBox, "BOTTOM")
 commissionFrame:SetFrameStrata("TOOLTIP")
 commissionFrame.Border = CreateFrame("Frame", nil, PublicOrdersReagentsColumnMinimumCommissionFrame, "DialogBorderDarkTemplate")
 commissionFrame.Backdrop = CreateFrame("Frame", nil, PublicOrdersReagentsColumnMinimumCommissionFrame, "TooltipBackdropTemplate")
@@ -211,7 +229,7 @@ commissionFrame.Label:SetWordWrap(true)
 commissionFrame.Label:SetWidth(280)
 
 commissionFrame:SetScript("OnLeave", function()
-    if (not checkBox:IsMouseOver()) and (not PublicOrdersReagentsColumnMinimumCommissionFrame:IsMouseOver()) then
+    if (not activeCheckBox:IsMouseOver()) and (not PublicOrdersReagentsColumnMinimumCommissionFrame:IsMouseOver()) then
         commissionFrame:Hide()
     end
 end)
@@ -224,3 +242,33 @@ function ProfessionsCrafterTableCellMaxMatsProvidedCommissionMixin:Populate(rowD
     orderToCell[order] = self
     ProfessionsTableCellTextMixin.SetText(self, "?")
 end
+
+-- handle user changing tab public/guild/private
+hooksecurefunc(ProfessionsFrame.OrdersPage, "InitOrderTypeTabs", function()
+    ProfessionsFrame.OrdersPage.BrowseFrame.PublicOrdersButton:HookScript("OnClick", function()
+        activeCheckBox = publicCheckBox
+        publicCheckBox:Show()
+        guildCheckBox:Hide()
+        privateCheckBox:Hide()
+        commissionFrame:SetParent(activeCheckBox)
+        commissionFrame:SetFrameStrata("TOOLTIP")
+    end)
+    
+    ProfessionsFrame.OrdersPage.BrowseFrame.GuildOrdersButton:HookScript("OnClick", function()
+        activeCheckBox = guildCheckBox
+        publicCheckBox:Hide()
+        guildCheckBox:Show()
+        privateCheckBox:Hide()
+        commissionFrame:SetParent(activeCheckBox)
+        commissionFrame:SetFrameStrata("TOOLTIP")
+    end)
+    
+    ProfessionsFrame.OrdersPage.BrowseFrame.PersonalOrdersButton:HookScript("OnClick", function()
+        activeCheckBox = privateCheckBox
+        publicCheckBox:Hide()
+        guildCheckBox:Hide()
+        privateCheckBox:Show()
+        commissionFrame:SetParent(activeCheckBox)
+        commissionFrame:SetFrameStrata("TOOLTIP")
+    end)
+end)
