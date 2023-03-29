@@ -93,8 +93,8 @@ hooksecurefunc(ProfessionsFrame.OrdersPage, "ShowGeneric", function(self, orders
                                 -- order meets all the exclusion requirements
                             else
                                 acceptableFound = true
-                                if orders[j].maxTip > maxTip then
-                                    maxTip = orders[j].maxTip
+                                if orders[j].tipAmount > maxTip then
+                                    maxTip = orders[j].tipAmount
                                 end
                             end
                         end
