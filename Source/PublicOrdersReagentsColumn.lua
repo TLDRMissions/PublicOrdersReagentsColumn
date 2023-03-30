@@ -26,6 +26,8 @@ local orderToCell = {}
 -- The existing function ProfessionsFrame.OrdersPage:ShotGeneric is called on the results from clicking the Search button
 -- This will hide results without reagents if the option is selected
 hooksecurefunc(ProfessionsFrame.OrdersPage, "ShowGeneric", function(self, orders, browseType, offset, isSorted)
+    if not C_CraftingOrders.ShouldShowCraftingOrderTab() then return end
+    
     if browseType == 1 then -- OrderBrowseType.Flat, small number of items, or player clicked into an item
         if (self.orderType == 0) and (not PublicOrdersReagentsDB.hideOrdersWithoutMaterials) then return end
         if (self.orderType == 1) and (not PublicOrdersReagentsDB.hideGuildOrdersWithoutMaterials) then return end
