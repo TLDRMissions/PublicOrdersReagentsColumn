@@ -16,6 +16,7 @@ end)
 local pendingCallback
 local busy
 local orderToCell = {}
+local cellToDetails = {}
 
 -- The existing function ProfessionsFrame.OrdersPage:ShotGeneric is called on the results from clicking the Search button
 -- This will hide results without reagents if the option is selected
@@ -77,13 +78,17 @@ hooksecurefunc(ProfessionsFrame.OrdersPage, "ShowGeneric", function(self, orders
                         local orders = C_CraftingOrders.GetCrafterOrders()
                         local acceptableFound = false
                         local maxTip = 0
+                        local numMatsProvidedAndExpiringSoon = 0
                         
-                        -- with sorting by reagents availability, probably only need to check the first result
                         for j = 1, #orders do
                             if orders[j].reagentState == 0 then
                                 acceptableFound = true
                                 if orders[j].tipAmount > maxTip then
                                     maxTip = orders[j].tipAmount
+                                end
+                                local remainingTime = Professions.GetCraftingOrderRemainingTime(orders[j].expirationTime)
+                                if remainingTime <= Constants.ProfessionConsts.PUBLIC_CRAFTING_ORDER_STALE_THRESHOLD then
+                                    numMatsProvidedAndExpiringSoon = numMatsProvidedAndExpiringSoon + 1
                                 end
                             end
                             if (PublicOrdersReagentsDB.minimumCommission == 0) or ((orders[j].tipAmount/10000) < PublicOrdersReagentsDB.minimumCommission) then
@@ -99,7 +104,15 @@ hooksecurefunc(ProfessionsFrame.OrdersPage, "ShowGeneric", function(self, orders
                         if acceptableFound then
                             local o = orderToCell[option]
                             if o then -- cells off the bottom of the screen wont yet be initialised
-                                ProfessionsTableCellTextMixin.SetText(o, math.floor(maxTip/10000)..GOLD_AMOUNT_SYMBOL)
+                                if numMatsProvidedAndExpiringSoon > 0 then
+                                    ProfessionsTableCellTextMixin.SetText(o, "\124cffFF0000"..math.floor(maxTip/10000)..GOLD_AMOUNT_SYMBOL.."\124r")
+                                else
+                                    ProfessionsTableCellTextMixin.SetText(o, math.floor(maxTip/10000)..GOLD_AMOUNT_SYMBOL)
+                                end
+                                cellToDetails[o] = {
+                                    ["maxTip"] = maxTip,
+                                    ["numMatsProvidedAndExpiringSoon"] = numMatsProvidedAndExpiringSoon,
+                                }
                             end
                             i = i + 1
                         else
@@ -111,6 +124,7 @@ hooksecurefunc(ProfessionsFrame.OrdersPage, "ShowGeneric", function(self, orders
                                 local o = orderToCell[option]
                                 if o then
                                     ProfessionsTableCellTextMixin.SetText(o, "None")
+                                    cellToDetails[o] = nil
                                 end
                                 i = i + 1
                             end
@@ -231,12 +245,36 @@ commissionFrame:SetScript("OnLeave", function()
 end)
 
 -- the max commission for mats provided column during bucket view
-ProfessionsCrafterTableCellMaxMatsProvidedCommissionMixin = CreateFromMixins(TableBuilderCellMixin);
+ProfessionsCrafterTableCellMaxMatsProvidedCommissionMixin = CreateFromMixins(TableBuilderCellMixin)
 
 function ProfessionsCrafterTableCellMaxMatsProvidedCommissionMixin:Populate(rowData, dataIndex)
     local order = rowData.option
     orderToCell[order] = self
     ProfessionsTableCellTextMixin.SetText(self, "?")
+    
+    self:HookScript("OnEnter", function()
+        self:GetParent():OnEnter()
+        local details = cellToDetails[self]
+        if details and details.numMatsProvidedAndExpiringSoon and details.maxTip then
+            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+            --tooltip:ClearLines()
+            GameTooltip:AddLine("Has mats")
+            GameTooltip:AddLine("Highest commission with mats: "..math.floor(details.maxTip/10000)..GOLD_AMOUNT_SYMBOL)
+            if (details.numMatsProvidedAndExpiringSoon > 0) then
+                GameTooltip:AddLine(details.numMatsProvidedAndExpiringSoon.." expiring soon!")
+            end
+            GameTooltip:Show()
+        end
+    end)
+    
+    self:HookScript("OnLeave", function()
+        self:GetParent():OnLeave()
+        GameTooltip:Hide()
+    end)
+    
+    self:HookScript("OnMouseDown", function()
+        self:GetParent():Click()
+    end)
 end
 
 -- handle user changing tab public/guild/private
