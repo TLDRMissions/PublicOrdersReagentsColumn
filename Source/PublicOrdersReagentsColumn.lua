@@ -26,7 +26,7 @@ hooksecurefunc(ProfessionsFrame.OrdersPage, "ShowGeneric", function(self, orders
     if browseType == 1 then -- OrderBrowseType.Flat, small number of items, or player clicked into an item
         if (self.orderType == 0) and (not PublicOrdersReagentsDB.hideOrdersWithoutMaterials) then return end
         if (self.orderType == 1) and (not PublicOrdersReagentsDB.hideGuildOrdersWithoutMaterials) then return end
-        if (self.orderType == 2) and (not PublicOrdersReagentsDB.hidePrivateOrdersWithoutMaterials) then return end
+        if (self.orderType == 2) and (not PublicOrdersReagentsDB.hidePersonalOrdersWithoutMaterials) then return end
         
         local dataProvider = self.BrowseFrame.OrderList.ScrollBox:GetDataProvider()
     
@@ -118,7 +118,7 @@ hooksecurefunc(ProfessionsFrame.OrdersPage, "ShowGeneric", function(self, orders
                         else
                             if  ((self.orderType == 0) and PublicOrdersReagentsDB.hideOrdersWithoutMaterials) or
                                 ((self.orderType == 1) and PublicOrdersReagentsDB.hideGuildOrdersWithoutMaterials) or
-                                ((self.orderType == 2) and PublicOrdersReagentsDB.hidePrivateOrdersWithoutMaterials) then
+                                ((self.orderType == 2) and PublicOrdersReagentsDB.hidePersonalOrdersWithoutMaterials) then
                                     dataProvider:Remove(collection[i])
                             else
                                 local o = orderToCell[option]
@@ -188,7 +188,7 @@ publicCheckBox:HookScript("OnEvent", function(self, event, ...)
         if not PublicOrdersReagentsDB.minimumCommission then PublicOrdersReagentsDB.minimumCommission = 0 end
         publicCheckBox:SetChecked(PublicOrdersReagentsDB.hideOrdersWithoutMaterials)
         guildCheckBox:SetChecked(PublicOrdersReagentsDB.hideGuildOrdersWithoutMaterials)
-        privateCheckBox:SetChecked(PublicOrdersReagentsDB.hidePrivateOrdersWithoutMaterials)
+        privateCheckBox:SetChecked(PublicOrdersReagentsDB.hidePersonalOrdersWithoutMaterials)
         
         -- addon RECraft moves the arrow to the same spot I have the checkbox, compensate
         if IsAddOnLoaded("RECraft") then
