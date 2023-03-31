@@ -5,13 +5,7 @@ hooksecurefunc(ProfessionsFrame.OrdersPage, "SetupTable", function(self)
     local browseType = self:GetBrowseType();
     local PTC = ProfessionsTableConstants;
 
-    if browseType == 1 then
-        if self.orderType == Enum.CraftingOrderType.Public then
-            self.tableBuilder:AddFixedWidthColumn(self, PTC.NoPadding, PTC.Reagents.Width, PTC.Reagents.LeftCellPadding,
-                PTC.Reagents.RightCellPadding, ProfessionsSortOrder.Reagents, "ProfessionsCrafterTableCellReagentsTemplate")
-        end
-        self.tableBuilder:Arrange()
-    elseif browseType == 2 then
+    if browseType == 2 then
         local column = self.tableBuilder:AddFixedWidthColumn(self, PTC.NoPadding, 50, PTC.Tip.LeftCellPadding,
             PTC.Tip.RightCellPadding, nil, "ProfessionsCrafterTableCellMaxMatsProvidedCommissionTemplate")
         column:ConstructHeader("BUTTON", "ProfessionsCrafterTableHeaderStringTemplate", self, "Mats?")
