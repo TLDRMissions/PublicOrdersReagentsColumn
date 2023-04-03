@@ -21,7 +21,12 @@ local cellToDetails = {}
 -- The existing function ProfessionsFrame.OrdersPage:ShotGeneric is called on the results from clicking the Search button
 -- This will hide results without reagents if the option is selected
 hooksecurefunc(ProfessionsFrame.OrdersPage, "ShowGeneric", function(self, orders, browseType, offset, isSorted)
-    if not C_CraftingOrders.ShouldShowCraftingOrderTab() then return end
+    if not C_CraftingOrders.ShouldShowCraftingOrderTab() then
+        return
+    end
+    if ProfessionsFrame:GetTab() ~= ProfessionsFrame.craftingOrdersTabID then
+        return
+    end
     
     if browseType == 1 then -- OrderBrowseType.Flat, small number of items, or player clicked into an item
         if (self.orderType == 0) and (not PublicOrdersReagentsDB.hideOrdersWithoutMaterials) then return end
@@ -30,7 +35,7 @@ hooksecurefunc(ProfessionsFrame.OrdersPage, "ShowGeneric", function(self, orders
         
         local dataProvider = self.BrowseFrame.OrderList.ScrollBox:GetDataProvider()
     
-        function recursion()
+        local function recursion()
             local collection = dataProvider:GetCollection()
             for i = 1, #collection do
                 if collection[i].option.reagentState ~= 0 then
@@ -72,6 +77,9 @@ hooksecurefunc(ProfessionsFrame.OrdersPage, "ShowGeneric", function(self, orders
                 },
                 callback = C_FunctionContainers.CreateCallback( 
                     function(result, orderType, displayBuckets, expectMoreRows, offset, isSorted)
+                        if not C_CraftingOrders.ShouldShowCraftingOrderTab() then return end
+                        if ProfessionsFrame:GetTab() ~= ProfessionsFrame.craftingOrdersTabID then return end
+                        
                         if orderType ~= Enum.CraftingOrderType.Public then return end
                         if displayBuckets then return end
                     
@@ -146,6 +154,13 @@ end)
 
 -- workaround for if a player clicks into an item during Bucket View before filtering has finished
 hooksecurefunc(C_CraftingOrders, "RequestCrafterOrders", function()
+    if not C_CraftingOrders.ShouldShowCraftingOrderTab() then
+        return
+    end
+    if ProfessionsFrame:GetTab() ~= ProfessionsFrame.craftingOrdersTabID then
+        return
+    end
+        
     if pendingCallback and (not busy) then
         pendingCallback:Cancel()
     end
@@ -252,12 +267,11 @@ function ProfessionsCrafterTableCellMaxMatsProvidedCommissionMixin:Populate(rowD
     orderToCell[order] = self
     ProfessionsTableCellTextMixin.SetText(self, "?")
     
-    self:HookScript("OnEnter", function()
+    self:SetScript("OnEnter", function()
         self:GetParent():OnEnter()
         local details = cellToDetails[self]
         if details and details.numMatsProvidedAndExpiringSoon and details.maxTip then
             GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-            --tooltip:ClearLines()
             GameTooltip:AddLine("Has mats")
             GameTooltip:AddLine("Highest commission with mats: "..math.floor(details.maxTip/10000)..GOLD_AMOUNT_SYMBOL)
             if (details.numMatsProvidedAndExpiringSoon > 0) then
@@ -267,17 +281,19 @@ function ProfessionsCrafterTableCellMaxMatsProvidedCommissionMixin:Populate(rowD
         end
     end)
     
-    self:HookScript("OnLeave", function()
+    self:SetScript("OnLeave", function()
         self:GetParent():OnLeave()
         GameTooltip:Hide()
     end)
     
-    self:HookScript("OnMouseDown", function()
+    self:SetScript("OnMouseDown", function()
         self:GetParent():Click()
     end)
 end
 
 -- handle user changing tab public/guild/private
+-- Blizzard calls this function: during the frame's OnLoad, and for events PLAYER_GUILD_UPDATE and PLAYER_ENTERING_WORLD
+-- They reset the Script handler every time, so I have to re-hook the script handler all over again
 hooksecurefunc(ProfessionsFrame.OrdersPage, "InitOrderTypeTabs", function()
     ProfessionsFrame.OrdersPage.BrowseFrame.PublicOrdersButton:HookScript("OnClick", function()
         activeCheckBox = publicCheckBox
