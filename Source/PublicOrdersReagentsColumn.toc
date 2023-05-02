@@ -1,10 +1,11 @@
-## Interface: 100007
+## Interface: 100100
 ## Title: No Mats; No Make
-## Version: 10.0-012
+## Version: 10.0-001
 ## Notes: Hides orders that don't provide all the materials or a decent enough commission
 ## Author: Teelo
 ## X-Curse-Project-ID: 841061
 ## SavedVariables: PublicOrdersReagentsDB
 ## Dependencies: Blizzard_Professions
+## IconTexture: Interface\Icons\INV_Alchemy_90_Reagent_Blue
 
 PublicOrdersReagentsColumn.xml
