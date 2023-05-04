@@ -6,7 +6,7 @@ hooksecurefunc(ProfessionsFrame.OrdersPage, "SetupTable", function(self)
     local PTC = ProfessionsTableConstants;
 
     if browseType == 2 then
-        local column = self.tableBuilder:AddFixedWidthColumn(self, PTC.NoPadding, 50, PTC.Tip.LeftCellPadding,
+        local column = self.tableBuilder:AddFixedWidthColumn(self, PTC.NoPadding, 80, PTC.Tip.LeftCellPadding,
             PTC.Tip.RightCellPadding, nil, "ProfessionsCrafterTableCellMaxMatsProvidedCommissionTemplate")
         column:ConstructHeader("BUTTON", "ProfessionsCrafterTableHeaderStringTemplate", self, "Mats?")
         self.tableBuilder:Arrange()
