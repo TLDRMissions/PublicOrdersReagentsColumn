@@ -159,7 +159,7 @@ hooksecurefunc(ProfessionsFrame.OrdersPage, "ShowGeneric", function(self, orders
                                 local reagentsCost = getReagentsCostFromOtherAddons(orders[j])
                                 if reagentsCost and ((reagentsCost + PublicOrdersReagentsDB.minimumCommission) <= (orders[j].tipAmount/10000)) then
                                     acceptableFound = true
-                                    local profit = orders[j].tipAmount - reagentsCost
+                                    local profit = orders[j].tipAmount - (reagentsCost*10000)
                                     if profit > maxTip then
                                         maxTip = profit
                                     end
