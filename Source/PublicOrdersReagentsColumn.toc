@@ -1,6 +1,6 @@
 ## Interface: 100100
 ## Title: No Mats; No Make
-## Version: 10.1-002
+## Version: 10.1-003
 ## Notes: Hides orders that don't provide all the materials or a decent enough commission
 ## Author: Teelo
 ## X-Curse-Project-ID: 841061
