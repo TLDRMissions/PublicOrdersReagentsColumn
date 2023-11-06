@@ -19,7 +19,7 @@ local orderToCell = {}
 local cellToDetails = {}
 
 -- Attempts to check Auction database addons for the price of reagents
--- Currently supports: Auctionator
+-- Currently supports: Auctionator and TSM
 local function auctionatorGetPrice(itemID)
     return Auctionator.API.v1.GetAuctionPriceByItemID("Public Orders Reagents Column", itemID)
 end
@@ -89,7 +89,9 @@ hooksecurefunc(ProfessionsFrame.OrdersPage, "ShowGeneric", function(self, orders
                 if collection[i].option.reagentState ~= 0 then
                     if PublicOrdersReagentsDB.checkAuctionsDB then
                         local reagentsCost = getReagentsCostFromOtherAddons(collection[i].option)
-                        if reagentsCost and ((reagentsCost + PublicOrdersReagentsDB.minimumCommission) > (collection[i].option.tipAmount/10000)) then
+                        if (reagentsCost and ((reagentsCost + PublicOrdersReagentsDB.minimumCommission) > (collection[i].option.tipAmount/10000)))
+                            or ((not reagentsCost) and (PublicOrdersReagentsDB.minimumCommission > (collection[i].option.tipAmount/10000)))
+                                then
                             dataProvider:Remove(collection[i])
                             recursion()
                             return
@@ -162,6 +164,11 @@ hooksecurefunc(ProfessionsFrame.OrdersPage, "ShowGeneric", function(self, orders
                                     local profit = orders[j].tipAmount - (reagentsCost*10000)
                                     if profit > maxTip then
                                         maxTip = profit
+                                    end
+                                elseif (not reagentsCost) and (PublicOrdersReagentsDB.minimumCommission <= (orders[j].tipAmount/10000)) then
+                                    acceptableFound = true
+                                    if orders[j].tipAmount > maxTip then
+                                        maxTip = orders[j].tipAmount
                                     end
                                 end
                             else
