@@ -5,7 +5,8 @@
 ## Author: Teelo
 ## X-Curse-Project-ID: 841061
 ## SavedVariables: PublicOrdersReagentsDB
-## Dependencies: Blizzard_Professions
+## LoadOnDemand: 1
+## LoadWith: Blizzard_Professions
 ## IconTexture: Interface\Icons\INV_Alchemy_90_Reagent_Blue
 
 PublicOrdersReagentsColumn.xml
