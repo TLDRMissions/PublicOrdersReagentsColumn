@@ -1,3 +1,11 @@
+-- the max commission for mats provided column during bucket view
+ProfessionsCrafterTableCellMaxMatsProvidedCommissionMixin = CreateFromMixins(TableBuilderCellMixin)
+
+-- Delay entire file until after Blizzard_Professions is loaded
+-- Will not make it a dependency or load it myself due to lua errors that are thrown since 10.2 if it is not loaded completely
+EventUtil.ContinueOnAddOnLoaded("Blizzard_Professions", function()
+
+
 -- This code adapted from Blizzard_Professions\Blizzard_ProfessionsCrafterOrderPage.lua
 -- The existing function ProfessionsFrame.OrdersPage:SetupTable() hides the Reagents column for Public Orders
 -- This code simply shows it again.
@@ -356,9 +364,6 @@ commissionFrame:SetScript("OnLeave", function()
     end
 end)
 
--- the max commission for mats provided column during bucket view
-ProfessionsCrafterTableCellMaxMatsProvidedCommissionMixin = CreateFromMixins(TableBuilderCellMixin)
-
 function ProfessionsCrafterTableCellMaxMatsProvidedCommissionMixin:Populate(rowData, dataIndex)
     local order = rowData.option
     orderToCell[order] = self
@@ -419,3 +424,5 @@ hooksecurefunc(ProfessionsFrame.OrdersPage, "InitOrderTypeTabs", function()
         commissionFrame:SetFrameStrata("TOOLTIP")
     end)
 end)
+
+end) -- end of EventUtil.ContinueOnAddOnLoaded
