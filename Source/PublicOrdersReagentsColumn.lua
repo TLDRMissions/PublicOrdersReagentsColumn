@@ -5,6 +5,9 @@ ProfessionsCrafterTableCellMaxMatsProvidedCommissionMixin = CreateFromMixins(Tab
 -- Will not make it a dependency or load it myself due to lua errors that are thrown since 10.2 if it is not loaded completely
 EventUtil.ContinueOnAddOnLoaded("Blizzard_Professions", function()
 
+-- This might get initialized before saved variables are loaded, if it does, it'll get re-initialized during PLAYER_ENTERING_WORLD.
+if not PublicOrdersReagentsDB then PublicOrdersReagentsDB = {} end
+if not PublicOrdersReagentsDB.minimumCommission then PublicOrdersReagentsDB.minimumCommission = 0 end
 
 -- This code adapted from Blizzard_Professions\Blizzard_ProfessionsCrafterOrderPage.lua
 -- The existing function ProfessionsFrame.OrdersPage:SetupTable() hides the Reagents column for Public Orders
