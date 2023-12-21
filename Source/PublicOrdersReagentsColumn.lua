@@ -1,3 +1,5 @@
+local addonName = ...
+
 -- the max commission for mats provided column during bucket view
 ProfessionsCrafterTableCellMaxMatsProvidedCommissionMixin = CreateFromMixins(TableBuilderCellMixin)
 
@@ -5,7 +7,7 @@ ProfessionsCrafterTableCellMaxMatsProvidedCommissionMixin = CreateFromMixins(Tab
 -- Will not make it a dependency or load it myself due to lua errors that are thrown since 10.2 if it is not loaded completely
 EventUtil.ContinueOnAddOnLoaded("Blizzard_Professions", function()
 
--- This might get initialized before saved variables are loaded, if it does, it'll get re-initialized during PLAYER_ENTERING_WORLD.
+-- This might get initialized before saved variables are loaded, if it does, it'll get re-initialized during ADDON_LOADED.
 if not PublicOrdersReagentsDB then PublicOrdersReagentsDB = {} end
 if not PublicOrdersReagentsDB.minimumCommission then PublicOrdersReagentsDB.minimumCommission = 0 end
 
@@ -37,6 +39,10 @@ end
 
 local function tsmGetPrice(itemID)
     return TSM_API.GetCustomPriceValue("dbminbuyout", "i:"..itemID)
+end
+
+local function hasAuctionAddon()
+    return TSM_API or IsAddOnLoaded("Auctionator")
 end
 
 local function getReagentsCostFromOtherAddons(option)
@@ -98,7 +104,7 @@ hooksecurefunc(ProfessionsFrame.OrdersPage, "ShowGeneric", function(self, orders
             local collection = dataProvider:GetCollection()
             for i = 1, #collection do
                 if collection[i].option.reagentState ~= 0 then
-                    if PublicOrdersReagentsDB.checkAuctionsDB then
+                    if PublicOrdersReagentsDB.checkAuctionsDB and hasAuctionAddon() then
                         local reagentsCost = getReagentsCostFromOtherAddons(collection[i].option)
                         if (reagentsCost and ((reagentsCost + PublicOrdersReagentsDB.minimumCommission) > (collection[i].option.tipAmount/10000)))
                             or ((not reagentsCost) and (PublicOrdersReagentsDB.minimumCommission > (collection[i].option.tipAmount/10000)))
@@ -166,9 +172,9 @@ hooksecurefunc(ProfessionsFrame.OrdersPage, "ShowGeneric", function(self, orders
                                 if remainingTime <= Constants.ProfessionConsts.PUBLIC_CRAFTING_ORDER_STALE_THRESHOLD then
                                     numMatsProvidedAndExpiringSoon = numMatsProvidedAndExpiringSoon + 1
                                 end
-                            elseif (not PublicOrdersReagentsDB.checkAuctionsDB) and ((PublicOrdersReagentsDB.minimumCommission == 0) or ((orders[j].tipAmount/10000) < PublicOrdersReagentsDB.minimumCommission))then
+                            elseif (not (PublicOrdersReagentsDB.checkAuctionsDB and hasAuctionAddon())) and ((PublicOrdersReagentsDB.minimumCommission == 0) or ((orders[j].tipAmount/10000) < PublicOrdersReagentsDB.minimumCommission))then
                                 -- order meets all the exclusion requirements
-                            elseif PublicOrdersReagentsDB.checkAuctionsDB then
+                            elseif PublicOrdersReagentsDB.checkAuctionsDB and hasAuctionAddon() then
                                 local reagentsCost = getReagentsCostFromOtherAddons(orders[j])
                                 if reagentsCost and ((reagentsCost + PublicOrdersReagentsDB.minimumCommission) <= (orders[j].tipAmount/10000)) then
                                     acceptableFound = true
@@ -276,28 +282,24 @@ local activeCheckBox = publicCheckBox
 guildCheckBox:Hide()
 privateCheckBox:Hide()
 
-publicCheckBox:RegisterEvent("PLAYER_ENTERING_WORLD")
-publicCheckBox:HookScript("OnEvent", function(self, event, ...)
-    if event == "PLAYER_ENTERING_WORLD" then
-        publicCheckBox:UnregisterEvent("PLAYER_ENTERING_WORLD")
-        if not PublicOrdersReagentsDB then PublicOrdersReagentsDB = {} end
-        if not PublicOrdersReagentsDB.minimumCommission then PublicOrdersReagentsDB.minimumCommission = 0 end
-        publicCheckBox:SetChecked(PublicOrdersReagentsDB.hideOrdersWithoutMaterials)
-        guildCheckBox:SetChecked(PublicOrdersReagentsDB.hideGuildOrdersWithoutMaterials)
-        privateCheckBox:SetChecked(PublicOrdersReagentsDB.hidePersonalOrdersWithoutMaterials)
-        
-        PublicOrdersReagentsColumnMinimumCommissionFrame.CheckButton1:SetChecked(not PublicOrdersReagentsDB.checkAuctionsDB)
-        PublicOrdersReagentsColumnMinimumCommissionFrame.CheckButton2:SetChecked(PublicOrdersReagentsDB.checkAuctionsDB)
-        
-        -- addon RECraft moves the arrow to the same spot I have the checkbox, compensate
-        if IsAddOnLoaded("RECraft") then
-            publicCheckBox:SetPoint("LEFT", ProfessionsFrame.OrdersPage.BrowseFrame.SearchButton, "RIGHT", 28, 22)
-            guildCheckBox:SetPoint("LEFT", ProfessionsFrame.OrdersPage.BrowseFrame.SearchButton, "RIGHT", 28, 22)
-            privateCheckBox:SetPoint("LEFT", ProfessionsFrame.OrdersPage.BrowseFrame.SearchButton, "RIGHT", 28, 22)
-        end
-        
-        PublicOrdersReagentsColumnMinimumCommissionSlider:SetValue(PublicOrdersReagentsDB.minimumCommission or 0)
+EventUtil.ContinueOnAddOnLoaded(addonName, function()
+    if not PublicOrdersReagentsDB then PublicOrdersReagentsDB = {} end
+    if not PublicOrdersReagentsDB.minimumCommission then PublicOrdersReagentsDB.minimumCommission = 0 end
+    publicCheckBox:SetChecked(PublicOrdersReagentsDB.hideOrdersWithoutMaterials)
+    guildCheckBox:SetChecked(PublicOrdersReagentsDB.hideGuildOrdersWithoutMaterials)
+    privateCheckBox:SetChecked(PublicOrdersReagentsDB.hidePersonalOrdersWithoutMaterials)
+    
+    PublicOrdersReagentsColumnMinimumCommissionFrame.CheckButton1:SetChecked(not PublicOrdersReagentsDB.checkAuctionsDB)
+    PublicOrdersReagentsColumnMinimumCommissionFrame.CheckButton2:SetChecked(PublicOrdersReagentsDB.checkAuctionsDB)
+    
+    -- addon RECraft moves the arrow to the same spot I have the checkbox, compensate
+    if IsAddOnLoaded("RECraft") then
+        publicCheckBox:SetPoint("LEFT", ProfessionsFrame.OrdersPage.BrowseFrame.SearchButton, "RIGHT", 28, 22)
+        guildCheckBox:SetPoint("LEFT", ProfessionsFrame.OrdersPage.BrowseFrame.SearchButton, "RIGHT", 28, 22)
+        privateCheckBox:SetPoint("LEFT", ProfessionsFrame.OrdersPage.BrowseFrame.SearchButton, "RIGHT", 28, 22)
     end
+    
+    PublicOrdersReagentsColumnMinimumCommissionSlider:SetValue(PublicOrdersReagentsDB.minimumCommission or 0)
 end)
 
 -- minimum commission frame with slider
