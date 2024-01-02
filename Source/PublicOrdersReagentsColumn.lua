@@ -255,8 +255,8 @@ end)
 
 -- adds a checkbox to the crafting orders frame
 local function createCheckBox(variableName)
-    local checkBox = CreateFrame("CheckButton", nil, ProfessionsFrame.OrdersPage, "UICheckButtonTemplate")
-    checkBox:SetPoint("LEFT", ProfessionsFrame.OrdersPage.BrowseFrame.SearchButton, "RIGHT", 28, 0)
+    local checkBox = CreateFrame("CheckButton", nil, ProfessionsFrame.OrdersPage, "PublicOrdersReagentsColumnCheckButtonTemplate")
+    checkBox:SetPoint("TOPLEFT", ProfessionsFrame, "TOPRIGHT", 4, -36)
     checkBox:SetScript("OnClick", function()
         PublicOrdersReagentsDB[variableName] = checkBox:GetChecked()
     end)
@@ -267,11 +267,11 @@ local function createCheckBox(variableName)
     end)
     checkBox:SetScript("OnLeave", function()
         GameTooltip:Hide()
-        
         if not PublicOrdersReagentsColumnMinimumCommissionFrame:IsMouseOver() then
             PublicOrdersReagentsColumnMinimumCommissionFrame:Hide()
         end
     end)
+    checkBox:SetNormalTexture(3566850)
     return checkBox
 end
 
@@ -291,13 +291,6 @@ EventUtil.ContinueOnAddOnLoaded(addonName, function()
     
     PublicOrdersReagentsColumnMinimumCommissionFrame.CheckButton1:SetChecked(not PublicOrdersReagentsDB.checkAuctionsDB)
     PublicOrdersReagentsColumnMinimumCommissionFrame.CheckButton2:SetChecked(PublicOrdersReagentsDB.checkAuctionsDB)
-    
-    -- addon RECraft moves the arrow to the same spot I have the checkbox, compensate
-    if IsAddOnLoaded("RECraft") then
-        publicCheckBox:SetPoint("LEFT", ProfessionsFrame.OrdersPage.BrowseFrame.SearchButton, "RIGHT", 28, 22)
-        guildCheckBox:SetPoint("LEFT", ProfessionsFrame.OrdersPage.BrowseFrame.SearchButton, "RIGHT", 28, 22)
-        privateCheckBox:SetPoint("LEFT", ProfessionsFrame.OrdersPage.BrowseFrame.SearchButton, "RIGHT", 28, 22)
-    end
     
     PublicOrdersReagentsColumnMinimumCommissionSlider:SetValue(PublicOrdersReagentsDB.minimumCommission or 0)
 end)
@@ -341,7 +334,6 @@ commissionFrame.CheckButton1:HookScript("OnClick", function(self)
     PublicOrdersReagentsDB.checkAuctionsDB = not self:GetChecked()
     commissionFrame.CheckButton2:SetChecked(not self:GetChecked())
 end)
-    
 
 commissionFrame.Label1 = commissionFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 commissionFrame.Label1:SetPoint("LEFT", commissionFrame.CheckButton1, "RIGHT", 0, 0)
@@ -367,6 +359,11 @@ commissionFrame:SetScript("OnLeave", function()
     if (not activeCheckBox:IsMouseOver()) and (not PublicOrdersReagentsColumnMinimumCommissionFrame:IsMouseOver()) then
         commissionFrame:Hide()
     end
+    C_Timer.After(0.1, function()
+        if (not activeCheckBox:IsMouseOver()) and (not PublicOrdersReagentsColumnMinimumCommissionFrame:IsMouseOver()) then
+            commissionFrame:Hide()
+        end
+    end)
 end)
 
 function ProfessionsCrafterTableCellMaxMatsProvidedCommissionMixin:Populate(rowData, dataIndex)
@@ -401,7 +398,7 @@ end
 -- handle user changing tab public/guild/private
 -- Blizzard calls this function: during the frame's OnLoad, and for events PLAYER_GUILD_UPDATE and PLAYER_ENTERING_WORLD
 -- They reset the Script handler every time, so I have to re-hook the script handler all over again
-hooksecurefunc(ProfessionsFrame.OrdersPage, "InitOrderTypeTabs", function()
+local function setupOrdersButtonHooks()
     ProfessionsFrame.OrdersPage.BrowseFrame.PublicOrdersButton:HookScript("OnClick", function()
         activeCheckBox = publicCheckBox
         publicCheckBox:Show()
@@ -428,6 +425,8 @@ hooksecurefunc(ProfessionsFrame.OrdersPage, "InitOrderTypeTabs", function()
         commissionFrame:SetParent(activeCheckBox)
         commissionFrame:SetFrameStrata("TOOLTIP")
     end)
-end)
+end
+hooksecurefunc(ProfessionsFrame.OrdersPage, "InitOrderTypeTabs", setupOrdersButtonHooks)
+setupOrdersButtonHooks()
 
 end) -- end of EventUtil.ContinueOnAddOnLoaded
