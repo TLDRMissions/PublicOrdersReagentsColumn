@@ -7,10 +7,6 @@ ProfessionsCrafterTableCellMaxMatsProvidedCommissionMixin = CreateFromMixins(Tab
 -- Will not make it a dependency or load it myself due to lua errors that are thrown since 10.2 if it is not loaded completely
 EventUtil.ContinueOnAddOnLoaded("Blizzard_Professions", function()
 
--- This might get initialized before saved variables are loaded, if it does, it'll get re-initialized during ADDON_LOADED.
-if not PublicOrdersReagentsDB then PublicOrdersReagentsDB = {} end
-if not PublicOrdersReagentsDB.minimumCommission then PublicOrdersReagentsDB.minimumCommission = 0 end
-
 -- This code adapted from Blizzard_Professions\Blizzard_ProfessionsCrafterOrderPage.lua
 -- The existing function ProfessionsFrame.OrdersPage:SetupTable() hides the Reagents column for Public Orders
 -- This code simply shows it again.
@@ -30,6 +26,7 @@ local pendingCallback
 local busy
 local orderToCell = {}
 local cellToDetails = {}
+local activeCheckBox
 
 -- Attempts to check Auction database addons for the price of reagents
 -- Currently supports: Auctionator and TSM
@@ -83,6 +80,26 @@ local function getReagentsCostFromOtherAddons(option)
     return cost/10000
 end
 
+local function hasNothingSelected(orderType)
+    if orderType == 0 then orderType = "" end
+    if orderType == 1 then orderType = "Guild" end
+    if orderType == 2 then orderType = "Private" end
+    
+    if PublicOrdersReagentsDB["hide"..orderType.."OrdersWithoutMaterials"] then
+        return false
+    end
+    
+    if PublicOrdersReagentsDB["exceptCommission"..orderType] then
+        return false
+    end
+    
+    if PublicOrdersReagentsDB["checkAuctionsDB"..orderType] and hasAuctionAddon() then
+        return false
+    end
+    
+    return true
+end
+
 -- The existing function ProfessionsFrame.OrdersPage:ShotGeneric is called on the results from clicking the Search button
 -- This will hide results without reagents if the option is selected
 hooksecurefunc(ProfessionsFrame.OrdersPage, "ShowGeneric", function(self, orders, browseType, offset, isSorted)
@@ -94,9 +111,7 @@ hooksecurefunc(ProfessionsFrame.OrdersPage, "ShowGeneric", function(self, orders
     end
     
     if browseType == 1 then -- OrderBrowseType.Flat, small number of items, or player clicked into an item
-        if (self.orderType == 0) and (not PublicOrdersReagentsDB.hideOrdersWithoutMaterials) then return end
-        if (self.orderType == 1) and (not PublicOrdersReagentsDB.hideGuildOrdersWithoutMaterials) then return end
-        if (self.orderType == 2) and (not PublicOrdersReagentsDB.hidePersonalOrdersWithoutMaterials) then return end
+        if hasNothingSelected(self.orderType) then return end
         
         local dataProvider = self.BrowseFrame.OrderList.ScrollBox:GetDataProvider()
     
@@ -104,7 +119,7 @@ hooksecurefunc(ProfessionsFrame.OrdersPage, "ShowGeneric", function(self, orders
             local collection = dataProvider:GetCollection()
             for i = 1, #collection do
                 if collection[i].option.reagentState ~= 0 then
-                    if PublicOrdersReagentsDB.checkAuctionsDB and hasAuctionAddon() then
+                    if PublicOrdersReagentsDB["checkAuctionsDB"..(activeCheckBox.ordersType or "")] and hasAuctionAddon() then
                         local reagentsCost = getReagentsCostFromOtherAddons(collection[i].option)
                         if (reagentsCost and ((reagentsCost + PublicOrdersReagentsDB.minimumCommission) > (collection[i].option.tipAmount/10000)))
                             or ((not reagentsCost) and (PublicOrdersReagentsDB.minimumCommission > (collection[i].option.tipAmount/10000)))
@@ -113,7 +128,7 @@ hooksecurefunc(ProfessionsFrame.OrdersPage, "ShowGeneric", function(self, orders
                             recursion()
                             return
                         end
-                    elseif (PublicOrdersReagentsDB.minimumCommission == 0) or ((collection[i].option.tipAmount/10000) < PublicOrdersReagentsDB.minimumCommission) then
+                    elseif PublicOrdersReagentsDB["hide"..(activeCheckBox.ordersType or "").."OrdersWithoutMaterials"] or (PublicOrdersReagentsDB["exceptCommission"..(activeCheckBox.ordersType or "")] and ((collection[i].option.tipAmount/10000) < PublicOrdersReagentsDB.minimumCommission)) then
                         dataProvider:Remove(collection[i])
                         recursion()
                         return
@@ -172,7 +187,7 @@ hooksecurefunc(ProfessionsFrame.OrdersPage, "ShowGeneric", function(self, orders
                                 if remainingTime <= Constants.ProfessionConsts.PUBLIC_CRAFTING_ORDER_STALE_THRESHOLD then
                                     numMatsProvidedAndExpiringSoon = numMatsProvidedAndExpiringSoon + 1
                                 end
-                            elseif (not (PublicOrdersReagentsDB.checkAuctionsDB and hasAuctionAddon())) and ((PublicOrdersReagentsDB.minimumCommission == 0) or ((orders[j].tipAmount/10000) < PublicOrdersReagentsDB.minimumCommission))then
+                            elseif PublicOrdersReagentsDB.hideOrdersWithoutMaterials or (PublicOrdersReagentsDB.exceptCommission and ((orders[j].tipAmount/10000) < PublicOrdersReagentsDB.minimumCommission)) then
                                 -- order meets all the exclusion requirements
                             elseif PublicOrdersReagentsDB.checkAuctionsDB and hasAuctionAddon() then
                                 local reagentsCost = getReagentsCostFromOtherAddons(orders[j])
@@ -198,23 +213,28 @@ hooksecurefunc(ProfessionsFrame.OrdersPage, "ShowGeneric", function(self, orders
                         
                         if acceptableFound then
                             local o = orderToCell[option]
-                            if o then -- cells off the bottom of the screen wont yet be initialised
-                                if numMatsProvidedAndExpiringSoon > 0 then
-                                    ProfessionsTableCellTextMixin.SetText(o, "\124cffFF0000"..math.floor(maxTip/10000)..GOLD_AMOUNT_SYMBOL.."\124r")
-                                else
-                                    ProfessionsTableCellTextMixin.SetText(o, math.floor(maxTip/10000)..GOLD_AMOUNT_SYMBOL)
+                            if hasNothingSelected(orderType) then
+                                if o then
+                                    ProfessionsTableCellTextMixin.SetText(o, "None")
+                                    cellToDetails[o] = nil
                                 end
-                                cellToDetails[o] = {
-                                    ["maxTip"] = maxTip,
-                                    ["numMatsProvidedAndExpiringSoon"] = numMatsProvidedAndExpiringSoon,
-                                }
+                            else
+                                if o then -- cells off the bottom of the screen wont yet be initialised
+                                    if numMatsProvidedAndExpiringSoon > 0 then
+                                        ProfessionsTableCellTextMixin.SetText(o, "\124cffFF0000"..math.floor(maxTip/10000)..GOLD_AMOUNT_SYMBOL.."\124r")
+                                    else
+                                        ProfessionsTableCellTextMixin.SetText(o, math.floor(maxTip/10000)..GOLD_AMOUNT_SYMBOL)
+                                    end
+                                    cellToDetails[o] = {
+                                        ["maxTip"] = maxTip,
+                                        ["numMatsProvidedAndExpiringSoon"] = numMatsProvidedAndExpiringSoon,
+                                    }
+                                end
                             end
                             i = i + 1
                         else
-                            if  ((self.orderType == 0) and PublicOrdersReagentsDB.hideOrdersWithoutMaterials) or
-                                ((self.orderType == 1) and PublicOrdersReagentsDB.hideGuildOrdersWithoutMaterials) or
-                                ((self.orderType == 2) and PublicOrdersReagentsDB.hidePersonalOrdersWithoutMaterials) then
-                                    dataProvider:Remove(collection[i])
+                            if not hasNothingSelected(orderType) then
+                                dataProvider:Remove(collection[i])
                             else
                                 local o = orderToCell[option]
                                 if o then
@@ -254,52 +274,74 @@ hooksecurefunc(C_CraftingOrders, "RequestCrafterOrders", function()
 end)
 
 -- adds a checkbox to the crafting orders frame
-local function createCheckBox(variableName)
-    local checkBox = CreateFrame("CheckButton", nil, ProfessionsFrame.OrdersPage, "PublicOrdersReagentsColumnCheckButtonTemplate")
+local function createCheckBox(variableName, textureID, init, ordersType)
+    local checkBox = CreateFrame("CheckButton", "PublicOrdersReagentsColumn_"..variableName, ProfessionsFrame.OrdersPage, "PublicOrdersReagentsColumnCheckButtonTemplate")
+    checkBox.variableName = variableName
+    checkBox.ordersType = ordersType
     checkBox:SetPoint("TOPLEFT", ProfessionsFrame, "TOPRIGHT", 4, -36)
-    checkBox:SetScript("OnClick", function()
-        PublicOrdersReagentsDB[variableName] = checkBox:GetChecked()
-    end)
-    checkBox:SetScript("OnEnter", function(self)
-        GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
-        GameTooltip:SetText("Hide orders that do not provide all the materials")
-        PublicOrdersReagentsColumnMinimumCommissionFrame:Show()
-    end)
-    checkBox:SetScript("OnLeave", function()
-        GameTooltip:Hide()
-        if not PublicOrdersReagentsColumnMinimumCommissionFrame:IsMouseOver() then
-            PublicOrdersReagentsColumnMinimumCommissionFrame:Hide()
-        end
-    end)
-    checkBox:SetNormalTexture(3566850)
+    if init then
+        checkBox:SetScript("OnClick", function()
+            PublicOrdersReagentsDB[variableName] = checkBox:GetChecked()
+            PublicOrdersReagentsDB["exceptCommission"..(activeCheckBox.ordersType or "")] = false
+            PublicOrdersReagentsDB["checkAuctionsDB"..(activeCheckBox.ordersType or "")] = false
+            PublicOrdersReagentsColumnMinimumCommissionFrame.CheckButton1:SetChecked(false)
+            PublicOrdersReagentsColumnMinimumCommissionFrame.CheckButton2:SetChecked(false)
+        end)
+        checkBox:SetScript("OnEnter", function(self)
+            GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
+            GameTooltip:SetText("Hide ALL orders that do not supply materials")
+        end)
+        checkBox:SetScript("OnLeave", function()
+            GameTooltip:Hide()
+        end)
+    end
+    checkBox:SetNormalTexture(textureID)
     return checkBox
 end
 
-local publicCheckBox = createCheckBox("hideOrdersWithoutMaterials")
-local guildCheckBox = createCheckBox("hideGuildOrdersWithoutMaterials")
-local privateCheckBox = createCheckBox("hidePersonalOrdersWithoutMaterials")
-local activeCheckBox = publicCheckBox
+local publicCheckBox = createCheckBox("hideOrdersWithoutMaterials", 3566850, true)
+local guildCheckBox = createCheckBox("hideGuildOrdersWithoutMaterials", 3566850, true, "Guild")
+local privateCheckBox = createCheckBox("hidePersonalOrdersWithoutMaterials", 3566850, true, "Private")
+activeCheckBox = publicCheckBox
 guildCheckBox:Hide()
 privateCheckBox:Hide()
 
 EventUtil.ContinueOnAddOnLoaded(addonName, function()
     if not PublicOrdersReagentsDB then PublicOrdersReagentsDB = {} end
-    if not PublicOrdersReagentsDB.minimumCommission then PublicOrdersReagentsDB.minimumCommission = 0 end
-    publicCheckBox:SetChecked(PublicOrdersReagentsDB.hideOrdersWithoutMaterials)
-    guildCheckBox:SetChecked(PublicOrdersReagentsDB.hideGuildOrdersWithoutMaterials)
-    privateCheckBox:SetChecked(PublicOrdersReagentsDB.hidePersonalOrdersWithoutMaterials)
+    local db = PublicOrdersReagentsDB
+    if not db.minimumCommission then db.minimumCommission = 0 end
+    publicCheckBox:SetChecked(db.hideOrdersWithoutMaterials)
+    guildCheckBox:SetChecked(db.hideGuildOrdersWithoutMaterials)
+    privateCheckBox:SetChecked(db.hidePersonalOrdersWithoutMaterials)
     
-    PublicOrdersReagentsColumnMinimumCommissionFrame.CheckButton1:SetChecked(not PublicOrdersReagentsDB.checkAuctionsDB)
-    PublicOrdersReagentsColumnMinimumCommissionFrame.CheckButton2:SetChecked(PublicOrdersReagentsDB.checkAuctionsDB)
+    if db.hideOrdersWithoutMaterials then
+        db.checkAuctionsDB = false
+        db.exceptCommission = false
+    end
     
-    PublicOrdersReagentsColumnMinimumCommissionSlider:SetValue(PublicOrdersReagentsDB.minimumCommission or 0)
+    if db.hideGuildOrdersWithoutMaterials then
+        db.checkAuctionsDBGuild = false
+        db.exceptCommissionGuild = false
+    end
+    
+    if db.hidePersonalOrdersWithoutMaterials then
+        db.checkAuctionsDBPrivate = false
+        db.exceptCommissionPrivate = false
+    end
+    
+    PublicOrdersReagentsColumnMinimumCommissionFrame.CheckButton1:SetChecked(db.exceptCommission)
+    PublicOrdersReagentsColumnMinimumCommissionFrame.CheckButton2:SetChecked(db.checkAuctionsDB)
+    
+    if PublicOrdersReagentsDB.minimumCommission < 1 then
+        PublicOrdersReagentsDB.minimumCommission = 1
+    end
+    PublicOrdersReagentsColumnMinimumCommissionSlider:SetValue(PublicOrdersReagentsDB.minimumCommission or 1)
 end)
 
 -- minimum commission frame with slider
 local commissionFrame = CreateFrame("Frame", "PublicOrdersReagentsColumnMinimumCommissionFrame", activeCheckBox)
 commissionFrame:Hide()
-commissionFrame:SetSize(330, 200)
-commissionFrame:SetPoint("TOP", activeCheckBox, "BOTTOM")
+commissionFrame:SetSize(330, 80)
 commissionFrame:SetFrameStrata("TOOLTIP")
 commissionFrame.Border = CreateFrame("Frame", nil, PublicOrdersReagentsColumnMinimumCommissionFrame, "DialogBorderDarkTemplate")
 commissionFrame.Backdrop = CreateFrame("Frame", nil, PublicOrdersReagentsColumnMinimumCommissionFrame, "TooltipBackdropTemplate")
@@ -307,63 +349,75 @@ commissionFrame.Backdrop = CreateFrame("Frame", nil, PublicOrdersReagentsColumnM
 commissionFrame.Slider = CreateFrame("Slider", "PublicOrdersReagentsColumnMinimumCommissionSlider", PublicOrdersReagentsColumnMinimumCommissionFrame, "OptionsSliderTemplate")
 commissionFrame.Slider:SetPoint("TOP", commissionFrame, "TOP", 0, -20)
 commissionFrame.Slider:SetSize(280, 20)
-PublicOrdersReagentsColumnMinimumCommissionSliderLow:SetText("Never")
+PublicOrdersReagentsColumnMinimumCommissionSliderLow:SetText("1")
 PublicOrdersReagentsColumnMinimumCommissionSliderHigh:SetText("25,000")
-PublicOrdersReagentsColumnMinimumCommissionSliderText:SetText("Never")
+PublicOrdersReagentsColumnMinimumCommissionSliderText:SetText("1")
 PublicOrdersReagentsColumnMinimumCommissionSliderText:SetFontObject("GameFontHighlightSmall")
 PublicOrdersReagentsColumnMinimumCommissionSliderText:SetTextColor(0, 1, 0)
 commissionFrame.Slider:SetOrientation('HORIZONTAL')
-commissionFrame.Slider:SetValueStep(100)
+commissionFrame.Slider:SetValueStep(50)
 commissionFrame.Slider:SetObeyStepOnDrag(true)
-commissionFrame.Slider:SetMinMaxValues(0, 25000)
-commissionFrame.Slider:SetValue(0)
+commissionFrame.Slider:SetMinMaxValues(1, 25000)
+commissionFrame.Slider:SetValue(1)
 
 commissionFrame.Slider:SetScript("OnValueChanged", function(self, value, userInput)
     PublicOrdersReagentsColumnMinimumCommissionSliderText:SetText(value)
     PublicOrdersReagentsDB.minimumCommission = value
-    if value == 0 then
-        PublicOrdersReagentsColumnMinimumCommissionSliderText:SetText("Never")
+end)
+
+commissionFrame.CheckButton1 = createCheckBox("ExceptCommissionButton", 134571)
+commissionFrame.CheckButton1:ClearAllPoints()
+commissionFrame.CheckButton1:SetPoint("TOPLEFT", publicCheckBox, "BOTTOMLEFT", 0, -10)
+commissionFrame.CheckButton1:SetChecked(true)
+commissionFrame.CheckButton1:SetScript("OnClick", function(self)
+    PublicOrdersReagentsDB["exceptCommission"..(activeCheckBox.ordersType or "")] = self:GetChecked()
+    PublicOrdersReagentsDB["checkAuctionsDB"..(activeCheckBox.ordersType or "")] = false
+    PublicOrdersReagentsDB[activeCheckBox.variableName] = false
+    
+    commissionFrame.CheckButton2:SetChecked(false)
+    activeCheckBox:SetChecked(false)
+end)
+commissionFrame.CheckButton1:SetScript("OnEnter", function(self)
+    GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
+    GameTooltip:SetText("Hide orders without materials UNLESS they offer this much commission")
+    commissionFrame:SetPoint("LEFT", self, "RIGHT")
+    commissionFrame:Show()
+end)
+commissionFrame.CheckButton1:SetScript("OnLeave", function()
+    GameTooltip:Hide()
+    if not PublicOrdersReagentsColumnMinimumCommissionFrame:IsMouseOver() then
+        PublicOrdersReagentsColumnMinimumCommissionFrame:Hide()
     end
 end)
 
-commissionFrame.CheckButton1 = CreateFrame("CheckButton", nil, PublicOrdersReagentsColumnMinimumCommissionFrame, "UICheckButtonTemplate")
-commissionFrame.CheckButton1:SetSize(40, 40)
-commissionFrame.CheckButton1:SetPoint("TOPLEFT", commissionFrame.Slider, "BOTTOMLEFT", -10, -10)
-commissionFrame.CheckButton1:SetChecked(true)
-commissionFrame.CheckButton1:HookScript("OnClick", function(self)
-    PublicOrdersReagentsDB.checkAuctionsDB = not self:GetChecked()
-    commissionFrame.CheckButton2:SetChecked(not self:GetChecked())
+commissionFrame.CheckButton2 = createCheckBox("ExceptAuctionProfitButton", 1059110)--CreateFrame("CheckButton", nil, PublicOrdersReagentsColumnMinimumCommissionFrame, "UICheckButtonTemplate")
+commissionFrame.CheckButton2:ClearAllPoints()
+commissionFrame.CheckButton2:SetPoint("TOP", commissionFrame.CheckButton1, "BOTTOM", 0, -10)
+commissionFrame.CheckButton2:SetScript("OnClick", function(self)
+    PublicOrdersReagentsDB["checkAuctionsDB"..(activeCheckBox.ordersType or "")] = self:GetChecked()
+    PublicOrdersReagentsDB["exceptCommission"..(activeCheckBox.ordersType or "")] = false
+    PublicOrdersReagentsDB[activeCheckBox.variableName] = false
+    
+    commissionFrame.CheckButton1:SetChecked(false)
+    activeCheckBox:SetChecked(false)
 end)
-
-commissionFrame.Label1 = commissionFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-commissionFrame.Label1:SetPoint("LEFT", commissionFrame.CheckButton1, "RIGHT", 0, 0)
-commissionFrame.Label1:SetText("show the order if this much commission")
-commissionFrame.Label1:SetWordWrap(true)
-commissionFrame.Label1:SetWidth(260)
-
-commissionFrame.CheckButton2 = CreateFrame("CheckButton", nil, PublicOrdersReagentsColumnMinimumCommissionFrame, "UICheckButtonTemplate")
-commissionFrame.CheckButton2:SetSize(40, 40)
-commissionFrame.CheckButton2:SetPoint("TOP", commissionFrame.CheckButton1, "BOTTOM", 0, 0)
-commissionFrame.CheckButton2:HookScript("OnClick", function(self)
-    PublicOrdersReagentsDB.checkAuctionsDB = self:GetChecked()
-    commissionFrame.CheckButton1:SetChecked(not self:GetChecked())
+commissionFrame.CheckButton2:SetScript("OnEnter", function(self)
+    GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
+    GameTooltip:SetText("Hide orders without materials UNLESS they offer this much profit based on Auctionator or TSM data")
+    commissionFrame:SetPoint("LEFT", self, "RIGHT")
+    commissionFrame:Show()
 end)
-
-commissionFrame.Label2 = commissionFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-commissionFrame.Label2:SetPoint("LEFT", commissionFrame.CheckButton2, "RIGHT", 0, 0)
-commissionFrame.Label2:SetText("this much profit based on Auctionator or TSM data")
-commissionFrame.Label2:SetWordWrap(true)
-commissionFrame.Label2:SetWidth(260)
+commissionFrame.CheckButton2:SetScript("OnLeave", function()
+    GameTooltip:Hide()
+    if not PublicOrdersReagentsColumnMinimumCommissionFrame:IsMouseOver() then
+        PublicOrdersReagentsColumnMinimumCommissionFrame:Hide()
+    end
+end)
 
 commissionFrame:SetScript("OnLeave", function()
-    if (not activeCheckBox:IsMouseOver()) and (not PublicOrdersReagentsColumnMinimumCommissionFrame:IsMouseOver()) then
+    if (not (commissionFrame.CheckButton1:IsMouseOver() or commissionFrame.CheckButton2:IsMouseOver())) and (not PublicOrdersReagentsColumnMinimumCommissionFrame:IsMouseOver()) then
         commissionFrame:Hide()
     end
-    C_Timer.After(0.1, function()
-        if (not activeCheckBox:IsMouseOver()) and (not PublicOrdersReagentsColumnMinimumCommissionFrame:IsMouseOver()) then
-            commissionFrame:Hide()
-        end
-    end)
 end)
 
 function ProfessionsCrafterTableCellMaxMatsProvidedCommissionMixin:Populate(rowData, dataIndex)
@@ -406,6 +460,8 @@ local function setupOrdersButtonHooks()
         privateCheckBox:Hide()
         commissionFrame:SetParent(activeCheckBox)
         commissionFrame:SetFrameStrata("TOOLTIP")
+        commissionFrame.CheckButton1:SetChecked(PublicOrdersReagentsDB.exceptCommission)
+        commissionFrame.CheckButton2:SetChecked(PublicOrdersReagentsDB.checkAuctionsDB)
     end)
     
     ProfessionsFrame.OrdersPage.BrowseFrame.GuildOrdersButton:HookScript("OnClick", function()
@@ -415,6 +471,8 @@ local function setupOrdersButtonHooks()
         privateCheckBox:Hide()
         commissionFrame:SetParent(activeCheckBox)
         commissionFrame:SetFrameStrata("TOOLTIP")
+        commissionFrame.CheckButton1:SetChecked(PublicOrdersReagentsDB.exceptCommissionGuild)
+        commissionFrame.CheckButton2:SetChecked(PublicOrdersReagentsDB.checkAuctionsDBGuild)
     end)
     
     ProfessionsFrame.OrdersPage.BrowseFrame.PersonalOrdersButton:HookScript("OnClick", function()
@@ -424,6 +482,8 @@ local function setupOrdersButtonHooks()
         privateCheckBox:Show()
         commissionFrame:SetParent(activeCheckBox)
         commissionFrame:SetFrameStrata("TOOLTIP")
+        commissionFrame.CheckButton1:SetChecked(PublicOrdersReagentsDB.exceptCommissionPrivate)
+        commissionFrame.CheckButton2:SetChecked(PublicOrdersReagentsDB.checkAuctionsDBPrivate)
     end)
 end
 hooksecurefunc(ProfessionsFrame.OrdersPage, "InitOrderTypeTabs", setupOrdersButtonHooks)
