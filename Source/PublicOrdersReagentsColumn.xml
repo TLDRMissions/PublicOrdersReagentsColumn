@@ -1,6 +1,6 @@
 <Ui>
     <Frame name="ProfessionsCrafterTableCellMaxMatsProvidedCommissionTemplate" mixin="ProfessionsCrafterTableCellMaxMatsProvidedCommissionMixin" inherits="ProfessionsTableCellTextTemplate" virtual="true"/>
-    <CheckButton name="PublicOrdersReagentsColumnCheckButtonTemplate" frameLevel="510" virtual="true">
+    <CheckButton name="PublicOrdersReagentsColumnCheckButtonTemplate" frameStrata="HIGH" frameLevel="510" virtual="true">
 		<Size x="32" y="32"/>
 		<Layers>
 			<Layer level="BACKGROUND">
