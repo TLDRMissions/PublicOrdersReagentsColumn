@@ -1,4 +1,5 @@
 local addonName = ...
+local aceGUI = LibStub("AceGUI-3.0")
 
 -- the max commission for mats provided column during bucket view
 ProfessionsCrafterTableCellMaxMatsProvidedCommissionMixin = CreateFromMixins(TableBuilderCellMixin)
@@ -341,27 +342,20 @@ end)
 -- minimum commission frame with slider
 local commissionFrame = CreateFrame("Frame", "PublicOrdersReagentsColumnMinimumCommissionFrame", activeCheckBox)
 commissionFrame:Hide()
-commissionFrame:SetSize(330, 80)
-commissionFrame:SetFrameStrata("TOOLTIP")
+commissionFrame:SetSize(330, 60)
+commissionFrame:SetFrameStrata("FULLSCREEN_DIALOG")
 commissionFrame.Border = CreateFrame("Frame", nil, PublicOrdersReagentsColumnMinimumCommissionFrame, "DialogBorderDarkTemplate")
 commissionFrame.Backdrop = CreateFrame("Frame", nil, PublicOrdersReagentsColumnMinimumCommissionFrame, "TooltipBackdropTemplate")
 
-commissionFrame.Slider = CreateFrame("Slider", "PublicOrdersReagentsColumnMinimumCommissionSlider", PublicOrdersReagentsColumnMinimumCommissionFrame, "OptionsSliderTemplate")
-commissionFrame.Slider:SetPoint("TOP", commissionFrame, "TOP", 0, -20)
-commissionFrame.Slider:SetSize(280, 20)
-PublicOrdersReagentsColumnMinimumCommissionSliderLow:SetText("1")
-PublicOrdersReagentsColumnMinimumCommissionSliderHigh:SetText("25,000")
-PublicOrdersReagentsColumnMinimumCommissionSliderText:SetText("1")
-PublicOrdersReagentsColumnMinimumCommissionSliderText:SetFontObject("GameFontHighlightSmall")
-PublicOrdersReagentsColumnMinimumCommissionSliderText:SetTextColor(0, 1, 0)
-commissionFrame.Slider:SetOrientation('HORIZONTAL')
-commissionFrame.Slider:SetValueStep(50)
-commissionFrame.Slider:SetObeyStepOnDrag(true)
-commissionFrame.Slider:SetMinMaxValues(1, 25000)
+commissionFrame.Slider = aceGUI:Create("Slider")
+PublicOrdersReagentsColumnMinimumCommissionSlider = commissionFrame.Slider
+commissionFrame.Slider.frame:SetParent(commissionFrame)
+commissionFrame.Slider:SetPoint("TOP", commissionFrame, "TOP")
+commissionFrame.Slider:SetWidth(300)
+commissionFrame.Slider:SetSliderValues(1, 5000, 1)
 commissionFrame.Slider:SetValue(1)
 
-commissionFrame.Slider:SetScript("OnValueChanged", function(self, value, userInput)
-    PublicOrdersReagentsColumnMinimumCommissionSliderText:SetText(value)
+commissionFrame.Slider:SetCallback("OnValueChanged", function(self, event, value)
     PublicOrdersReagentsDB.minimumCommission = value
 end)
 
@@ -390,7 +384,7 @@ commissionFrame.CheckButton1:SetScript("OnLeave", function()
     end
 end)
 
-commissionFrame.CheckButton2 = createCheckBox("ExceptAuctionProfitButton", 1059110)--CreateFrame("CheckButton", nil, PublicOrdersReagentsColumnMinimumCommissionFrame, "UICheckButtonTemplate")
+commissionFrame.CheckButton2 = createCheckBox("ExceptAuctionProfitButton", 1059110)
 commissionFrame.CheckButton2:ClearAllPoints()
 commissionFrame.CheckButton2:SetPoint("TOP", commissionFrame.CheckButton1, "BOTTOM", 0, -10)
 commissionFrame.CheckButton2:SetScript("OnClick", function(self)
