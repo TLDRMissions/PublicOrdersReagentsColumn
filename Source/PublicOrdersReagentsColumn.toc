@@ -9,4 +9,9 @@
 ## LoadWith: Blizzard_Professions
 ## IconTexture: Interface\Icons\INV_Alchemy_90_Reagent_Blue
 
+libs\LibStub.lua
+libs\AceGUI-3.0\AceGUI-3.0.lua
+libs\AceGUI-3.0\widgets\AceGUIWidget-Slider.lua
+
 PublicOrdersReagentsColumn.xml
+
