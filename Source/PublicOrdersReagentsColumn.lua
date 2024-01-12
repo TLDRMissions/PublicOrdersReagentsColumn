@@ -140,12 +140,12 @@ hooksecurefunc(ProfessionsFrame.OrdersPage, "ShowGeneric", function(self, orders
         recursion()
     elseif browseType == 2 then -- OrderBrowseType.Bucketed, a list of items showing number of orders for that item
         local dataProvider = self.BrowseFrame.OrderList.ScrollBox:GetDataProvider()
-        local i = 1
         local collection = dataProvider:GetCollection()
+        local i = #collection
         
         local function recursion()
-            if i > #collection then return end
-            
+            if i < 1 then return end
+
             local option = collection[i].option
             
             local request =
@@ -232,7 +232,6 @@ hooksecurefunc(ProfessionsFrame.OrdersPage, "ShowGeneric", function(self, orders
                                     }
                                 end
                             end
-                            i = i + 1
                         else
                             if not hasNothingSelected(orderType) then
                                 dataProvider:Remove(collection[i])
@@ -242,12 +241,12 @@ hooksecurefunc(ProfessionsFrame.OrdersPage, "ShowGeneric", function(self, orders
                                     ProfessionsTableCellTextMixin.SetText(o, "None")
                                     cellToDetails[o] = nil
                                 end
-                                i = i + 1
                             end
                         end
                         
                         pendingCallback = nil
                         
+                        i = i - 1
                         recursion()
                     end),
             }
