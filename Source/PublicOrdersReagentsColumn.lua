@@ -204,7 +204,7 @@ hooksecurefunc(ProfessionsFrame.OrdersPage, "ShowGeneric", function(self, orders
                                         maxTip = orders[j].tipAmount
                                     end
                                 end
-                            else
+                            elseif not hasNothingSelected(orderType) then
                                 acceptableFound = true
                                 if orders[j].tipAmount > maxTip then
                                     maxTip = orders[j].tipAmount
@@ -214,7 +214,7 @@ hooksecurefunc(ProfessionsFrame.OrdersPage, "ShowGeneric", function(self, orders
                         
                         if acceptableFound then
                             local o = orderToCell[option]
-                            if hasNothingSelected(orderType) then
+                            if hasNothingSelected(orderType) and (maxTip == 0) then
                                 if o then
                                     ProfessionsTableCellTextMixin.SetText(o, "None")
                                     cellToDetails[o] = nil
