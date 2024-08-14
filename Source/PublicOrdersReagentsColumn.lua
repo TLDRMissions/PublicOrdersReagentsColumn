@@ -40,7 +40,7 @@ local function tsmGetPrice(itemID)
 end
 
 local function hasAuctionAddon()
-    return TSM_API or IsAddOnLoaded("Auctionator")
+    return TSM_API or C_AddOns.IsAddOnLoaded("Auctionator")
 end
 
 local function getReagentsCostFromOtherAddons(option)
@@ -48,7 +48,7 @@ local function getReagentsCostFromOtherAddons(option)
     
     if TSM_API then
         priceLookup = tsmGetPrice
-    elseif IsAddOnLoaded("Auctionator") then
+    elseif C_AddOns.IsAddOnLoaded("Auctionator") then
         priceLookup = auctionatorGetPrice
     else
         return
