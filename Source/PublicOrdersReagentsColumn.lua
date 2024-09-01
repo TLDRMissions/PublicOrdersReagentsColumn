@@ -1,6 +1,22 @@
+local rewardIcons = {}
 local reagentIcons = {}
+local textFields = {}
 EventUtil.ContinueOnAddOnLoaded("Blizzard_Professions", function()
     hooksecurefunc(ProfessionsFrame.OrdersPage, "ShowGeneric", function(self, orders, browseType, offset, isSorted)
+        for i, r in pairs(reagentIcons) do
+            for j, s in pairs(r) do
+                s:Hide()
+            end
+        end
+        for i, r in pairs(rewardIcons) do
+            for j, s in pairs(r) do
+                s:Hide()
+            end
+        end
+        for t in pairs(textFields) do
+            t:Show()
+        end
+        
         if not C_CraftingOrders.ShouldShowCraftingOrderTab() then
             return
         end
@@ -11,15 +27,12 @@ EventUtil.ContinueOnAddOnLoaded("Blizzard_Professions", function()
         if browseType ~= 1 then return end
         if self.orderType ~= 3 then return end
         
-        for i, r in pairs(reagentIcons) do
-            for j, s in pairs(r) do
-                s:Hide()
-            end
-        end
-        
         local rows = self.BrowseFrame.OrderList.ScrollBox:GetView().frames
         
         for rowID, row in ipairs(rows) do
+            if not rewardIcons[rowID] then
+                rewardIcons[rowID] = {}
+            end
             if not reagentIcons[rowID] then
                 reagentIcons[rowID] = {}
             end
@@ -30,11 +43,8 @@ EventUtil.ContinueOnAddOnLoaded("Blizzard_Professions", function()
                 local quantity = reward.count
                 local itemLink = reward.itemLink
                 
-                if not cell["RewardIcon"..(idx+1)] then
-                    cell["RewardIcon"..(idx+1)] = CreateFrame("ItemButton", nil, cell, "ProfessionsCrafterOrderRewardTemplate")
-                end
-                
-                local button = cell["RewardIcon"..(idx+1)]
+                local button = rewardIcons[rowID][idx] or CreateFrame("ItemButton", nil, cell, "ProfessionsCrafterOrderRewardTemplate")
+                rewardIcons[rowID][idx] = button
                 button:SetScale(0.5)
                 button.Count:SetScale(2)
                 if idx == 1 then
@@ -52,11 +62,7 @@ EventUtil.ContinueOnAddOnLoaded("Blizzard_Professions", function()
             textField:Show()
             if rowData.reagentState == Enum.CraftingOrderReagentsType.Some then
                 textField:Hide()
-                for i = 1, 10 do
-                    if cell["ReagentIcon"..i] then
-                        cell["ReagentIcon"..i]:Hide()
-                    end
-                end
+                textFields[textField] = true
                 local recipeSchematic = C_TradeSkillUI.GetRecipeSchematic(rowData.spellID, false)
                 local reagents = recipeSchematic.reagentSlotSchematics
                 for i = #reagents, 1, -1 do
