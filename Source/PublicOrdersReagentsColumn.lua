@@ -26,8 +26,10 @@ EventUtil.ContinueOnAddOnLoaded("Blizzard_Professions", function()
                 
                 local button = cell["RewardIcon"..(idx+1)]
                 button:SetScale(0.5)
+                button.Count:SetScale(2)
                 if idx == 1 then
-                    button:SetPoint("TOPRIGHT", cell.RewardIcon, "TOPLEFT")
+                    button:SetPoint("TOPRIGHT", cell.RewardIcon, "TOPRIGHT")
+                    cell.RewardIcon:Hide()
                 else
                     button:SetPoint("TOPRIGHT", cell["RewardIcon"..idx], "TOPLEFT")
                 end
