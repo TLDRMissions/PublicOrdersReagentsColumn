@@ -44,6 +44,7 @@ EventUtil.ContinueOnAddOnLoaded("Blizzard_Professions", function()
                 local itemLink = reward.itemLink
                 
                 local button = rewardIcons[rowID][idx] or CreateFrame("ItemButton", nil, cell, "ProfessionsCrafterOrderRewardTemplate")
+                button:SetParent(cell)
                 rewardIcons[rowID][idx] = button
                 button:SetScale(0.5)
                 button.Count:SetScale(2)
@@ -51,7 +52,7 @@ EventUtil.ContinueOnAddOnLoaded("Blizzard_Professions", function()
                     button:SetPoint("TOPRIGHT", cell.RewardIcon, "TOPRIGHT")
                     cell.RewardIcon:Hide()
                 else
-                    button:SetPoint("TOPRIGHT", cell["RewardIcon"..idx], "TOPLEFT")
+                    button:SetPoint("TOPRIGHT", rewardIcons[rowID][idx-1], "TOPLEFT")
                 end
                 button:SetReward(reward)
             end
@@ -59,10 +60,9 @@ EventUtil.ContinueOnAddOnLoaded("Blizzard_Professions", function()
             cell = row.cells[4]
             rowData = cell.rowData.option
             local textField = cell.Text
-            textField:Show()
-            if rowData.reagentState == Enum.CraftingOrderReagentsType.Some then
-                textField:Hide()
-                textFields[textField] = true
+            textField:Hide()
+            textFields[textField] = true
+            if rowData.reagentState ~= Enum.CraftingOrderReagentsType.All then
                 local recipeSchematic = C_TradeSkillUI.GetRecipeSchematic(rowData.spellID, false)
                 local reagents = recipeSchematic.reagentSlotSchematics
                 for i = #reagents, 1, -1 do
@@ -87,6 +87,7 @@ EventUtil.ContinueOnAddOnLoaded("Blizzard_Professions", function()
                 end
                 for idx, reagentData in ipairs(reagents) do
                     local button = reagentIcons[rowID][idx] or CreateFrame("ItemButton", nil, cell, "ProfessionsCrafterOrderRewardTemplate")
+                    button:SetParent(cell)
                     reagentIcons[rowID][idx] = button
                     button:SetScale(0.5)
                     button.Count:SetScale(2)
