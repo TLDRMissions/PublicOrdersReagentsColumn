@@ -27,6 +27,13 @@ EventUtil.ContinueOnAddOnLoaded("Blizzard_Professions", function()
         if browseType ~= 1 then return end
         if self.orderType ~= 3 then return end
         
+        -- resize the commission and reagents columns
+        local columns = ProfessionsFrame.OrdersPage.tableBuilder:GetColumns()
+        local commissionColumn, reagentColumn = columns[3], columns[4]
+        commissionColumn.fixedWidth = 100
+        reagentColumn.fixedWidth = 130
+        ProfessionsFrame.OrdersPage.tableBuilder:Arrange()
+        
         local rows = self.BrowseFrame.OrderList.ScrollBox:GetView().frames
         
         for rowID, row in ipairs(rows) do
@@ -49,7 +56,7 @@ EventUtil.ContinueOnAddOnLoaded("Blizzard_Professions", function()
                 button:SetScale(0.5)
                 button.Count:SetScale(2)
                 if idx == 1 then
-                    button:SetPoint("TOPRIGHT", cell.RewardIcon, "TOPRIGHT")
+                    button:SetPoint("TOPRIGHT", cell.TipMoneyDisplayFrame.GoldDisplay, "TOPLEFT", -5, 5)
                     cell.RewardIcon:Hide()
                 else
                     button:SetPoint("TOPRIGHT", rewardIcons[rowID][idx-1], "TOPLEFT")
@@ -91,6 +98,9 @@ EventUtil.ContinueOnAddOnLoaded("Blizzard_Professions", function()
                     reagentIcons[rowID][idx] = button
                     button:SetScale(0.5)
                     button.Count:SetScale(2)
+                    if reagentData.quantityRequired > 99 then
+                        button.Count:SetScale(1.5)
+                    end
                     button:Show()
                     if idx == 1 then
                         button:SetPoint("TOPLEFT", textField, "TOPLEFT")
@@ -101,5 +111,15 @@ EventUtil.ContinueOnAddOnLoaded("Blizzard_Professions", function()
                 end
             end
         end
+    end)
+    
+    hooksecurefunc(ProfessionsCrafterTableCellCommissionMixin, "Populate", function(self, rowData, dataIndex)
+        if ProfessionsFrame.OrdersPage.browseType ~= 1 then return end
+        if ProfessionsFrame.OrdersPage.orderType ~= 3 then return end
+        local goldButton = self.TipMoneyDisplayFrame.GoldDisplay
+        local silverButton = self.TipMoneyDisplayFrame.SilverDisplay
+        local copperButton = self.TipMoneyDisplayFrame.CopperDisplay
+        silverButton:Hide()
+		goldButton:SetPoint("RIGHT", copperButton, "RIGHT", 0, 0)
     end)
 end)
