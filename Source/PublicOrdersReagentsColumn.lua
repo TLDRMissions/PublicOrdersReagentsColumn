@@ -1,6 +1,7 @@
 local rewardIcons = {}
 local reagentIcons = {}
 local textFields = {}
+local errorTextures = {}
 EventUtil.ContinueOnAddOnLoaded("Blizzard_Professions", function()
     hooksecurefunc(ProfessionsFrame.OrdersPage, "ShowGeneric", function(self, orders, browseType, offset, isSorted)
         for i, r in pairs(reagentIcons) do
@@ -15,6 +16,9 @@ EventUtil.ContinueOnAddOnLoaded("Blizzard_Professions", function()
         end
         for t in pairs(textFields) do
             t:Show()
+        end
+        for t in pairs(errorTextures) do
+            t:Hide()
         end
         
         if not C_CraftingOrders.ShouldShowCraftingOrderTab() then
@@ -43,6 +47,23 @@ EventUtil.ContinueOnAddOnLoaded("Blizzard_Professions", function()
             if not reagentIcons[rowID] then
                 reagentIcons[rowID] = {}
             end
+            
+            -- highlight red rows with unlearned recipes
+            local skillLineAbilityID = row.rowData.option.skillLineAbilityID
+            local recipeInfo = C_TradeSkillUI.GetRecipeInfoForSkillLineAbility(skillLineAbilityID)
+            local errorTexture = row.ErrorTexture or row:CreateTexture(nil, "OVERLAY")
+            errorTexture:SetPoint("TOPLEFT", row, "TOPLEFT")
+            errorTexture:SetPoint("BOTTOMRIGHT", row, "BOTTOMRIGHT")
+            errorTextures[errorTexture] = true
+            errorTexture:Hide()
+            errorTexture:SetBlendMode("ADD")
+            errorTexture:SetColorTexture(1, 0, 0, 0.4)
+            if not recipeInfo.learned then
+                errorTexture:Show()
+                zzzz = errorTexture
+            end
+            
+            
             local cell = row.cells[3]
             if not cell.RewardIcon then return end
             local rowData = cell.rowData.option.npcOrderRewards
