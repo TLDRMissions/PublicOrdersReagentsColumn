@@ -29,25 +29,10 @@ EventUtil.ContinueOnAddOnLoaded("Blizzard_Professions", function()
         end
         
         if browseType ~= 1 then return end
-        if self.orderType ~= 3 then return end
-        
-        -- resize the commission and reagents columns
-        local columns = ProfessionsFrame.OrdersPage.tableBuilder:GetColumns()
-        local commissionColumn, reagentColumn = columns[3], columns[4]
-        commissionColumn.fixedWidth = 100
-        reagentColumn.fixedWidth = 130
-        ProfessionsFrame.OrdersPage.tableBuilder:Arrange()
         
         local rows = self.BrowseFrame.OrderList.ScrollBox:GetView().frames
         
         for rowID, row in ipairs(rows) do
-            if not rewardIcons[rowID] then
-                rewardIcons[rowID] = {}
-            end
-            if not reagentIcons[rowID] then
-                reagentIcons[rowID] = {}
-            end
-            
             -- highlight red rows with unlearned recipes
             local skillLineAbilityID = row.rowData.option.skillLineAbilityID
             local recipeInfo = C_TradeSkillUI.GetRecipeInfoForSkillLineAbility(skillLineAbilityID)
@@ -62,7 +47,24 @@ EventUtil.ContinueOnAddOnLoaded("Blizzard_Professions", function()
                 errorTexture:Show()
                 zzzz = errorTexture
             end
-            
+        end
+        
+        if self.orderType ~= 3 then return end
+        
+        -- resize the commission and reagents columns
+        local columns = ProfessionsFrame.OrdersPage.tableBuilder:GetColumns()
+        local commissionColumn, reagentColumn = columns[3], columns[4]
+        commissionColumn.fixedWidth = 100
+        reagentColumn.fixedWidth = 130
+        ProfessionsFrame.OrdersPage.tableBuilder:Arrange()
+        
+        for rowID, row in ipairs(rows) do
+            if not rewardIcons[rowID] then
+                rewardIcons[rowID] = {}
+            end
+            if not reagentIcons[rowID] then
+                reagentIcons[rowID] = {}
+            end
             
             local cell = row.cells[3]
             if not cell.RewardIcon then return end
@@ -136,10 +138,13 @@ EventUtil.ContinueOnAddOnLoaded("Blizzard_Professions", function()
     
     hooksecurefunc(ProfessionsCrafterTableCellCommissionMixin, "Populate", function(self, rowData, dataIndex)
         if ProfessionsFrame.OrdersPage.browseType ~= 1 then return end
-        if ProfessionsFrame.OrdersPage.orderType ~= 3 then return end
         local goldButton = self.TipMoneyDisplayFrame.GoldDisplay
         local silverButton = self.TipMoneyDisplayFrame.SilverDisplay
         local copperButton = self.TipMoneyDisplayFrame.CopperDisplay
+        if ProfessionsFrame.OrdersPage.orderType ~= 3 then
+            goldButton:SetPoint("RIGHT", silverButton, "RIGHT", -36, 0)
+            return
+        end
         silverButton:Hide()
 		goldButton:SetPoint("RIGHT", copperButton, "RIGHT", 0, 0)
     end)
