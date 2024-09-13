@@ -1,0 +1,32 @@
+<Ui>
+	<Frame parent="ProfessionsFrame" parentKey="OrdersPageOffline" inherits="ProfessionsCraftingOrderPageTemplate" frameLevel="100" hidden="true">
+		<Scripts>
+			<OnLoad></OnLoad>
+		</Scripts>
+  		<Frames>
+            <Frame parentKey="OfflineWarningDisplay">
+        		<Size x="175" y="30"/>
+        		<Anchors>
+        			<Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="80" y="-41"/>
+        		</Anchors>						
+        		<Layers>
+        			<Layer level="BACKGROUND">
+        				<Texture parentKey="Background" atlas="CraftingOrder-RemainingOrders-Frame" useAtlasSize="true">
+        					<Anchors>
+        						<Anchor point="CENTER"/>
+        					</Anchors>
+        				</Texture>
+        			</Layer>
+        			<Layer level="ARTWORK">
+        				<FontString parentKey="Text" inherits="GameFontNormal" justifyV="MIDDLE" justifyH="CENTER">
+        					<Size x="0" y="30"/>
+        					<Anchors>
+        						<Anchor point="CENTER"/>
+        					</Anchors>
+        				</FontString>
+        			</Layer>
+        		</Layers>
+		    </Frame>
+        </Frames>
+    </Frame>
+</Ui>
