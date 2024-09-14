@@ -46,7 +46,7 @@ local function showGeneric(self, orders, browseType, offset, isSorted)
         errorTextures[errorTexture] = true
         errorTexture:Hide()
         errorTexture:SetBlendMode("ADD")
-        errorTexture:SetColorTexture(1, 0, 0, 0.1)
+        errorTexture:SetColorTexture(1, 0, 0, 0.15)
         if not recipeInfo.learned then
             errorTexture:Show()
         end
@@ -156,3 +156,36 @@ EventUtil.ContinueOnAddOnLoaded("Blizzard_Professions", function()
 		goldButton:SetPoint("RIGHT", copperButton, "RIGHT", 0, 0)
     end)
 end)
+
+PublicOrdersReagentsColumnProfessionsCrafterTableCellExpirationMixin = CreateFromMixins(TableBuilderCellMixin);
+
+function PublicOrdersReagentsColumnProfessionsCrafterTableCellExpirationMixin:Populate(rowData, dataIndex)
+	local order = rowData.option;
+	local remainingTime = Professions.GetCraftingOrderRemainingTime(order.expirationTime);
+	local seconds = remainingTime >= 60 and remainingTime or 60; -- Never show < 1min
+	self.remainingTime = seconds;
+	local timeText = Professions.OrderTimeLeftFormatter:Format(seconds);
+	if seconds <= Constants.ProfessionConsts.PUBLIC_CRAFTING_ORDER_STALE_THRESHOLD then
+		timeText = ERROR_COLOR:WrapTextInColorCode(timeText);
+	end
+	ProfessionsTableCellTextMixin.SetText(self, timeText);
+end
+
+function PublicOrdersReagentsColumnProfessionsCrafterTableCellExpirationMixin:OnEnter()
+	self:GetParent().HighlightTexture:Show();
+
+	GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+	local noSeconds = true;
+	GameTooltip_AddNormalLine(GameTooltip, AUCTION_HOUSE_TOOLTIP_DURATION_FORMAT:format(SecondsToTime(self.remainingTime, noSeconds)));
+	if self.remainingTime <= Constants.ProfessionConsts.PUBLIC_CRAFTING_ORDER_STALE_THRESHOLD and self.rowData.option.orderType == Enum.CraftingOrderType.Public then
+		GameTooltip_AddBlankLineToTooltip(GameTooltip);
+		GameTooltip_AddNormalLine(GameTooltip, PROFESSIONS_ORDER_ABOUT_TO_EXPIRE);
+	end
+	GameTooltip:Show();
+end
+
+function PublicOrdersReagentsColumnProfessionsCrafterTableCellExpirationMixin:OnLeave()
+	self:GetParent().HighlightTexture:Hide();
+
+	GameTooltip:Hide();
+end

@@ -1,5 +1,7 @@
 local addonName, addon = ...
 
+EventUtil.ContinueOnAddOnLoaded("Blizzard_Professions", function()
+
 local OrderBrowseType = EnumUtil.MakeEnum("Flat", "Bucketed", "None");
 
 local craftingOrdersTab = ProfessionsFrame.TabSystem:GetTabButton(ProfessionsFrame.craftingOrdersTabID)
@@ -165,3 +167,53 @@ end)
 
 duplicateFrame:SetScript("OnHide", nop)
 duplicateFrame.StartDefaultSearch = duplicateFrame.ShowCachedData
+
+function duplicateFrame:SetupTable()
+	local browseType = self:GetBrowseType();
+
+	if not self.tableBuilder then
+		self.tableBuilder = CreateTableBuilder(nil, ProfessionsTableBuilderMixin);
+		local function ElementDataTranslator(elementData)
+			return elementData;
+		end;
+		ScrollUtil.RegisterTableBuilder(self.BrowseFrame.OrderList.ScrollBox, self.tableBuilder, ElementDataTranslator);
+	
+		local function ElementDataProvider(elementData)
+			return elementData;
+		end;
+		self.tableBuilder:SetDataProvider(ElementDataProvider);
+	end
+
+	self.tableBuilder:Reset();
+	self.tableBuilder:SetColumnHeaderOverlap(2);
+	self.tableBuilder:SetHeaderContainer(self.BrowseFrame.OrderList.HeaderContainer);
+	self.tableBuilder:SetTableMargins(-3, 5);
+	self.tableBuilder:SetTableWidth(777);
+
+	local PTC = ProfessionsTableConstants;
+	self.tableBuilder:AddFillColumn(self, PTC.NoPadding, 1.0,
+		8, PTC.ItemName.RightCellPadding, ProfessionsSortOrder.ItemName, "ProfessionsCrafterTableCellItemNameTemplate");
+
+	if browseType == OrderBrowseType.Flat then
+		local customerColumnName = self.orderType == Enum.CraftingOrderType.Npc and CRAFTING_ORDERS_BROWSE_HEADER_NPC_NAME or CRAFTING_ORDERS_BROWSE_HEADER_CUSTOMER_NAME;
+		self.tableBuilder:AddUnsortableFixedWidthColumn(self, PTC.NoPadding, PTC.CustomerName.Width, PTC.CustomerName.LeftCellPadding,
+										  	  PTC.CustomerName.RightCellPadding, customerColumnName, "ProfessionsCrafterTableCellCustomerNameTemplate");
+		self.tableBuilder:AddFixedWidthColumn(self, PTC.NoPadding, PTC.Tip.Width, PTC.Tip.LeftCellPadding,
+										  	  PTC.Tip.RightCellPadding, ProfessionsSortOrder.Tip, "ProfessionsCrafterTableCellActualCommissionTemplate");
+		self.tableBuilder:AddFixedWidthColumn(self, PTC.NoPadding, PTC.Reagents.Width, PTC.Reagents.LeftCellPadding,
+										  		  PTC.Reagents.RightCellPadding, ProfessionsSortOrder.Reagents, "ProfessionsCrafterTableCellReagentsTemplate");
+		self.tableBuilder:AddFixedWidthColumn(self, PTC.NoPadding, PTC.Expiration.Width, PTC.Expiration.LeftCellPadding,
+										  	  PTC.Expiration.RightCellPadding, ProfessionsSortOrder.Expiration, "PublicOrdersReagentsColumnProfessionsCrafterTableCellExpirationTemplate");
+	elseif browseType == OrderBrowseType.Bucketed then
+		self.tableBuilder:AddFixedWidthColumn(self, PTC.NoPadding, PTC.Tip.Width, PTC.Tip.LeftCellPadding,
+										  	  PTC.Tip.RightCellPadding, ProfessionsSortOrder.MaxTip, "ProfessionsCrafterTableCellMaxCommissionTemplate");
+		self.tableBuilder:AddFixedWidthColumn(self, PTC.NoPadding, PTC.Tip.Width, PTC.Tip.LeftCellPadding,
+										  	  PTC.Tip.RightCellPadding, ProfessionsSortOrder.AverageTip, "ProfessionsCrafterTableCellAvgCommissionTemplate");
+		self.tableBuilder:AddFixedWidthColumn(self, PTC.NoPadding, PTC.NumAvailable.Width, PTC.NumAvailable.LeftCellPadding,
+										  	  PTC.NumAvailable.RightCellPadding, ProfessionsSortOrder.NumAvailable, "ProfessionsCrafterTableCellNumAvailableTemplate");
+	end
+
+	self.tableBuilder:Arrange();
+end
+
+end) -- end continue on addon loaded
