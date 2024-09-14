@@ -25,6 +25,11 @@ hooksecurefunc(ProfessionsFrame, "UpdateTabs", function()
             duplicateFrame:Hide()
             ProfessionsFrame.TabSystem:GetTabButton(ProfessionsFrame.recipesTabID):Click()
         end
+        if addon.cache and addon.cache[getProfessionID()] then
+            duplicateTab:Show()
+            duplicateTab:SetTabSelected(false)
+            craftingOrdersTab:Hide()
+        end
     elseif duplicateTab.isSelected then
         if not addon.cache[getProfessionID()] then
             duplicateTab:Hide()
