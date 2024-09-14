@@ -21,7 +21,6 @@ end
 hooksecurefunc(ProfessionsFrame, "UpdateTabs", function()
     if not C_CraftingOrders.ShouldShowCraftingOrderTab() then
         duplicateTab:Hide()
-        --craftingOrdersTab:Show()
         if duplicateFrame:IsShown() then
             duplicateFrame:Hide()
             ProfessionsFrame.TabSystem:GetTabButton(ProfessionsFrame.recipesTabID):Click()
@@ -32,12 +31,19 @@ hooksecurefunc(ProfessionsFrame, "UpdateTabs", function()
             ProfessionsFrame.TabSystem:GetTabButton(ProfessionsFrame.recipesTabID):Click()
             return
         end
+        if craftingOrdersTab:IsEnabled() then
+            duplicateTab:Hide()
+            ProfessionsFrame.TabSystem:GetTabButton(ProfessionsFrame.craftingOrdersTabID):Click()
+            return
+        end
         duplicateFrame:ShowCachedData()
-        return
     elseif craftingOrdersTab:IsEnabled() or craftingOrdersTab.isSelected then
         duplicateTab:Hide()
         craftingOrdersTab:Show()
         duplicateFrame:Hide()
+        if craftingOrdersTab.isSelected then
+            ProfessionsFrame.OrdersPage:Show()
+        end
     elseif addon.cache then
         if addon.cache[getProfessionID()] then
             duplicateTab:Show()
