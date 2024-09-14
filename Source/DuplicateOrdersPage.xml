@@ -46,4 +46,17 @@
 			</Layer>
 		</Layers>
 	</Frame>
+    <Button name="PublicOrdersReagentsColumnProfessionsCrafterOrderListElementTemplate" mixin="ProfessionsCrafterOrderListElementMixin" registerForClicks="LeftButtonUp, RightButtonUp" virtual="true">
+		<Size y="20"/>
+		<Layers>
+			<Layer level="OVERLAY">
+				<Texture parentKey="HighlightTexture" atlas="auctionhouse-ui-row-highlight" alphaMode="ADD" setAllPoints="true" hidden="true"/>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnEnter method="OnEnter"/>
+			<OnLeave method="OnLeave"/>
+			<OnClick></OnClick>
+		</Scripts>
+	</Button>
 </Ui>

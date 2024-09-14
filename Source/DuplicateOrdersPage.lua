@@ -84,6 +84,16 @@ hooksecurefunc(ProfessionsFrame, "Update", function(self)
     end
 end)
 
+function duplicateFrame:InitOrderList()
+	local pad = 5;
+	local spacing = 1;
+	local view = CreateScrollBoxListLinearView(pad, pad, pad, pad, spacing);
+	view:SetElementInitializer("PublicOrdersReagentsColumnProfessionsCrafterOrderListElementTemplate", function(button, elementData)
+		button:Init(elementData);
+	end);
+	ScrollUtil.InitScrollBoxListWithScrollBar(self.BrowseFrame.OrderList.ScrollBox, self.BrowseFrame.OrderList.ScrollBar, view);
+end
+
 function duplicateFrame:OnLoad()
 	self:InitButtons();
 	self:InitOrderTypeTabs();
