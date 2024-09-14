@@ -1,6 +1,6 @@
 local addonName, addon = ...
 
-EventUtil.ContinueOnAddOnLoaded("Blizzard_Professions", function()
+EventUtil.ContinueOnAddOnLoaded("Blizzard_Professions", function() RunNextFrame(function()
 
 local OrderBrowseType = EnumUtil.MakeEnum("Flat", "Bucketed", "None");
 
@@ -74,6 +74,7 @@ duplicateTab:SetScript("OnClick", function()
 end)
 
 hooksecurefunc(ProfessionsFrame, "Update", function(self)
+    if not self.professionInfo.profession then return end
     if duplicateFrame:IsShown() and C_TradeSkillUI.IsNearProfessionSpellFocus(self.professionInfo.profession) then
         duplicateFrame:Hide()
         ProfessionsFrame.OrdersPage:Show()
@@ -216,4 +217,4 @@ function duplicateFrame:SetupTable()
 	self.tableBuilder:Arrange();
 end
 
-end) -- end continue on addon loaded
+end) end) -- end continue on addon loaded
