@@ -88,6 +88,20 @@ local function showGeneric(self, orders, browseType, offset, isSorted)
                 button:SetPoint("TOPRIGHT", rewardIcons[rowID][idx-1], "TOPLEFT")
             end
             button:SetReward(reward)
+            button:SetScript("OnClick", function()
+                if IsModifiedClick("CHATLINK") then
+                    if itemLink then
+                        -- the itemlink in the reward table doesn't always have the item name loaded - have to refetch the item link from the item ID
+                        local item = Item:CreateFromItemLink(itemLink)
+                        item:ContinueOnItemLoad(function()
+                            item = Item:CreateFromItemID(item:GetItemID())
+                            item:ContinueOnItemLoad(function()
+                                ChatEdit_InsertLink(item:GetItemLink())
+                            end)
+                        end)
+                    end
+                end
+            end)
         end
         
         cell = row.cells[4]
@@ -134,6 +148,14 @@ local function showGeneric(self, orders, browseType, offset, isSorted)
                     button:SetPoint("TOPLEFT", reagentIcons[rowID][idx-1], "TOPRIGHT")
                 end
                 button:SetReward({count = reagentData.quantityRequired, itemLink = "|cff0070dd|Hitem:"..reagentData.reagents[1].itemID.."|h[]|h|r"})
+                button:SetScript("OnClick", function()
+                    if IsModifiedClick("CHATLINK") then
+                        item = Item:CreateFromItemID(reagentData.reagents[1].itemID)
+                        item:ContinueOnItemLoad(function()
+                            ChatEdit_InsertLink(item:GetItemLink())
+                        end)
+                    end
+                end)
             end
         end
     end
