@@ -1,9 +1,132 @@
 <Ui>
-	<Frame parent="ProfessionsFrame" parentKey="OrdersPageOffline" inherits="ProfessionsCraftingOrderPageTemplate" frameLevel="100" hidden="true">
+    <Button name="PublicOrdersReagentsColumnProfessionsCrafterOrderListElementTemplate" mixin="ProfessionsCrafterOrderListElementMixin" registerForClicks="LeftButtonUp, RightButtonUp" virtual="true">
+		<Size y="20"/>
+		<Layers>
+			<Layer level="OVERLAY">
+				<Texture parentKey="HighlightTexture" atlas="auctionhouse-ui-row-highlight" alphaMode="ADD" setAllPoints="true" hidden="true"/>
+			</Layer>
+		</Layers>
 		<Scripts>
-			<OnLoad></OnLoad>
+			<OnEnter method="OnEnter"/>
+			<OnLeave method="OnLeave"/>
+			<OnClick></OnClick>
 		</Scripts>
-  		<Frames>
+	</Button>
+	<Frame parent="ProfessionsFrame" parentKey="OrdersPageOffline" frameLevel="100" hidden="true" setAllPoints="true" mixin="PublicOrdersReagentsColumnProfessionsCraftingOrderPageMixin">
+        <Scripts>
+			<OnLoad method="OnLoad"/>
+            <OnShow method="OnShow"/>
+			<OnEvent method="OnEvent"/>
+		</Scripts>
+		<Frames>
+			<Frame parentKey="BrowseFrame" setAllPoints="true">
+				<Frames>
+					<Frame parentKey="OrderList">
+						<Layers>
+							<Layer>
+								<Texture parentKey="Background" atlas="auctionhouse-background-index" useAtlasSize="false">
+									<Anchors>
+										<Anchor point="TOPLEFT" x="3" y="-22"/>
+										<Anchor point="BOTTOMRIGHT"  x="-6" y="0"/>
+									</Anchors>
+								</Texture>
+							</Layer>
+						</Layers>
+						<Frames>
+							<Frame parentKey="HeaderContainer">
+								<Size y="20"/>
+								<Anchors>
+									<Anchor point="TOPLEFT" x="3" y="-1"/>
+									<Anchor point="TOPRIGHT" x="-25" y="-1"/>
+								</Anchors>
+							</Frame>
+							<Frame parentKey="NineSlice" useParentLevel="true" inherits="NineSlicePanelTemplate">
+								<KeyValues>
+									<KeyValue key="layoutType" value="InsetFrameTemplate" type="string"/>
+								</KeyValues>
+								<Anchors>
+									<Anchor point="TOPLEFT" x="0" y="-19"/>
+									<Anchor point="BOTTOMRIGHT" x="-22" y="0"/>
+								</Anchors>
+							</Frame>
+							<Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
+								<Anchors>
+									<Anchor point="TOPLEFT" relativeKey="$parent.Background" relativePoint="TOPLEFT"/>
+									<Anchor point="BOTTOMRIGHT" relativeKey="$parent.Background" relativePoint="BOTTOMRIGHT" x="-14" y="0"/>
+								</Anchors>
+							</Frame>
+							<EventFrame parentKey="ScrollBar" inherits="MinimalScrollBar">
+								<Anchors>
+									<Anchor point="TOPLEFT" relativeKey="$parent.ScrollBox" relativePoint="TOPRIGHT" x="0" y="-2"/>
+									<Anchor point="BOTTOMLEFT" relativeKey="$parent.ScrollBox" relativePoint="BOTTOMRIGHT" x="0" y="2"/>
+								</Anchors>
+							</EventFrame>
+							<Frame parentKey="LoadingSpinner" inherits="SpinnerTemplate" hidden="true" frameLevel="2000">
+								<Size x="80" y="80"/>
+								<Anchors>
+									<Anchor point="CENTER" x="0" y="0"/>
+								</Anchors>
+							</Frame>
+						</Frames>
+						<Layers>
+							<Layer level="OVERLAY">
+								<FontString parentKey="ResultsText" inherits="GameFontNormal" hidden="true">
+									<Anchors>
+										<Anchor point="TOP" relativeKey="$parent.ScrollBox" relativePoint="TOP" x="0" y="-20"/>
+										<Anchor point="LEFT" x="45"/>
+										<Anchor point="RIGHT" x="-67"/>
+									</Anchors>
+									<Shadow>
+										<Offset>
+											<AbsDimension x="1" y="-1"/>
+										</Offset>
+										<Color r="0" g="0" b="0"/>
+									</Shadow>
+								</FontString>
+							</Layer>
+						</Layers>
+					</Frame>
+		
+					<Button parentKey="PublicOrdersButton" inherits="ProfessionsCraftingOrderTypeTabTemplate">
+						<KeyValues>
+							<KeyValue key="orderType" value="Enum.CraftingOrderType.Public" type="global"/>
+						</KeyValues>
+						<Anchors>
+							<Anchor point="BOTTOMLEFT" relativeKey="$parent.OrderList" relativePoint="TOPLEFT" x="-120" y="0"/>
+						</Anchors>									
+					</Button>
+					<Button parentKey="GuildOrdersButton" inherits="ProfessionsCraftingOrderTypeTabTemplate">
+						<KeyValues>
+							<KeyValue key="orderType" value="Enum.CraftingOrderType.Guild" type="global"/>
+						</KeyValues>
+						<Anchors>
+							<Anchor point="LEFT" relativeKey="$parent.PublicOrdersButton" relativePoint="RIGHT" x="0" y="0"/>
+						</Anchors>
+					</Button>
+					<Button parentKey="NpcOrdersButton" inherits="ProfessionsCraftingOrderTypeTabTemplate">
+						<KeyValues>
+							<KeyValue key="orderType" value="Enum.CraftingOrderType.Npc" type="global"/>
+						</KeyValues>
+						<Anchors>
+							<Anchor point="LEFT" relativeKey="$parent.GuildOrdersButton" relativePoint="RIGHT" x="0" y="0"/>
+						</Anchors>
+					</Button>
+					<Frame parentKey="NpcOrdersNewFeature" inherits="NewFeatureLabelNoAnimateTemplate" frameStrata="HIGH">
+						<Anchors>
+							<Anchor point="RIGHT" relativeKey="$parent.NpcOrdersButton" relativePoint="RIGHT" x="0" y="16"/>
+						</Anchors>
+					</Frame>
+					<Button parentKey="PersonalOrdersButton" inherits="ProfessionsCraftingOrderTypeTabTemplate">
+						<KeyValues>
+							<KeyValue key="orderType" value="Enum.CraftingOrderType.Personal" type="global"/>
+						</KeyValues>
+						<Anchors>
+							<Anchor point="LEFT" relativeKey="$parent.NpcOrdersButton" relativePoint="RIGHT" x="0" y="0"/>
+						</Anchors>
+					</Button>
+				</Frames>
+			</Frame>
+
             <Frame parentKey="OfflineWarningDisplay">
         		<Size x="175" y="30"/>
         		<Anchors>
@@ -27,7 +150,7 @@
         			</Layer>
         		</Layers>
 		    </Frame>
-        </Frames>
+		</Frames>
     </Frame>
     <Frame name="PublicOrdersReagentsColumnProfessionsCrafterTableCellExpirationTemplate" mixin="PublicOrdersReagentsColumnProfessionsCrafterTableCellExpirationMixin" passThroughButtons="LeftButton, RightButton" virtual="true">
 		<Size x="0" y="16"/>
@@ -46,17 +169,4 @@
 			</Layer>
 		</Layers>
 	</Frame>
-    <Button name="PublicOrdersReagentsColumnProfessionsCrafterOrderListElementTemplate" mixin="ProfessionsCrafterOrderListElementMixin" registerForClicks="LeftButtonUp, RightButtonUp" virtual="true">
-		<Size y="20"/>
-		<Layers>
-			<Layer level="OVERLAY">
-				<Texture parentKey="HighlightTexture" atlas="auctionhouse-ui-row-highlight" alphaMode="ADD" setAllPoints="true" hidden="true"/>
-			</Layer>
-		</Layers>
-		<Scripts>
-			<OnEnter method="OnEnter"/>
-			<OnLeave method="OnLeave"/>
-			<OnClick></OnClick>
-		</Scripts>
-	</Button>
 </Ui>

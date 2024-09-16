@@ -9,5 +9,5 @@
 ## LoadWith: Blizzard_Professions
 
 PublicOrdersReagentsColumn.lua
-DuplicateOrdersPage.xml
 DuplicateOrdersPage.lua
+DuplicateOrdersPage.xml

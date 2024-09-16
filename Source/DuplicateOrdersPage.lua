@@ -1,167 +1,149 @@
 local addonName, addon = ...
 
-EventUtil.ContinueOnAddOnLoaded("Blizzard_Professions", function() RunNextFrame(function()
-
-local OrderBrowseType = EnumUtil.MakeEnum("Flat", "Bucketed", "None");
-
-local craftingOrdersTab = ProfessionsFrame.TabSystem:GetTabButton(ProfessionsFrame.craftingOrdersTabID)
-local duplicateTab = CreateFrame("BUTTON", nil, ProfessionsFrame, ProfessionsFrame.TabSystem.tabTemplate)
-duplicateTab:SetPoint("TOPLEFT", craftingOrdersTab, "TOPLEFT")
-duplicateTab:SetPoint("BOTTOMRIGHT", craftingOrdersTab, "BOTTOMRIGHT")
-duplicateTab:SetFrameStrata("DIALOG")
-duplicateTab:Hide()
-duplicateTab:SetText(craftingOrdersTab:GetText())
-
-local duplicateFrame = ProfessionsFrame.OrdersPageOffline
-
 local function getProfessionID()
     return Professions.GetProfessionInfo().parentProfessionID
 end
 
-hooksecurefunc(ProfessionsFrame, "UpdateTabs", function()
-    if not C_CraftingOrders.ShouldShowCraftingOrderTab() then
-        duplicateTab:Hide()
-        if duplicateFrame:IsShown() then
-            duplicateFrame:Hide()
-            ProfessionsFrame.TabSystem:GetTabButton(ProfessionsFrame.recipesTabID):Click()
-        end
-        if addon.cache and addon.cache[getProfessionID()] then
-            duplicateTab:Show()
-            duplicateTab:SetTabSelected(false)
-            craftingOrdersTab:Hide()
-        end
-    elseif duplicateTab.isSelected then
-        if not addon.cache[getProfessionID()] then
-            duplicateTab:Hide()
-            ProfessionsFrame.TabSystem:GetTabButton(ProfessionsFrame.recipesTabID):Click()
-            return
-        end
-        if craftingOrdersTab:IsEnabled() then
-            duplicateTab:Hide()
-            ProfessionsFrame.TabSystem:GetTabButton(ProfessionsFrame.craftingOrdersTabID):Click()
-            return
-        end
-        duplicateFrame:ShowCachedData()
-    elseif craftingOrdersTab:IsEnabled() or craftingOrdersTab.isSelected then
-        duplicateTab:Hide()
-        craftingOrdersTab:Show()
-        duplicateFrame:Hide()
-        if craftingOrdersTab.isSelected then
-            ProfessionsFrame.OrdersPage:Show()
-        end
-    elseif addon.cache then
-        if addon.cache[getProfessionID()] then
-            duplicateTab:Show()
-            craftingOrdersTab:Hide()
-            duplicateTab:SetTabSelected(false)
-        end
-    end
-end)
+local OrderBrowseType = EnumUtil.MakeEnum("Flat", "Bucketed", "None");
 
-for tabID, tab in ipairs(ProfessionsFrame.TabSystem.tabs) do
-    tab:HookScript("OnClick", function()
-        duplicateTab:SetTabSelected(false)
-        duplicateFrame:Hide()
-        for frameIndex, frame in ipairs(ProfessionsFrame.internalTabTracker.tabbedElements) do
-            if tabID == frameIndex then
-                frame:Show()
-                ProfessionsFrame:SetWidth(frame:GetDesiredPageWidth())
+EventUtil.ContinueOnAddOnLoaded("Blizzard_Professions", function() RunNextFrame(function()
+    local craftingOrdersTab = ProfessionsFrame.TabSystem:GetTabButton(ProfessionsFrame.craftingOrdersTabID)
+    duplicateTab = CreateFrame("BUTTON", nil, ProfessionsFrame, ProfessionsFrame.TabSystem.tabTemplate)
+    duplicateTab:SetPoint("TOPLEFT", craftingOrdersTab, "TOPLEFT")
+    duplicateTab:SetPoint("BOTTOMRIGHT", craftingOrdersTab, "BOTTOMRIGHT")
+    duplicateTab:SetFrameStrata("DIALOG")
+    duplicateTab:Hide()
+    duplicateTab:SetText(PROFESSIONS_CRAFTING_ORDERS_TAB_NAME)
+
+    local duplicateFrame = ProfessionsFrame.OrdersPageOffline
+
+    hooksecurefunc(ProfessionsFrame, "UpdateTabs", function()
+        if not C_CraftingOrders.ShouldShowCraftingOrderTab() then
+            duplicateTab:Hide()
+            if duplicateFrame:IsShown() then
+                duplicateFrame:Hide()
+                ProfessionsFrame.TabSystem:GetTabButton(ProfessionsFrame.recipesTabID):Click()
+            end
+            if addon.cache and addon.cache[getProfessionID()] then
+                duplicateTab:Show()
+                duplicateTab:SetTabSelected(false)
+                craftingOrdersTab:Hide()
+            end
+        elseif duplicateTab.isSelected then
+            if not addon.cache[getProfessionID()] then
+                duplicateTab:Hide()
+                ProfessionsFrame.TabSystem:GetTabButton(ProfessionsFrame.recipesTabID):Click()
+                return
+            end
+            if craftingOrdersTab:IsEnabled() then
+                duplicateTab:Hide()
+                ProfessionsFrame.TabSystem:GetTabButton(ProfessionsFrame.craftingOrdersTabID):Click()
+                return
+            end
+            duplicateFrame:ShowCachedData()
+        elseif craftingOrdersTab:IsEnabled() or craftingOrdersTab.isSelected then
+            duplicateTab:Hide()
+            craftingOrdersTab:Show()
+            duplicateFrame:Hide()
+            if craftingOrdersTab.isSelected then
+                ProfessionsFrame.OrdersPage:Show()
+            end
+        elseif addon.cache then
+            if addon.cache[getProfessionID()] then
+                duplicateTab:Show()
+                craftingOrdersTab:Hide()
+                duplicateTab:SetTabSelected(false)
             end
         end
     end)
-end
 
-duplicateTab:SetScript("OnClick", function()
-    ProfessionsFrame.CraftingPage:Hide()
-    ProfessionsFrame.SpecPage:Hide()
-    ProfessionsFrame.OrdersPage:Hide()
-    duplicateTab:SetTabSelected(true)
-    duplicateFrame:Show()
-    
     for tabID, tab in ipairs(ProfessionsFrame.TabSystem.tabs) do
-        tab:SetTabSelected(false)
+        tab:HookScript("OnClick", function()
+            duplicateTab:SetTabSelected(false)
+            duplicateFrame:Hide()
+            for frameIndex, frame in ipairs(ProfessionsFrame.internalTabTracker.tabbedElements) do
+                if tabID == frameIndex then
+                    frame:Show()
+                    ProfessionsFrame:SetWidth(frame:GetDesiredPageWidth())
+                end
+            end
+        end)
     end
-    ProfessionsFrame:SetWidth(ProfessionsFrame.OrdersPage:GetDesiredPageWidth())
-end)
 
-hooksecurefunc(ProfessionsFrame, "Update", function(self)
-    if not self.professionInfo.profession then return end
-    if duplicateFrame:IsShown() and C_TradeSkillUI.IsNearProfessionSpellFocus(self.professionInfo.profession) then
-        duplicateFrame:Hide()
-        ProfessionsFrame.OrdersPage:Show()
-    elseif ProfessionsFrame.OrdersPage:IsShown() and not C_TradeSkillUI.IsNearProfessionSpellFocus(self.professionInfo.profession) then
-        duplicateFrame:Show()
+    duplicateTab:SetScript("OnClick", function()
+        ProfessionsFrame.CraftingPage:Hide()
+        ProfessionsFrame.SpecPage:Hide()
         ProfessionsFrame.OrdersPage:Hide()
-    end
-end)
+        duplicateTab:SetTabSelected(true)
+        duplicateFrame:Show()
+        
+        for tabID, tab in ipairs(ProfessionsFrame.TabSystem.tabs) do
+            tab:SetTabSelected(false)
+        end
+        ProfessionsFrame:SetWidth(ProfessionsFrame.OrdersPage:GetDesiredPageWidth())
+    end)
 
-function duplicateFrame:InitOrderList()
+    hooksecurefunc(ProfessionsFrame, "Update", function(self)
+        if not self.professionInfo.profession then return end
+        if duplicateFrame:IsShown() and C_TradeSkillUI.IsNearProfessionSpellFocus(self.professionInfo.profession) then
+            duplicateFrame:Hide()
+            ProfessionsFrame.OrdersPage:Show()
+        elseif ProfessionsFrame.OrdersPage:IsShown() and not C_TradeSkillUI.IsNearProfessionSpellFocus(self.professionInfo.profession) then
+            duplicateFrame:Show()
+            ProfessionsFrame.OrdersPage:Hide()
+        end
+    end)
+
+end) end) -- end continue on addon loaded
+
+PublicOrdersReagentsColumnProfessionsCraftingOrderPageMixin = CreateFromMixins(ProfessionsCraftingOrderPageMixin)
+
+function PublicOrdersReagentsColumnProfessionsCraftingOrderPageMixin:InitOrderList()
 	local pad = 5;
 	local spacing = 1;
 	local view = CreateScrollBoxListLinearView(pad, pad, pad, pad, spacing);
-	view:SetElementInitializer("PublicOrdersReagentsColumnProfessionsCrafterOrderListElementTemplate", function(button, elementData)
+    view:SetElementInitializer("PublicOrdersReagentsColumnProfessionsCrafterOrderListElementTemplate", function(button, elementData)
 		button:Init(elementData);
 	end);
 	ScrollUtil.InitScrollBoxListWithScrollBar(self.BrowseFrame.OrderList.ScrollBox, self.BrowseFrame.OrderList.ScrollBar, view);
 end
 
-function duplicateFrame:OnLoad()
-	self:InitButtons();
+function PublicOrdersReagentsColumnProfessionsCraftingOrderPageMixin:OnLoad()
 	self:InitOrderTypeTabs();
-	self:InitRecipeList();
 	self:SetBrowseType(OrderBrowseType.None);
 	self:InitOrderList();
 	self:SetCraftingOrderType(Enum.CraftingOrderType.Npc);
-
-	--FrameUtil.RegisterFrameForEvents(self, ProfessionsCraftingOrderPageAlwaysListenEvents);
-	--EventRegistry:RegisterCallback("ProfessionsFrame.Hide", function() self:ClearCachedRequests(); end, self);
     
-    self.BrowseFrame.RecipeList:Hide()
-    self.BrowseFrame.FavoritesSearchButton:Hide()
-    self.BrowseFrame.SearchButton:Hide()
     self.BrowseFrame.PublicOrdersButton:Hide()
-    self.BrowseFrame.BackButton:Hide()
-    self.BrowseFrame.OrdersRemainingDisplay:Hide()
     self.OfflineWarningDisplay.Text:SetText("Last known crafting orders")
-end
-duplicateFrame:OnLoad()
-
-duplicateFrame.RequestOrders = nop
-
-duplicateFrame:SetScript("OnShow", function(self)
-	--FrameUtil.RegisterFrameForEvents(self, ProfessionsCraftingOrderPageEvents);
-	--EventRegistry:RegisterCallback("ProfessionsRecipeListMixin.Event.OnRecipeSelected", self.OnRecipeSelected, self);
-
-	--C_TradeSkillUI.SetOnlyShowAvailableForOrders(true);
-
-	self:SetTitle();
-
-	--self.BrowseFrame.RecipeList.SearchBox:SetText(C_TradeSkillUI.GetRecipeItemNameFilter());
-
-	--local profession = self.professionInfo and self.professionInfo.profession;
-	--if profession and C_CraftingOrders.ShouldShowCraftingOrderTab() and C_TradeSkillUI.IsNearProfessionSpellFocus(profession) then
-		--C_CraftingOrders.OpenCrafterCraftingOrders();
-		-- Delay a frame so that the recipe list does not get thrashed because of the delayed event from flag changes
-		--RunNextFrame(function() self:StartDefaultSearch(); end);
-	--end
-	--self:CheckForClaimedOrder();
     
+    self.BrowseFrame.OrderList:SetPoint("TOPLEFT", ProfessionsFrame.OrdersPage.BrowseFrame.RecipeList, "TOPRIGHT")
+    self.BrowseFrame.OrderList:SetPoint("BOTTOMLEFT", ProfessionsFrame.OrdersPage.BrowseFrame.RecipeList, "BOTTOMRIGHT")
+    self.BrowseFrame.OrderList:SetPoint("TOPRIGHT")
+    self.BrowseFrame.OrderList:SetPoint("BOTTOMRIGHT")
+end
+
+PublicOrdersReagentsColumnProfessionsCraftingOrderPageMixin.RequestOrders = nop
+
+function PublicOrdersReagentsColumnProfessionsCraftingOrderPageMixin:OnShow()
+	self:SetTitle();
     self:ShowCachedData()
     
+    if not addon.cache then return end
     if not addon.cache[getProfessionID()] then return end
     self.BrowseFrame.GuildOrdersButton:SetShown(addon.cache[getProfessionID()][Enum.CraftingOrderType.Guild])
     self.BrowseFrame.NpcOrdersButton:SetShown(addon.cache[getProfessionID()][Enum.CraftingOrderType.Npc])
     self.BrowseFrame.PersonalOrdersButton:SetShown(addon.cache[getProfessionID()][Enum.CraftingOrderType.Personal])
-end)
+end
 
-duplicateFrame.OnRecipeSelected = nop
-duplicateFrame.RequestOrders = nop
+PublicOrdersReagentsColumnProfessionsCraftingOrderPageMixin.OnRecipeSelected = nop
+PublicOrdersReagentsColumnProfessionsCraftingOrderPageMixin.RequestOrders = nop
 
-function duplicateFrame:ShowCachedData()
+function PublicOrdersReagentsColumnProfessionsCraftingOrderPageMixin:ShowCachedData()
     local cache = addon.cache
     if not cache then return end
     if (not cache[getProfessionID()]) or (not cache[getProfessionID()][self.orderType]) then
-        local dp = duplicateFrame.BrowseFrame.OrderList.ScrollBox:GetDataProvider()
+        local dp = self.BrowseFrame.OrderList.ScrollBox:GetDataProvider()
         if dp then dp:Flush() end
         return
     end
@@ -169,7 +151,7 @@ function duplicateFrame:ShowCachedData()
     self:OrderRequestCallback(nil, self.orderType, false, false, 0, true)
 end
 
-function duplicateFrame:ShowOrders(offset, isSorted)
+function PublicOrdersReagentsColumnProfessionsCraftingOrderPageMixin:ShowOrders(offset, isSorted)
 	if self.lastRequest == self.lastBucketRequest then
 		-- We requested bucketed orders and were handed a flat list
 		self.lastBucketRequest = nil;
@@ -183,14 +165,13 @@ hooksecurefunc(ProfessionsFrame.OrdersPage, "ShowOrders", function(self, offset,
     if not addon.cache then addon.cache = {} end
     if not addon.cache[getProfessionID()] then addon.cache[getProfessionID()] = {} end
     addon.cache[getProfessionID()][self.orderType] = C_CraftingOrders.GetCrafterOrders()
-    duplicateFrame:ShowCachedData()
-    duplicateFrame:SetCraftingOrderType(self.orderType)
+    ProfessionsFrame.OrdersPageOffline:ShowCachedData()
+    ProfessionsFrame.OrdersPageOffline:SetCraftingOrderType(self.orderType)
 end)
 
-duplicateFrame:SetScript("OnHide", nop)
-duplicateFrame.StartDefaultSearch = duplicateFrame.ShowCachedData
+PublicOrdersReagentsColumnProfessionsCraftingOrderPageMixin.StartDefaultSearch = PublicOrdersReagentsColumnProfessionsCraftingOrderPageMixin.ShowCachedData
 
-function duplicateFrame:SetupTable()
+function PublicOrdersReagentsColumnProfessionsCraftingOrderPageMixin:SetupTable()
 	local browseType = self:GetBrowseType();
 
 	if not self.tableBuilder then
@@ -237,5 +218,3 @@ function duplicateFrame:SetupTable()
 
 	self.tableBuilder:Arrange();
 end
-
-end) end) -- end continue on addon loaded
