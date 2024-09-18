@@ -9,5 +9,8 @@
 ## LoadWith: Blizzard_Professions
 
 PublicOrdersReagentsColumn.lua
+TabHandler.lua
 DuplicateOrdersPage.lua
 DuplicateOrdersPage.xml
+NoWeeklyQuestWarning.xml
+NoWeeklyQuestWarning.lua
