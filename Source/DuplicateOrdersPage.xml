@@ -87,20 +87,12 @@
 						</Layers>
 					</Frame>
 		
-					<Button parentKey="PublicOrdersButton" inherits="ProfessionsCraftingOrderTypeTabTemplate">
-						<KeyValues>
-							<KeyValue key="orderType" value="Enum.CraftingOrderType.Public" type="global"/>
-						</KeyValues>
-						<Anchors>
-							<Anchor point="BOTTOMLEFT" relativeKey="$parent.OrderList" relativePoint="TOPLEFT" x="-120" y="0"/>
-						</Anchors>									
-					</Button>
 					<Button parentKey="GuildOrdersButton" inherits="ProfessionsCraftingOrderTypeTabTemplate">
 						<KeyValues>
 							<KeyValue key="orderType" value="Enum.CraftingOrderType.Guild" type="global"/>
 						</KeyValues>
 						<Anchors>
-							<Anchor point="LEFT" relativeKey="$parent.PublicOrdersButton" relativePoint="RIGHT" x="0" y="0"/>
+							<Anchor point="BOTTOMLEFT" relativeKey="$parent.OrderList" relativePoint="TOPLEFT" x="60" y="0"/>
 						</Anchors>
 					</Button>
 					<Button parentKey="NpcOrdersButton" inherits="ProfessionsCraftingOrderTypeTabTemplate">
@@ -108,7 +100,7 @@
 							<KeyValue key="orderType" value="Enum.CraftingOrderType.Npc" type="global"/>
 						</KeyValues>
 						<Anchors>
-							<Anchor point="LEFT" relativeKey="$parent.GuildOrdersButton" relativePoint="RIGHT" x="0" y="0"/>
+							<Anchor point="BOTTOMLEFT" relativeKey="$parent.OrderList" relativePoint="TOPLEFT" x="240" y="0"/>
 						</Anchors>
 					</Button>
 					<Frame parentKey="NpcOrdersNewFeature" inherits="NewFeatureLabelNoAnimateTemplate" frameStrata="HIGH">
@@ -121,7 +113,7 @@
 							<KeyValue key="orderType" value="Enum.CraftingOrderType.Personal" type="global"/>
 						</KeyValues>
 						<Anchors>
-							<Anchor point="LEFT" relativeKey="$parent.NpcOrdersButton" relativePoint="RIGHT" x="0" y="0"/>
+							<Anchor point="BOTTOMLEFT" relativeKey="$parent.OrderList" relativePoint="TOPLEFT" x="420" y="0"/>
 						</Anchors>
 					</Button>
 				</Frames>

@@ -1,6 +1,13 @@
 local addonName, addon = ...
 
 local OrderBrowseType = EnumUtil.MakeEnum("Flat", "Bucketed", "None");
+local orderTypeTabTitles =
+{
+	[Enum.CraftingOrderType.Public] = PROFESSIONS_CRAFTER_ORDER_TAB_PUBLIC,
+	[Enum.CraftingOrderType.Guild] = PROFESSIONS_CRAFTER_ORDER_TAB_GUILD,
+	[Enum.CraftingOrderType.Personal] = PROFESSIONS_CRAFTER_ORDER_TAB_PERSONAL,
+	[Enum.CraftingOrderType.Npc] = PROFESSIONS_CRAFTER_ORDER_TAB_NPC,
+}
 
 local function getProfessionID()
     return Professions.GetProfessionInfo().parentProfessionID
@@ -18,13 +25,49 @@ function PublicOrdersReagentsColumnProfessionsCraftingOrderPageMixin:InitOrderLi
 	ScrollUtil.InitScrollBoxListWithScrollBar(self.BrowseFrame.OrderList.ScrollBox, self.BrowseFrame.OrderList.ScrollBar, view);
 end
 
+local function SetTabTitleWithCount(tabButton, type, count)
+	if tabButton then
+		local title = orderTypeTabTitles[type];
+		if type == Enum.CraftingOrderType.Public then
+			tabButton.Text:SetText(title);
+		else
+			tabButton.Text:SetText(string.format("%s (%s)", title, count));
+		end
+	end
+end
+
+function PublicOrdersReagentsColumnProfessionsCraftingOrderPageMixin:InitOrderTypeTabs()
+	for _, typeTab in ipairs(self.BrowseFrame.orderTypeTabs) do
+		typeTab:SetScript("OnClick", function()
+			PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB);
+			self:SetCraftingOrderType(typeTab.orderType);
+
+			self:ClearCachedRequests();
+			self:StartDefaultSearch();
+
+			-- Show NEW feature label on NPC tab until first clicked
+			if typeTab.orderType == Enum.CraftingOrderType.Npc then
+				SetCVarBitfield("closedInfoFramesAccountWide", LE_FRAME_TUTORIAL_ACCOUNT_NPC_CRAFTING_ORDER_TAB_NEW, true);
+				self.BrowseFrame.NpcOrdersNewFeature:SetShown(false);
+			end
+		end);
+
+		typeTab:HandleRotation();
+		local count = 0;
+		SetTabTitleWithCount(typeTab, typeTab.orderType, count);
+		local minWidth = 150;
+		local bufferWidth = 100;
+		local stretchWidth = typeTab.Text:GetWidth() + bufferWidth;
+		typeTab:SetTabWidth(math.max(minWidth, stretchWidth));
+	end
+end
+
 function PublicOrdersReagentsColumnProfessionsCraftingOrderPageMixin:OnLoad()
 	self:InitOrderTypeTabs();
 	self:SetBrowseType(OrderBrowseType.None);
 	self:InitOrderList();
 	self:SetCraftingOrderType(Enum.CraftingOrderType.Npc);
     
-    self.BrowseFrame.PublicOrdersButton:Hide()
     self.OfflineWarningDisplay.Text:SetText("Last known crafting orders")
     
     self.BrowseFrame.OrderList:SetPoint("TOPLEFT", ProfessionsFrame.OrdersPage.BrowseFrame.RecipeList, "TOPRIGHT")
