@@ -52,7 +52,7 @@ local function showGeneric(self, orders, browseType, offset, isSorted)
         end
     end
     
-    if self.orderType ~= 3 then return end
+    if self.orderType == Enum.CraftingOrderType.Public then return end
     
     -- resize the commission and reagents columns
     local columns = self.tableBuilder:GetColumns()
