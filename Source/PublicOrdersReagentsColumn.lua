@@ -25,9 +25,13 @@ local function showGeneric(self, orders, browseType, offset, isSorted)
             s:Hide()
         end
     end
-    for t in pairs(textFields) do
-        t:Show()
+    
+    if self.orderType == Enum.CraftingOrderType.Public then
+        for t in pairs(textFields) do
+            t:Show()
+        end
     end
+    
     for t in pairs(errorTextures) do
         t:Hide()
     end
