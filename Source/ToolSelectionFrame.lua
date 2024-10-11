@@ -91,13 +91,13 @@ for _, statButton in pairs(frame.statButtons) do
             local itemLink = getProfessionDB()[self.stat]
             local locationType = getItemLocation(itemLink)
             if not locationType then
-            -- Make button red
+                self.ignoreTexture:Show()
             end
             local itemID = C_Item.GetItemInfoInstant(itemLink)
             self:SetItem(itemID)
         else
             self:Reset()
-            -- Remove red button
+            self.ignoreTexture:Hide()
         end
     end)
 
@@ -129,7 +129,7 @@ for _, statButton in pairs(frame.statButtons) do
         GameTooltip:Hide()
     end)
     
-    statButton:SetScript("OnReceiveDrag", function(...)
+    statButton:SetScript("OnReceiveDrag", function(self)
         handleButtonClick(self.stat)
         self:Hide()
         self:Show()
@@ -191,15 +191,25 @@ hooksecurefunc(ProfessionsFrame.CraftingPage.SchematicForm, "UpdateDetailsStats"
         end
     end
     
-    if ProfessionsFrame.CraftingPage.SchematicForm.Details.CraftingChoicesContainer.ConcentrateContainer.ConcentrateToggleButton:GetChecked() then
-        if equipIngenuityTool() then
-            return
+    if db.ingenuityPriority then
+        if ProfessionsFrame.CraftingPage.SchematicForm.Details.CraftingChoicesContainer.ConcentrateContainer.ConcentrateToggleButton:GetChecked() then
+            if equipIngenuityTool() then
+                return
+            end
         end
     end
     
     if usesMulticraft then
         if equipMulticraftTool() then
             return
+        end
+    end
+    
+    if not db.ingenuityPriority then
+        if ProfessionsFrame.CraftingPage.SchematicForm.Details.CraftingChoicesContainer.ConcentrateContainer.ConcentrateToggleButton:GetChecked() then
+            if equipIngenuityTool() then
+                return
+            end
         end
     end
     
@@ -210,9 +220,7 @@ hooksecurefunc(ProfessionsFrame.CraftingPage.SchematicForm, "UpdateDetailsStats"
     end
     
     if usesSpeed then
-        if equipCraftingSpeedTool() then
-            return
-        end
+        equipCraftingSpeedTool()
     end
 end)
 
@@ -222,7 +230,36 @@ hooksecurefunc(ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm,
     equipResourcefulnessTool()
 end)
 
-PublicOrdersReagentsColumnToolSelectionFrame.DisableButton.Text:SetText("Disable auto-equipping")
+PublicOrdersReagentsColumnToolSelectionFrame.DisableButton.Text:SetText(L["DISABLE_BUTTON_TEXT"])
 PublicOrdersReagentsColumnToolSelectionFrame.DisableButton:HookScript("OnClick", function(self, button, ...)
     db.disabled = self:GetChecked()
+end)
+PublicOrdersReagentsColumnToolSelectionFrame.DisableButton:HookScript("OnShow", function(self)
+    self:SetChecked(db.disabled)
+end)
+
+local function setPriorityButtonText()
+    local button = PublicOrdersReagentsColumnToolSelectionFrame.PriorityButton
+    if button:GetChecked() then
+        button.Text:SetText(L["PRIORTY_BUTTON_SELECTED_TEXT"])
+    else
+        button.Text:SetText(L["PRIORTY_BUTTON_DESELECTED_TEXT"])
+    end
+end
+
+PublicOrdersReagentsColumnToolSelectionFrame.PriorityButton:HookScript("OnShow", function(self)
+    self:SetChecked(db.ingenuityPriority)
+    setPriorityButtonText()
+end)
+PublicOrdersReagentsColumnToolSelectionFrame.PriorityButton:HookScript("OnClick", function(self)
+    db.ingenuityPriority = self:GetChecked()
+    setPriorityButtonText()
+end)
+PublicOrdersReagentsColumnToolSelectionFrame.PriorityButton:HookScript("OnEnter", function(self)
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    GameTooltip:AddLine(L["PRIORITY_BUTTON_TOOLTIP"], nil, nil, nil, true)
+    GameTooltip:Show()
+end)
+PublicOrdersReagentsColumnToolSelectionFrame.PriorityButton:HookScript("OnLeave", function(self)
+    GameTooltip:Hide()
 end)
