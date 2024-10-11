@@ -1,0 +1,25 @@
+<Ui>
+    <CheckButton name="PublicOrdersReagentsColumnToolFlyoutButton" motionScriptsWhileDisabled="true">
+		<Size x="29" y="8"/>
+		<Layers>
+			<Layer level="OVERLAY">
+				<Texture parentKey="BlackCover" setAllPoints="true" hidden="true">
+					<Color r="0" g="0" b="0" a="0.6"/>
+				</Texture>
+			</Layer>
+			<Layer level="OVERLAY" textureSubLevel="1">
+				<Texture name="$parentFlyoutArrow" file="Interface\Buttons\ActionBarFlyoutButton" parentKey="FlyoutArrow">
+					<Size x="23" y="11"/>
+					<Anchors>
+						<Anchor point="BOTTOM" x="0" y="-3"/>
+					</Anchors>
+					<TexCoords left="0.62500000" right="0.98437500" top="0.82812500" bottom="0.74218750"/>
+				</Texture>
+				<Texture name="$parentSelected" file="Interface\Buttons\CheckButtonHilight" parentKey="selected" alphaMode="ADD"/>
+			</Layer>
+		</Layers>
+		<PushedTexture file="Interface\Buttons\UI-Quickslot-Depress"/>
+		<HighlightTexture name="$parentHighlight" file="Interface\Buttons\ButtonHilight-Square" alphaMode="ADD"/>
+		<CheckedTexture file="Interface\Buttons\CheckButtonHilight" alphaMode="ADD"/>
+	</CheckButton>
+</Ui>

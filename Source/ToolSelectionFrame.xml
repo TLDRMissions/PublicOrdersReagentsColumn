@@ -1,0 +1,105 @@
+<Ui>
+    <ItemButton name="PublicOrdersReagentsColumnStatButtonTemplate" virtual="true">
+        <Size x="37" y="37"/>
+		<Layers>
+			<Layer>
+				<Texture parentKey="Line" atlas="Professions-QualityPane-Divider" alpha=".8" useAtlasSize="false">
+					<Size x="126" y="1"/>
+					<Anchors>
+						<Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" x="-6" y="-4"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+    </ItemButton>
+    
+    <Frame name="PublicOrdersReagentsColumnToolSelectionFrame" inherits="TooltipBackdropTemplate" hidden="true" parent="PublicOrdersReagentsColumnToolFlyoutButton" parentKey="ToolSelection">
+        <Size x="160" y="210"/>
+        <Anchors>
+            <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT"/>
+        </Anchors>
+		<KeyValues>
+			<KeyValue key="backdropColor" value="BLACK_FONT_COLOR" type="global"/>
+		</KeyValues>
+		<Frames>
+			<ItemButton parentKey="ResourcefulnessButton" inherits="PublicOrdersReagentsColumnStatButtonTemplate" parentArray="statButtons">
+				<KeyValues>
+                    <KeyValue key="stat" value="Resourcefulness"/>
+                </KeyValues>
+                <Anchors>
+					<Anchor point="TOPRIGHT" x="-8" y="-8"/>
+				</Anchors>
+				<Layers>
+					<Layer>
+						<FontString parentKey="Text" inherits="GameFontNormal" text="ITEM_MOD_RESOURCEFULNESS_SHORT" justifyH="RIGHT">
+							<Size x="120" y="50"/>
+							<Anchors>
+								<Anchor point="RIGHT" relativePoint="LEFT" x="-5"/>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+			</ItemButton>
+            <ItemButton parentKey="MulticraftButton" inherits="PublicOrdersReagentsColumnStatButtonTemplate" parentArray="statButtons">
+				<KeyValues>
+                    <KeyValue key="stat" value="Multicraft"/>
+                </KeyValues>
+                <Anchors>
+					<Anchor point="TOPRIGHT" relativeKey="$parent.ResourcefulnessButton" relativePoint="BOTTOMRIGHT" x="0" y="-8"/>
+				</Anchors>
+				<Layers>
+					<Layer>
+						<FontString parentKey="Text" inherits="GameFontNormal" text="ITEM_MOD_MULTICRAFT_SHORT" justifyH="RIGHT">
+							<Size x="120" y="50"/>
+							<Anchors>
+								<Anchor point="RIGHT" relativePoint="LEFT" x="-5"/>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+			</ItemButton>
+            <ItemButton parentKey="IngenuityButton" inherits="PublicOrdersReagentsColumnStatButtonTemplate" parentArray="statButtons">
+				<KeyValues>
+                    <KeyValue key="stat" value="Ingenuity"/>
+                </KeyValues>
+                <Anchors>
+					<Anchor point="TOPRIGHT" relativeKey="$parent.MulticraftButton" relativePoint="BOTTOMRIGHT" x="0" y="-8"/>
+				</Anchors>
+				<Layers>
+					<Layer>
+						<FontString parentKey="Text" inherits="GameFontNormal" text="ITEM_MOD_INGENUITY_SHORT" justifyH="RIGHT">
+							<Size x="120" y="50"/>
+							<Anchors>
+								<Anchor point="RIGHT" relativePoint="LEFT" x="-5"/>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+			</ItemButton>
+            <ItemButton parentKey="SpeedButton" inherits="PublicOrdersReagentsColumnStatButtonTemplate" parentArray="statButtons">
+				<KeyValues>
+                    <KeyValue key="stat" value="Speed"/>
+                </KeyValues>
+                <Anchors>
+					<Anchor point="TOPRIGHT" relativeKey="$parent.IngenuityButton" relativePoint="BOTTOMRIGHT" x="0" y="-8"/>
+				</Anchors>
+				<Layers>
+					<Layer>
+						<FontString parentKey="Text" inherits="GameFontNormal" text="ITEM_MOD_CRAFTING_SPEED_SHORT" justifyH="RIGHT">
+							<Size x="120" y="50"/>
+							<Anchors>
+								<Anchor point="RIGHT" relativePoint="LEFT" x="-5"/>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+			</ItemButton>
+            <CheckButton parentKey="DisableButton" inherits="UICheckButtonTemplate">
+				<Size x="26" y="26"/>
+				<Anchors>
+					<Anchor point="BOTTOMLEFT" x="8" y="2"/>
+				</Anchors>
+            </CheckButton>
+		</Frames>
+    </Frame>
+</Ui>

@@ -7,6 +7,7 @@
 ## IconTexture: Interface\Icons\INV_Alchemy_90_Reagent_Blue
 ## LoadOnDemand: 1
 ## LoadWith: Blizzard_Professions
+## SavedVariablesPerCharacter: PublicOrdersReagentsColumnToolSelectionDB
 
 PublicOrdersReagentsColumn.lua
 TabHandler.lua
@@ -14,3 +15,8 @@ DuplicateOrdersPage.lua
 DuplicateOrdersPage.xml
 NoWeeklyQuestWarning.xml
 NoWeeklyQuestWarning.lua
+ToolFlyoutButton.xml
+ToolFlyoutButton.lua
+ToolSelectionLocales.lua
+ToolSelectionFrame.xml
+ToolSelectionFrame.lua
