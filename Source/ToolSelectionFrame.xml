@@ -10,11 +10,19 @@
 					</Anchors>
 				</Texture>
 			</Layer>
+			<Layer level="OVERLAY">
+				<Texture parentKey="ignoreTexture" file="Interface\PaperDollInfoFrame\UI-GearManager-LeaveItem-Transparent" hidden="true">
+					<Size x="40" y="40"/>
+					<Anchors>
+						<Anchor point="CENTER"/>
+					</Anchors>
+				</Texture>
+			</Layer>
 		</Layers>
     </ItemButton>
     
     <Frame name="PublicOrdersReagentsColumnToolSelectionFrame" inherits="TooltipBackdropTemplate" hidden="true" parent="PublicOrdersReagentsColumnToolFlyoutButton" parentKey="ToolSelection">
-        <Size x="160" y="210"/>
+        <Size x="160" y="240"/>
         <Anchors>
             <Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT"/>
         </Anchors>
@@ -99,6 +107,12 @@
 				<Anchors>
 					<Anchor point="BOTTOMLEFT" x="8" y="2"/>
 				</Anchors>
+            </CheckButton>
+            <CheckButton parentKey="PriorityButton" inherits="UICheckButtonTemplate">
+                <Size x="26" y="26"/>
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT" relativeKey="$parent.DisableButton" relativePoint="TOPLEFT" x="0" y="2"/>
+                </Anchors>
             </CheckButton>
 		</Frames>
     </Frame>
