@@ -227,6 +227,7 @@ end)
 -- This is the work orders tab
 hooksecurefunc(ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm, "UpdateDetailsStats", function(self, operationInfo)
     if db.disabled then return end
+    if not ProfessionsFrame.professionInfo.profession then return end
     equipResourcefulnessTool()
 end)
 
