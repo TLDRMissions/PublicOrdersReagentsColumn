@@ -9,12 +9,19 @@
 ## LoadWith: Blizzard_Professions
 ## SavedVariablesPerCharacter: PublicOrdersReagentsColumnToolSelectionDB
 
+## Icons on crafting orders module
 PublicOrdersReagentsColumn.lua
+
+## 'Offline' crafting orders module
 TabHandler.lua
 DuplicateOrdersPage.lua
 DuplicateOrdersPage.xml
+
+## No weekly quest warning module
 NoWeeklyQuestWarning.xml
 NoWeeklyQuestWarning.lua
+
+## Tool flyout automation module
 ToolFlyoutButton.xml
 ToolFlyoutButton.lua
 ToolSelectionLocales.lua
