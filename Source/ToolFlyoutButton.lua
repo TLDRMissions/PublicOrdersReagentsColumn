@@ -12,9 +12,10 @@ flyout:HookScript("OnClick", function(self, button, isUserInput)
 end)
 
 hooksecurefunc(ProfessionsFrame, "Refresh", function()
+    flyout:Hide()
     if ProfessionsFrame.professionType == 1 then
-        flyout:Show()
-    else
-        flyout:Hide()
+        if addon.db.profile.toolFlyout then
+            flyout:Show()
+        end
     end
 end)
