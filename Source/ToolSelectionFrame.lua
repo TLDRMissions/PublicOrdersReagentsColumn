@@ -154,6 +154,7 @@ local function equipTool(slotName)
     
     C_Container.PickupContainerItem(containerIndex, slotIndex)
     PickupInventoryItem(getActiveToolSlotID())
+    C_Timer.After(0.2, function() ClearCursor() end)
     return true
 end
 
