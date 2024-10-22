@@ -1,4 +1,4 @@
-## Interface: 110002
+## Interface: 110005
 ## Title: No Mats; No Make
 ## Version: @project-version@
 ## Notes: NPC Orders - shows the reward icons without needing to mouse over
