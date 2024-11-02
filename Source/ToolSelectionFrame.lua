@@ -231,6 +231,13 @@ hooksecurefunc(ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm,
     if not addon.db.profile.toolFlyout then return end
     if db.disabled then return end
     if not ProfessionsFrame.professionInfo.profession then return end
+    
+    if ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm.Details.CraftingChoicesContainer.ConcentrateContainer.ConcentrateToggleButton:GetChecked() then
+        if equipIngenuityTool() then
+            return
+        end
+    end
+    
     equipResourcefulnessTool()
 end)
 
