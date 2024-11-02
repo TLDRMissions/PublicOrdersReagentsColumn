@@ -1,6 +1,9 @@
 -- Fixes a UI bug introduced in 11.0.5
 -- See: https://github.com/Stanzilla/WoWUIBugs/issues/677
 
+local debugMode = UnitName("player") == "Tlo"
+if debugMode then return end
+
 function ProfessionsCrafterTableCellItemNameMixin:Populate(rowData, dataIndex)
 	local order = rowData.option;
 
@@ -18,10 +21,10 @@ function ProfessionsCrafterTableCellItemNameMixin:Populate(rowData, dataIndex)
 	end
 
 	item:ContinueOnItemLoad(function()
-		if item:GetItemID() ~= self.rowData.option.itemID then
-			-- Callback from a previous async request
-			return;
-		end
+  		if item:GetItemID() ~= self.rowData.option.itemID then
+  			-- Callback from a previous async request
+  			return;
+        end
 		local icon = item:GetItemIcon();
 		self.Icon:SetTexture(icon);
 
