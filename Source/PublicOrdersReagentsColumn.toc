@@ -45,5 +45,3 @@ ToolSelectionFrame.lua
 
 options.lua
 init.lua
-
-BlizzardBugFix.lua
