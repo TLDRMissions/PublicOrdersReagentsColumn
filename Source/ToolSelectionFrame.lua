@@ -54,17 +54,27 @@ local function handleButtonClick(stat)
     ClearCursor()
 end
 
+local function escapeItemLink(itemLink)
+    -- example itemstring:
+    -- |cff0070dd|Hitem:222576:7373:::::::73:253::13:4:10828:10830:9632:8953:5:28:2734:29:76:38:8:40:2259:45:222634::::Player-1597-0F963060:|h[Patient Alchemist's Mixing Rod |A:Professions-ChatIcon-Quality-Tier5:17:17::1|a]|h|r
+    -- the :73: is "level the character was when they saved this item"
+    -- lets ignore that as the character can level up
+    if not itemLink then return end
+    return itemLink:gsub("(item:%d*:%d*:%d*:%d*:%d*:%d*:%d*:%d*)(:%d*:)", "%1::")
+end
+
 -- first return param: 1 if equipped, 2 if in bags
 local function getItemLocation(itemLink)
-    if GetInventoryItemLink("player", 20) == itemLink then
+    itemLink = escapeItemLink(itemLink)
+    if escapeItemLink(GetInventoryItemLink("player", 20)) == itemLink then
         return 1, 20
-    elseif GetInventoryItemLink("player", 23) == itemLink then
+    elseif escapeItemLink(GetInventoryItemLink("player", 23)) == itemLink then
         return 1, 23
     end
-    
+
     for containerIndex = 0, 4 do
         for slotIndex = 1, 100 do
-            if C_Container.GetContainerItemLink(containerIndex, slotIndex) == itemLink then
+            if escapeItemLink(C_Container.GetContainerItemLink(containerIndex, slotIndex)) == itemLink then
                 return 2, containerIndex, slotIndex
             end
         end
