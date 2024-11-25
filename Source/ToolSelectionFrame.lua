@@ -186,7 +186,7 @@ end
 
 -- This is the Recipes tab - can ignore work orders here
 hooksecurefunc(ProfessionsFrame.CraftingPage.SchematicForm, "UpdateDetailsStats", function(self, operationInfo)
-    if not addon.db.profile.toolFlyout then return end
+    if not addon.getToolFlyoutEnabled() then return end
     if not operationInfo then return end
     if db.disabled then return end
 
@@ -238,7 +238,7 @@ end)
 
 -- This is the work orders tab
 hooksecurefunc(ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm, "UpdateDetailsStats", function(self, operationInfo)
-    if not addon.db.profile.toolFlyout then return end
+    if not addon.getToolFlyoutEnabled() then return end
     if db.disabled then return end
     if not ProfessionsFrame.professionInfo.profession then return end
     

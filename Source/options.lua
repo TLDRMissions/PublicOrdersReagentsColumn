@@ -2,9 +2,17 @@ local addonName, addon = ...
 
 local addonTitle = select(2, C_AddOns.GetAddOnInfo(addonName))
 
+function addon.getToolFlyoutEnabled()
+    if not addon.db.global.toolFlyout then return false end
+    return addon.db.profile.toolFlyout
+end
+
 function addon:setupOptions()
     local defaults = {
         profile = {
+            toolFlyout = true,
+        },
+        global = {
             toolFlyout = true,
         },
     }
@@ -16,9 +24,17 @@ function addon:setupOptions()
         args = {
             showCompleted = {
                 type = "toggle",
-                name = "Enable Tool Flyout Module",
+                name = "Enable Tool Flyout Module (This Character)",
                 set = function(info, v) addon.db.profile.toolFlyout = v end,
                 get = function() return addon.db.profile.toolFlyout end,
+                width = "full",
+            },
+            accountWide = {
+                type = "toggle",
+                name = "Enable Tool Flyout Module (Account Wide)",
+                desc = "If unchecked, overrides all character-specific settings",
+                set = function(info, v) addon.db.global.toolFlyout = v end,
+                get = function() return addon.db.global.toolFlyout end,
                 width = "full",
             },
         },

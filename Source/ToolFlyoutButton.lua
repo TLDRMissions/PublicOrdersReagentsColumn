@@ -14,7 +14,7 @@ end)
 hooksecurefunc(ProfessionsFrame, "Refresh", function()
     flyout:Hide()
     if ProfessionsFrame.professionType == 1 then
-        if addon.db.profile.toolFlyout then
+        if addon.getToolFlyoutEnabled() then
             flyout:Show()
         end
     end
