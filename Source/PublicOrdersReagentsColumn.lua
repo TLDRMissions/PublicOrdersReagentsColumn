@@ -114,7 +114,7 @@ local function showGeneric(self, orders, browseType, offset, isSorted)
         textField:Hide()
         textFields[textField] = true
         if rowData.reagentState ~= Enum.CraftingOrderReagentsType.All then
-            local recipeSchematic = C_TradeSkillUI.GetRecipeSchematic(rowData.spellID, false)
+            local recipeSchematic = C_TradeSkillUI.GetRecipeSchematic(rowData.spellID, rowData.isRecraft)
             local reagents = recipeSchematic.reagentSlotSchematics
             for i = #reagents, 1, -1 do
                 local reagentData = reagents[i]
