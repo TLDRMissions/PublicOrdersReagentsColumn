@@ -83,7 +83,7 @@ local function showGeneric(self, orders, browseType, offset, isSorted)
             local button = rewardIcons[rowID][idx] or CreateFrame("ItemButton", nil, cell, "ProfessionsCrafterOrderRewardTemplate")
             button:SetParent(cell)
             rewardIcons[rowID][idx] = button
-            button:SetScale(0.5)
+            button:SetScale(0.55)
             button.Count:SetScale(2)
             if idx == 1 then
                 button:SetPoint("TOPRIGHT", cell.TipMoneyDisplayFrame.GoldDisplay, "TOPLEFT", -5, 5)
@@ -140,7 +140,7 @@ local function showGeneric(self, orders, browseType, offset, isSorted)
                 local button = reagentIcons[rowID][idx] or CreateFrame("ItemButton", nil, cell, "ProfessionsCrafterOrderRewardTemplate")
                 button:SetParent(cell)
                 reagentIcons[rowID][idx] = button
-                button:SetScale(0.5)
+                button:SetScale(0.55)
                 button.Count:SetScale(2)
                 if reagentData.quantityRequired > 99 then
                     button.Count:SetScale(1.5)
