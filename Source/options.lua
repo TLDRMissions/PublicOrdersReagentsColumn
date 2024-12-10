@@ -14,6 +14,7 @@ function addon:setupOptions()
         },
         global = {
             toolFlyout = true,
+            increasedPadding = nil,
         },
     }
         
@@ -35,6 +36,14 @@ function addon:setupOptions()
                 desc = "If unchecked, overrides all character-specific settings",
                 set = function(info, v) addon.db.global.toolFlyout = v end,
                 get = function() return addon.db.global.toolFlyout end,
+                width = "full",
+            },
+            increasedPaddingEnabled = {
+                type = "toggle",
+                name = "Enable Increased Padding Module (Account Wide)",
+                desc = "Makes crafting order rows extra-wide",
+                set = function(info, v) addon.db.global.increasedPadding = v end,
+                get = function() return addon.db.global.increasedPadding end,
                 width = "full",
             },
         },

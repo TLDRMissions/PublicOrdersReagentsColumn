@@ -1,3 +1,5 @@
+local addonName, addon = ...
+
 local rewardIconsPrimary, rewardIconsDuplicate = {}, {}
 local reagentIconsPrimary, reagentIconsDuplicate = {}, {}
 local textFieldsPrimary, textFieldsDuplicate = {}, {}
@@ -66,6 +68,15 @@ local function showGeneric(self, orders, browseType, offset, isSorted)
     self.tableBuilder:Arrange()
     
     for rowID, row in ipairs(rows) do
+        local padding = addon.db.global.increasedPadding
+        if padding then
+            row:SetHeight(row:GetHeight() + 15)
+            if rowID > 1 then
+                local a,b,c,d,e = row:GetPoint()
+                row:SetPoint(a,b,c,d,e-(15*(rowID-1)))
+            end
+        end
+        
         if not rewardIcons[rowID] then
             rewardIcons[rowID] = {}
         end
@@ -84,9 +95,16 @@ local function showGeneric(self, orders, browseType, offset, isSorted)
             button:SetParent(cell)
             rewardIcons[rowID][idx] = button
             button:SetScale(0.55)
+            if padding then
+                button:SetScale(0.9)
+            end
             button.Count:SetScale(2)
             if idx == 1 then
-                button:SetPoint("TOPRIGHT", cell.TipMoneyDisplayFrame.GoldDisplay, "TOPLEFT", -5, 5)
+                if padding then
+                    button:SetPoint("TOPRIGHT", cell.TipMoneyDisplayFrame.GoldDisplay, "TOPLEFT", -7, 12)
+                else
+                    button:SetPoint("TOPRIGHT", cell.TipMoneyDisplayFrame.GoldDisplay, "TOPLEFT", -5, 7)
+                end
                 cell.RewardIcon:Hide()
             else
                 button:SetPoint("TOPRIGHT", rewardIcons[rowID][idx-1], "TOPLEFT")
@@ -141,6 +159,9 @@ local function showGeneric(self, orders, browseType, offset, isSorted)
                 button:SetParent(cell)
                 reagentIcons[rowID][idx] = button
                 button:SetScale(0.55)
+                if padding then
+                    button:SetScale(0.9)
+                end
                 button.Count:SetScale(2)
                 if reagentData.quantityRequired > 99 then
                     button.Count:SetScale(1.5)
