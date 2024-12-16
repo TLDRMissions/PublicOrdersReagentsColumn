@@ -10,7 +10,8 @@ local orderTypeTabTitles =
 }
 
 local function getProfessionID()
-    return Professions.GetProfessionInfo().parentProfessionID
+    local professionInfo = Professions.GetProfessionInfo()
+    return professionInfo.parentProfessionID or professionInfo.professionID
 end
 
 PublicOrdersReagentsColumnProfessionsCraftingOrderPageMixin = CreateFromMixins(ProfessionsCraftingOrderPageMixin)
