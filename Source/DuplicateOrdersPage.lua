@@ -116,9 +116,11 @@ end
 hooksecurefunc(ProfessionsFrame.OrdersPage, "ShowOrders", function(self, offset, isSorted)
     if self.orderType == Enum.CraftingOrderType.Public then return end
     if not addon.cache then addon.cache = {} end
-    if not addon.cache[getProfessionID()] then addon.cache[getProfessionID()] = {} end
+    local professionID = getProfessionID()
+    if not professionID then return end
+    if not addon.cache[professionID] then addon.cache[professionID] = {} end
     if C_CraftingOrders.GetClaimedOrder() then return end
-    addon.cache[getProfessionID()][self.orderType] = C_CraftingOrders.GetCrafterOrders()
+    addon.cache[professionID][self.orderType] = C_CraftingOrders.GetCrafterOrders()
     ProfessionsFrame.OrdersPageOffline:ShowCachedData()
     ProfessionsFrame.OrdersPageOffline:SetCraftingOrderType(self.orderType)
 end)
