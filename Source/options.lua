@@ -14,7 +14,7 @@ function addon:setupOptions()
         },
         global = {
             toolFlyout = true,
-            increasedPadding = nil,
+            increasedPadding = 0,
         },
     }
         
@@ -38,12 +38,17 @@ function addon:setupOptions()
                 get = function() return addon.db.global.toolFlyout end,
                 width = "full",
             },
-            increasedPaddingEnabled = {
-                type = "toggle",
+            increasedPadding = {
+                type = "range",
                 name = "Enable Increased Padding Module (Account Wide)",
                 desc = "Makes crafting order rows extra-wide",
+                min = 0,
+                max = 20,
+                step = 1,
                 set = function(info, v) addon.db.global.increasedPadding = v end,
-                get = function() return addon.db.global.increasedPadding end,
+                get = function()
+                    return addon.db.global.increasedPadding
+                end,
                 width = "full",
             },
         },
@@ -52,4 +57,11 @@ function addon:setupOptions()
     LibStub("AceConfigRegistry-3.0"):ValidateOptionsTable(options, addonTitle)
     LibStub("AceConfig-3.0"):RegisterOptionsTable(addonTitle, options, {"publicordersreagentscolumn"})
     LibStub("AceConfigDialog-3.0"):AddToBlizOptions(addonTitle)
+    
+    -- backward compatibility
+    if addon.db.global.increasedPadding == true then
+        addon.db.global.increasedPadding = 10
+    elseif addon.db.global.increasedPadding == false then
+        addon.db.global.increasedPadding = 0
+    end
 end

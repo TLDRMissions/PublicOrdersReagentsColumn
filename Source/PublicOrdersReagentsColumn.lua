@@ -67,13 +67,13 @@ local function showGeneric(self, orders, browseType, offset, isSorted)
     reagentColumn.fixedWidth = 130
     self.tableBuilder:Arrange()
     
+    local padding = addon.db.global.increasedPadding
     for rowID, row in ipairs(rows) do
-        local padding = addon.db.global.increasedPadding
         if padding then
-            row:SetHeight(row:GetHeight() + 15)
+            row:SetHeight(row:GetHeight() + padding)
             if rowID > 1 then
                 local a,b,c,d,e = row:GetPoint()
-                row:SetPoint(a,b,c,d,e-(15*(rowID-1)))
+                row:SetPoint(a,b,c,d,e - (padding * (rowID-1)))
             end
         end
         
@@ -91,20 +91,20 @@ local function showGeneric(self, orders, browseType, offset, isSorted)
             local quantity = reward.count
             local itemLink = reward.itemLink
             
-            local button = rewardIcons[rowID][idx] or CreateFrame("ItemButton", nil, cell, "ProfessionsCrafterOrderRewardTemplate")
-            button:SetParent(cell)
-            rewardIcons[rowID][idx] = button
-            button:SetScale(0.55)
-            if padding then
-                button:SetScale(0.9)
+            local button = rewardIcons[rowID][idx] 
+            if not button then
+                button = CreateFrame("ItemButton", nil, cell, "ProfessionsCrafterOrderRewardTemplate")
+                rewardIcons[rowID][idx] = button
+                button:ClearNormalTexture()
+                button:ClearPushedTexture()
+                button:ClearHighlightTexture()
             end
-            button.Count:SetScale(2)
+            
+            button:SetSize(19+padding, 19+padding)
+            button:SetParent(cell)
+            
             if idx == 1 then
-                if padding then
-                    button:SetPoint("TOPRIGHT", cell.TipMoneyDisplayFrame.GoldDisplay, "TOPLEFT", -7, 12)
-                else
-                    button:SetPoint("TOPRIGHT", cell.TipMoneyDisplayFrame.GoldDisplay, "TOPLEFT", -5, 7)
-                end
+                button:SetPoint("TOPRIGHT", cell, "TOPRIGHT", -35, 0)
                 cell.RewardIcon:Hide()
             else
                 button:SetPoint("TOPRIGHT", rewardIcons[rowID][idx-1], "TOPLEFT")
@@ -155,18 +155,25 @@ local function showGeneric(self, orders, browseType, offset, isSorted)
                 end
             end
             for idx, reagentData in ipairs(reagents) do
-                local button = reagentIcons[rowID][idx] or CreateFrame("ItemButton", nil, cell, "ProfessionsCrafterOrderRewardTemplate")
+                local button = reagentIcons[rowID][idx]
+                if not button then
+                    button =  CreateFrame("ItemButton", nil, cell, "ProfessionsCrafterOrderRewardTemplate")
+                    reagentIcons[rowID][idx] = button
+                    button:ClearNormalTexture()
+                    button:ClearPushedTexture()
+                    button:ClearHighlightTexture()
+                    button.noProfessionQualityOverlay = true
+                end
+                
+                button:SetSize(19+padding, 19+padding)
                 button:SetParent(cell)
                 reagentIcons[rowID][idx] = button
-                button:SetScale(0.55)
-                if padding then
-                    button:SetScale(0.9)
-                end
-                button.Count:SetScale(2)
+                
+                button.Count:SetScale(1)
                 if reagentData.quantityRequired > 99 then
-                    button.Count:SetScale(1.5)
+                    button.Count:SetScale(0.8)
                 end
-                button:Show()
+                
                 if idx == 1 then
                     button:SetPoint("TOPLEFT", textField, "TOPLEFT")
                 else
