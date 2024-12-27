@@ -4,17 +4,21 @@ local rewardIconsPrimary, rewardIconsDuplicate = {}, {}
 local reagentIconsPrimary, reagentIconsDuplicate = {}, {}
 local textFieldsPrimary, textFieldsDuplicate = {}, {}
 local errorTexturesPrimary, errorTexturesDuplicate = {}, {}
+local priorityTexturesPrimary, priorityTexturesDuplicate = {}, {}
 
 local function showGeneric(self, orders, browseType, offset, isSorted)
     local rewardIcons = rewardIconsPrimary
     local reagentIcons = reagentIconsPrimary
     local textFields = textFieldsPrimary
     local errorTextures = errorTexturesPrimary
+    local priorityTextures = priorityTexturesPrimary
+    
     if self == ProfessionsFrame.OrdersPageOffline then
         rewardIcons = rewardIconsDuplicate
         reagentIcons = reagentIconsDuplicate
         textFields = textFieldsDuplicate
         errorTextures = errorTexturesDuplicate
+        priorityTextures = priorityTexturesDuplicate
     end
     
     for i, r in pairs(reagentIcons) do
@@ -38,6 +42,10 @@ local function showGeneric(self, orders, browseType, offset, isSorted)
         t:Hide()
     end
     
+    for t in pairs(priorityTextures) do
+        t:Hide()
+    end
+    
     if browseType ~= 1 then return end
     
     local rows = self.BrowseFrame.OrderList.ScrollBox:GetView().frames
@@ -47,6 +55,7 @@ local function showGeneric(self, orders, browseType, offset, isSorted)
         local skillLineAbilityID = row.rowData.option.skillLineAbilityID
         local recipeInfo = C_TradeSkillUI.GetRecipeInfoForSkillLineAbility(skillLineAbilityID)
         local errorTexture = row.ErrorTexture or row:CreateTexture(nil, "OVERLAY")
+        row.ErrorTexture = errorTexture
         errorTexture:SetPoint("TOPLEFT", row, "TOPLEFT")
         errorTexture:SetPoint("BOTTOMRIGHT", row, "BOTTOMRIGHT")
         errorTextures[errorTexture] = true
@@ -58,6 +67,7 @@ local function showGeneric(self, orders, browseType, offset, isSorted)
         end
     end
     
+    -- Public orders already have to provate all materials, so no need to show reagent icons or highlight them
     if self.orderType == Enum.CraftingOrderType.Public then return end
     
     -- resize the commission and reagents columns
@@ -154,6 +164,7 @@ local function showGeneric(self, orders, browseType, offset, isSorted)
                     end
                 end
             end
+            
             for idx, reagentData in ipairs(reagents) do
                 local button = reagentIcons[rowID][idx]
                 if not button then
@@ -188,6 +199,19 @@ local function showGeneric(self, orders, browseType, offset, isSorted)
                         end)
                     end
                 end)
+            end
+        else
+            -- if recipe has all materials provided, highlight it
+            -- don't highlight it as priority if its already highlighted as error
+            if (not row.ErrorTexture) or (not row.ErrorTexture:IsShown()) then
+                local priorityTexture = row.PriorityTexture or row:CreateTexture(nil, "OVERLAY")
+                row.PriorityTexture = priorityTexture
+                priorityTexture:SetPoint("TOPLEFT", row, "TOPLEFT")
+                priorityTexture:SetPoint("BOTTOMRIGHT", row, "BOTTOMRIGHT")
+                priorityTextures[priorityTexture] = true
+                priorityTexture:SetBlendMode("ADD")
+                priorityTexture:SetColorTexture(0, 1, 0, 0.15)
+                priorityTexture:Show()
             end
         end
     end
