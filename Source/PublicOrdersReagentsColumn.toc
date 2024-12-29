@@ -43,5 +43,7 @@ ToolSelectionLocales.lua
 ToolSelectionFrame.xml
 ToolSelectionFrame.lua
 
+MoveCreateButton.lua
+
 options.lua
 init.lua

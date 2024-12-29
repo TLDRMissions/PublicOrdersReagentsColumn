@@ -15,6 +15,7 @@ function addon:setupOptions()
         global = {
             toolFlyout = true,
             increasedPadding = 0,
+            moveCreateButton = false,
         },
     }
         
@@ -49,6 +50,14 @@ function addon:setupOptions()
                 get = function()
                     return addon.db.global.increasedPadding
                 end,
+                width = "full",
+            },
+            moveCreateButton = {
+                type = "toggle",
+                name = "Enable Move Create Button Module",
+                desc = "When filling Crafting Orders, moves the Create button over to the Start Order button",
+                set = function(info, v) addon.db.global.moveCreateButton = v end,
+                get = function() return addon.db.global.moveCreateButton end,
                 width = "full",
             },
         },
