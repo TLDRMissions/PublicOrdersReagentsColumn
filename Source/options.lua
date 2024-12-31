@@ -54,8 +54,8 @@ function addon:setupOptions()
             },
             moveCreateButton = {
                 type = "toggle",
-                name = "Enable Move Create Button Module",
-                desc = "When filling Crafting Orders, moves the Create button over to the Start Order button",
+                name = "Enable Move Crafting Order Buttons Module",
+                desc = "When filling Crafting Orders, moves various buttons around to be consistently in the same place, such as Create Order and Start Order",
                 set = function(info, v) addon.db.global.moveCreateButton = v end,
                 get = function() return addon.db.global.moveCreateButton end,
                 width = "full",
