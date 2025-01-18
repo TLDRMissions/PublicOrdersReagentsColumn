@@ -44,6 +44,8 @@ ToolSelectionFrame.xml
 ToolSelectionFrame.lua
 
 MoveCreateButton.lua
+SkillUpIcon.lua
+FirstCraftIcon.lua
 
 options.lua
 init.lua
