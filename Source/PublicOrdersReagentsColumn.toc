@@ -1,4 +1,4 @@
-## Interface: 110007
+## Interface: 110100
 ## Title: No Mats; No Make
 ## Version: @project-version@
 ## Notes: NPC Orders - shows the reward icons without needing to mouse over
@@ -9,6 +9,18 @@
 ## LoadWith: Blizzard_Professions
 ## SavedVariablesPerCharacter: PublicOrdersReagentsColumnToolSelectionDB
 ## SavedVariables: PublicOrdersReagentsColumnADB
+
+## Category-enUS: Professions
+## Category-deDE: Berufe
+## Category-esES: Profesiones
+## Category-esMX: Profesiones
+## Category-frFR: Métiers
+## Category-itIT: Professioni
+## Category-koKR: 전문 기술
+## Category-ptBR: Profissões
+## Category-ruRU: Профессии
+## Category-zhCN: 专业
+## Category-zhTW: 專業技能
 
 libs\LibStub\LibStub.lua
 libs\CallbackHandler-1.0\CallbackHandler-1.0.xml
