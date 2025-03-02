@@ -60,7 +60,7 @@ local function escapeItemLink(itemLink)
     -- the :73: is "level the character was when they saved this item"
     -- lets ignore that as the character can level up
     if not itemLink then return end
-    return itemLink:gsub("(item:%d*:%d*:%d*:%d*:%d*:%d*:%d*:%d*)(:%d*:)", "%1::")
+    return itemLink:gsub("(item:%d*:%d*:%d*:%d*:%d*:%d*:%d*:%d*)(:%d*:%d*:)", "%1::")
 end
 
 -- first return param: 1 if equipped, 2 if in bags
