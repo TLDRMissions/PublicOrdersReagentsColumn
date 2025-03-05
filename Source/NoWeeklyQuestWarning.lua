@@ -1,3 +1,6 @@
+local addonName, addon = ...
+local L = LibStub("AceLocale-3.0"):GetLocale(addonName)
+
 -- datamine from https://www.wowhead.com/search?q=services+requested
 -- 1 = Blacksmithing, 2 = Leatherworking, 3 = Alchemy, 7 = Tailoring, 8 = Engineering, 12 = Jewelcrafting, 13 = Inscription
 local db = {
@@ -12,7 +15,7 @@ local db = {
 local warningFrame = ProfessionsFrame.NoWeeklyQuestWarning
 warningFrame:SetParent(ProfessionsFrame.OrdersPage.BrowseFrame)
 warningFrame:SetPoint("TOP", ProfessionsFrame.OrdersPage, "TOP", 0, -31)
-warningFrame.Text:SetText("Weekly Crafting Orders quest missing!")
+warningFrame.Text:SetText(L["NO_WEEKLY_QUEST_WARNING_TEXT"])
 
 local function checkVisible()
     warningFrame:Hide()

@@ -1,5 +1,5 @@
 local addonName, addon = ...
-
+local L = LibStub("AceLocale-3.0"):GetLocale(addonName)
 local addonTitle = select(2, C_AddOns.GetAddOnInfo(addonName))
 
 function addon.getToolFlyoutEnabled()
@@ -26,23 +26,23 @@ function addon:setupOptions()
         args = {
             showCompleted = {
                 type = "toggle",
-                name = "Enable Tool Flyout Module (This Character)",
+                name = L["ENABLE_MODULE_CHARACTER"]:format(L["TOOL_FLYOUT_MODULE_NAME"]),
                 set = function(info, v) addon.db.profile.toolFlyout = v end,
                 get = function() return addon.db.profile.toolFlyout end,
                 width = "full",
             },
             accountWide = {
                 type = "toggle",
-                name = "Enable Tool Flyout Module (Account Wide)",
-                desc = "If unchecked, overrides all character-specific settings",
+                name = L["ENABLE_MODULE_ACCOUNT"]:format(L["TOOL_FLYOUT_MODULE_NAME"]),
+                desc = L["TOOL_FLYOUT_MODULE_DESC"],
                 set = function(info, v) addon.db.global.toolFlyout = v end,
                 get = function() return addon.db.global.toolFlyout end,
                 width = "full",
             },
             increasedPadding = {
                 type = "range",
-                name = "Enable Increased Padding Module (Account Wide)",
-                desc = "Makes crafting order rows extra-wide",
+                name = L["ENABLE_MODULE_ACCOUNT"]:format(L["INCREASED_PADDING_MODULE_NAME"]),
+                desc = L["INCREASED_PADDING_MODULE_DESC"],
                 min = 0,
                 max = 20,
                 step = 1,
@@ -54,8 +54,8 @@ function addon:setupOptions()
             },
             moveCreateButton = {
                 type = "toggle",
-                name = "Enable Move Crafting Order Buttons Module",
-                desc = "When filling Crafting Orders, moves various buttons around to be consistently in the same place, such as Create Order and Start Order",
+                name = L["MOVE_CRAFTING_ORDERS_MODULE_NAME"],
+                desc = L["MOVE_CRAFTING_ORDERS_MODULE_DESC"],
                 set = function(info, v) addon.db.global.moveCreateButton = v end,
                 get = function() return addon.db.global.moveCreateButton end,
                 width = "full",

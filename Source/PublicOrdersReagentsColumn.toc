@@ -36,6 +36,9 @@ libs\AceConsole-3.0\AceConsole-3.0.xml
 libs\AceGUI-3.0\AceGUI-3.0.xml
 libs\AceConfig-3.0\AceConfig-3.0.xml
 
+Locales\enus.lua
+Locales\zhCN.lua
+
 ## Icons on crafting orders module
 PublicOrdersReagentsColumn.lua
 
@@ -51,7 +54,6 @@ NoWeeklyQuestWarning.lua
 ## Tool flyout automation module
 ToolFlyoutButton.xml
 ToolFlyoutButton.lua
-ToolSelectionLocales.lua
 ToolSelectionFrame.xml
 ToolSelectionFrame.lua
 

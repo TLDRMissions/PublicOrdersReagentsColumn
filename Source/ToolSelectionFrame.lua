@@ -1,7 +1,7 @@
 local addonName, addon = ...
 
 local frame = PublicOrdersReagentsColumnToolSelectionFrame
-local L = addon.ToolSelectionLocales
+local L = LibStub("AceLocale-3.0"):GetLocale(addonName)
 
 local db
 EventUtil.ContinueOnAddOnLoaded(addonName, function()
