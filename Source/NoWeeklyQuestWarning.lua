@@ -26,9 +26,8 @@ local function checkVisible()
         questID = db.DF[professionID]
     elseif GetExpansionLevel() == 10 then
         questID = db.TWW[professionID]
-    else
-        return
     end
+    if not questID then return end
     if C_QuestLog.IsOnQuest(questID) or C_QuestLog.IsQuestFlaggedCompleted(questID) then return end
     warningFrame:Show()
 
