@@ -30,7 +30,6 @@ local function checkVisible()
     if not questID then return end
     if C_QuestLog.IsOnQuest(questID) or C_QuestLog.IsQuestFlaggedCompleted(questID) then return end
     warningFrame:Show()
-
 end
 
 ProfessionsFrame.OrdersPage:HookScript("OnShow", checkVisible)
