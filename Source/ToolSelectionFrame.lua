@@ -86,7 +86,7 @@ end
 for _, statButton in pairs(frame.statButtons) do
     statButton:HookScript("OnClick", function(self, button)
         if ( IsModifiedClick() ) then
-    		HandleModifiedItemClick(getProfessionID()[self.stat])
+    		HandleModifiedItemClick(getProfessionDB()[self.stat])
     	else
     		handleButtonClick(self.stat)
             self:Hide()
