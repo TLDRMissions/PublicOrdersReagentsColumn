@@ -10,10 +10,10 @@ local function createFirstCraftButton(cell)
     return button
 end
 
-function addon.firstCraftIconHandler(self, orders, browseType, offset, isSorted)
+function addon.firstCraftIconHandler(self)
     local rows = self.BrowseFrame.OrderList.ScrollBox:GetView().frames
     
-    for rowID, row in ipairs(rows) do
+    for _, row in ipairs(rows) do
         local skillLineAbilityID = row.rowData.option.skillLineAbilityID
         local recipeInfo = C_TradeSkillUI.GetRecipeInfoForSkillLineAbility(skillLineAbilityID)
         

@@ -115,7 +115,7 @@ function PublicOrdersReagentsColumnProfessionsCraftingOrderPageMixin:ShowOrders(
 	self:ShowGeneric(addon.cache[getProfessionID()][self.orderType], OrderBrowseType.Flat, offset, isSorted);
 end
 
-hooksecurefunc(ProfessionsFrame.OrdersPage, "ShowOrders", function(self, offset, isSorted)
+hooksecurefunc(ProfessionsFrame.OrdersPage, "ShowOrders", function(self)
     if self.orderType == Enum.CraftingOrderType.Public then return end
     if not addon.cache then addon.cache = {} end
     local professionID = getProfessionID()

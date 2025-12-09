@@ -6,7 +6,7 @@ local textFieldsPrimary, textFieldsDuplicate = {}, {}
 local errorTexturesPrimary, errorTexturesDuplicate = {}, {}
 local priorityTexturesPrimary, priorityTexturesDuplicate = {}, {}
 
-local function showGeneric(self, orders, browseType, offset, isSorted)
+local function showGeneric(self, _, browseType)
     local rewardIcons = rewardIconsPrimary
     local reagentIcons = reagentIconsPrimary
     local textFields = textFieldsPrimary
@@ -21,13 +21,13 @@ local function showGeneric(self, orders, browseType, offset, isSorted)
         priorityTextures = priorityTexturesDuplicate
     end
     
-    for i, r in pairs(reagentIcons) do
-        for j, s in pairs(r) do
+    for _, r in pairs(reagentIcons) do
+        for _, s in pairs(r) do
             s:Hide()
         end
     end
-    for i, r in pairs(rewardIcons) do
-        for j, s in pairs(r) do
+    for _, r in pairs(rewardIcons) do
+        for _, s in pairs(r) do
             s:Hide()
         end
     end
@@ -50,7 +50,7 @@ local function showGeneric(self, orders, browseType, offset, isSorted)
     
     local rows = self.BrowseFrame.OrderList.ScrollBox:GetView().frames
     
-    for rowID, row in ipairs(rows) do
+    for _, row in ipairs(rows) do
         -- highlight red rows with unlearned recipes
         local skillLineAbilityID = row.rowData.option.skillLineAbilityID
         local recipeInfo = C_TradeSkillUI.GetRecipeInfoForSkillLineAbility(skillLineAbilityID)
@@ -98,7 +98,6 @@ local function showGeneric(self, orders, browseType, offset, isSorted)
         if not cell.RewardIcon then return end
         local rowData = cell.rowData.option.npcOrderRewards
         for idx, reward in ipairs(rowData) do
-            local quantity = reward.count
             local itemLink = reward.itemLink
             
             local button = rewardIcons[rowID][idx] 
@@ -221,7 +220,7 @@ EventUtil.ContinueOnAddOnLoaded("Blizzard_Professions", function()
     hooksecurefunc(ProfessionsFrame.OrdersPage, "ShowGeneric", showGeneric)
     RunNextFrame(function() hooksecurefunc(ProfessionsFrame.OrdersPageOffline, "ShowGeneric", showGeneric) end)
     
-    hooksecurefunc(ProfessionsCrafterTableCellCommissionMixin, "Populate", function(self, rowData, dataIndex)
+    hooksecurefunc(ProfessionsCrafterTableCellCommissionMixin, "Populate", function(self)
         if ProfessionsFrame.OrdersPage.browseType ~= 1 then return end
         local goldButton = self.TipMoneyDisplayFrame.GoldDisplay
         local silverButton = self.TipMoneyDisplayFrame.SilverDisplay
@@ -237,7 +236,7 @@ end)
 
 PublicOrdersReagentsColumnProfessionsCrafterTableCellExpirationMixin = CreateFromMixins(TableBuilderCellMixin);
 
-function PublicOrdersReagentsColumnProfessionsCrafterTableCellExpirationMixin:Populate(rowData, dataIndex)
+function PublicOrdersReagentsColumnProfessionsCrafterTableCellExpirationMixin:Populate(rowData)
 	local order = rowData.option;
 	local remainingTime = Professions.GetCraftingOrderRemainingTime(order.expirationTime);
 	local seconds = remainingTime >= 60 and remainingTime or 60; -- Never show < 1min

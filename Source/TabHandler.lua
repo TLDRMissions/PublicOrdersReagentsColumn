@@ -75,7 +75,7 @@ EventUtil.ContinueOnAddOnLoaded("Blizzard_Professions", function() RunNextFrame(
         duplicateTab:SetTabSelected(true)
         duplicateFrame:Show()
         
-        for tabID, tab in ipairs(ProfessionsFrame.TabSystem.tabs) do
+        for _, tab in ipairs(ProfessionsFrame.TabSystem.tabs) do
             tab:SetTabSelected(false)
         end
         ProfessionsFrame:SetWidth(ProfessionsFrame.OrdersPage:GetDesiredPageWidth())

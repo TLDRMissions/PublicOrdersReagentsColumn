@@ -7,7 +7,7 @@ flyout:SetFrameStrata("HIGH")
 flyout:SetPoint("TOPLEFT", ProfessionsFrame.CraftingPage.Prof1ToolSlot, "BOTTOMLEFT")
 flyout:SetPoint("TOPRIGHT", ProfessionsFrame.CraftingPage.Prof1ToolSlot, "BOTTOMRIGHT")
 
-flyout:HookScript("OnClick", function(self, button, isUserInput)
+flyout:HookScript("OnClick", function(self)
     PublicOrdersReagentsColumnToolSelectionFrame:SetShown(self:GetChecked())
 end)
 

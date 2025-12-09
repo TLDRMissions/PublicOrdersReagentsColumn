@@ -15,13 +15,18 @@ local function createSkillUpButton(cell)
     button.Text:SetSize(0, 13)
     button.Text:SetPoint("RIGHT", button.Icon, "LEFT", 0, 1)
     cell.SkillUps = button
+    button:SetScript("OnEnter", function()
+        GameTooltip:SetOwner(button, "ANCHOR_BOTTOMLEFT")
+        GameTooltip:AddLine(button.tooltipSkillUpString)
+        GameTooltip:Show()
+    end)
     return button
 end
 
-function addon.skillUpIconHandler(self, orders, browseType, offset, isSorted)
+function addon.skillUpIconHandler(self)
     local rows = self.BrowseFrame.OrderList.ScrollBox:GetView().frames
     
-    for rowID, row in ipairs(rows) do
+    for _, row in ipairs(rows) do
         local skillLineAbilityID = row.rowData.option.skillLineAbilityID
         local recipeInfo = C_TradeSkillUI.GetRecipeInfoForSkillLineAbility(skillLineAbilityID)
         
@@ -38,16 +43,15 @@ function addon.skillUpIconHandler(self, orders, browseType, offset, isSorted)
     		local yOfs = 0;
 
     		local isDifficultyOptimal = recipeInfo.relativeDifficulty == Enum.TradeskillRelativeDifficulty.Optimal;
-    		local tooltipSkillUpString = nil;
     		if recipeInfo.relativeDifficulty == Enum.TradeskillRelativeDifficulty.Easy then
     			skillUpAtlas = "Professions-Icon-Skill-Low";
-    			tooltipSkillUpString = PROFESSIONS_SKILL_UP_EASY;
+    			skillUpButton.tooltipSkillUpString = PROFESSIONS_SKILL_UP_EASY;
     		elseif recipeInfo.relativeDifficulty == Enum.TradeskillRelativeDifficulty.Medium then
     			skillUpAtlas = "Professions-Icon-Skill-Medium";
-    			tooltipSkillUpString = PROFESSIONS_SKILL_UP_MEDIUM;
+    			skillUpButton.tooltipSkillUpString = PROFESSIONS_SKILL_UP_MEDIUM;
     		elseif isDifficultyOptimal then
     			skillUpAtlas = "Professions-Icon-Skill-High";
-    			tooltipSkillUpString = PROFESSIONS_SKILL_UP_OPTIMAL;
+    			skillUpButton.tooltipSkillUpString = string.format(PROFESSIONS_SKILL_UP_OPTIMAL, recipeInfo.numSkillUps)
     			yOfs = 1;
     		end
             

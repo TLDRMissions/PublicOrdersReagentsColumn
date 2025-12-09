@@ -27,7 +27,7 @@ function addon:setupOptions()
             showCompleted = {
                 type = "toggle",
                 name = L["ENABLE_MODULE_CHARACTER"]:format(L["TOOL_FLYOUT_MODULE_NAME"]),
-                set = function(info, v) addon.db.profile.toolFlyout = v end,
+                set = function(_, v) addon.db.profile.toolFlyout = v end,
                 get = function() return addon.db.profile.toolFlyout end,
                 width = "full",
             },
@@ -35,7 +35,7 @@ function addon:setupOptions()
                 type = "toggle",
                 name = L["ENABLE_MODULE_ACCOUNT"]:format(L["TOOL_FLYOUT_MODULE_NAME"]),
                 desc = L["TOOL_FLYOUT_MODULE_DESC"],
-                set = function(info, v) addon.db.global.toolFlyout = v end,
+                set = function(_, v) addon.db.global.toolFlyout = v end,
                 get = function() return addon.db.global.toolFlyout end,
                 width = "full",
             },
@@ -46,7 +46,7 @@ function addon:setupOptions()
                 min = 0,
                 max = 20,
                 step = 1,
-                set = function(info, v) addon.db.global.increasedPadding = v end,
+                set = function(_, v) addon.db.global.increasedPadding = v end,
                 get = function()
                     return addon.db.global.increasedPadding
                 end,
@@ -56,7 +56,7 @@ function addon:setupOptions()
                 type = "toggle",
                 name = L["MOVE_CRAFTING_ORDERS_MODULE_NAME"],
                 desc = L["MOVE_CRAFTING_ORDERS_MODULE_DESC"],
-                set = function(info, v) addon.db.global.moveCreateButton = v end,
+                set = function(_, v) addon.db.global.moveCreateButton = v end,
                 get = function() return addon.db.global.moveCreateButton end,
                 width = "full",
             },

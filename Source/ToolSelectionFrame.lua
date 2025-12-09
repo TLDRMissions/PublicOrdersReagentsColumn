@@ -32,7 +32,7 @@ local function getActiveToolSlotID()
 end
 
 local function handleButtonClick(stat)
-    local infoType, itemID, itemLink = GetCursorInfo()
+    local infoType, _, itemLink = GetCursorInfo()
     
     if infoType == nil then
         getProfessionDB()[stat] = nil
@@ -84,7 +84,7 @@ local function getItemLocation(itemLink)
 end
 
 for _, statButton in pairs(frame.statButtons) do
-    statButton:HookScript("OnClick", function(self, button)
+    statButton:HookScript("OnClick", function(self)
         if ( IsModifiedClick() ) then
     		HandleModifiedItemClick(getProfessionDB()[self.stat])
     	else
@@ -237,7 +237,7 @@ hooksecurefunc(ProfessionsFrame.CraftingPage.SchematicForm, "UpdateDetailsStats"
 end)
 
 -- This is the work orders tab
-hooksecurefunc(ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm, "UpdateDetailsStats", function(self, operationInfo)
+hooksecurefunc(ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm, "UpdateDetailsStats", function(self)
     if not addon.getToolFlyoutEnabled() then return end
     if db.disabled then return end
     if not ProfessionsFrame.professionInfo.profession then return end
@@ -252,7 +252,7 @@ hooksecurefunc(ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm,
 end)
 
 PublicOrdersReagentsColumnToolSelectionFrame.DisableButton.Text:SetText(L["DISABLE_BUTTON_TEXT"])
-PublicOrdersReagentsColumnToolSelectionFrame.DisableButton:HookScript("OnClick", function(self, button, ...)
+PublicOrdersReagentsColumnToolSelectionFrame.DisableButton:HookScript("OnClick", function(self)
     db.disabled = self:GetChecked()
 end)
 PublicOrdersReagentsColumnToolSelectionFrame.DisableButton:HookScript("OnShow", function(self)
