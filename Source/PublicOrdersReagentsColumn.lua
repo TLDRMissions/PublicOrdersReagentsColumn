@@ -151,7 +151,7 @@ local function showGeneric(self, _, browseType)
                     local found = false
                     for _, reagentChoice in pairs(reagentData.reagents) do
                         for _, providedReagentData in ipairs(rowData.reagents) do
-                            if providedReagentData.reagent.itemID == reagentChoice.itemID then
+                            if providedReagentData.reagentInfo.reagent.itemID == reagentChoice.itemID then
                                 found = true
                                 break
                             end
