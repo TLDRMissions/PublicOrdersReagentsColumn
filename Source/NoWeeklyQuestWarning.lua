@@ -1,4 +1,4 @@
-local addonName = ...
+local addonName, addon = ...
 local L = LibStub("AceLocale-3.0"):GetLocale(addonName)
 
 -- datamine from https://www.wowhead.com/search?q=services+requested
@@ -34,6 +34,7 @@ end
 
 ProfessionsFrame.OrdersPage:HookScript("OnShow", checkVisible)
 ProfessionsFrame:HookScript("OnShow", function()
+    if addon.db.global.suppressNoWeeklyQuestWarning then return end
     if ProfessionsFrame.tabSystem.selectedTabID == ProfessionsFrame.craftingOrdersTabID then
         RunNextFrame(checkVisible)
     end

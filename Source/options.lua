@@ -16,6 +16,7 @@ function addon:setupOptions()
             toolFlyout = true,
             increasedPadding = 0,
             moveCreateButton = false,
+            suppressNoWeeklyQuestWarning = false,
         },
     }
         
@@ -58,6 +59,14 @@ function addon:setupOptions()
                 desc = L["MOVE_CRAFTING_ORDERS_MODULE_DESC"],
                 set = function(_, v) addon.db.global.moveCreateButton = v end,
                 get = function() return addon.db.global.moveCreateButton end,
+                width = "full",
+            },
+            suppressNoWeeklyQuestWarning = {
+                type = "toggle",
+                name = L["SUPPRESS_WEEKLY_QUEST_WARNING_NAME"],
+                desc = L["SUPPRESS_WEEKLY_QUEST_WARNING_DESC"],
+                set = function(_, v) addon.db.global.suppressNoWeeklyQuestWarning = v end,
+                get = function() return addon.db.global.suppressNoWeeklyQuestWarning end,
                 width = "full",
             },
         },

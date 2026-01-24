@@ -11,6 +11,8 @@ L["TOOL_FLYOUT_MODULE_DESC"] = "If unchecked, overrides all character-specific s
 L["INCREASED_PADDING_MODULE_DESC"] = "Makes crafting order rows extra-wide"
 L["MOVE_CRAFTING_ORDERS_MODULE_NAME"] = "Move Crafting Orders"
 L["MOVE_CRAFTING_ORDERS_MODULE_DESC"] = "When filling Crafting Orders, moves various buttons around to be consistently in the same place, such as Create Order and Start Order"
+L["SUPPRESS_WEEKLY_QUEST_WARNING_NAME"] = "Suppress the No Weekly Quest warning"
+L["SUPPRESS_WEEKLY_QUEST_WARNING_DESC"] = ""
 
 L["NO_WEEKLY_QUEST_WARNING_TEXT"] = "Weekly Crafting Orders quest missing!"
 L["OFFLINE_WARNING_DISPLAY_TEXT"] = "Last known crafting orders"
