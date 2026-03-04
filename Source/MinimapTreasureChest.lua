@@ -37,6 +37,8 @@ f:SetScript("OnEvent", function()
     if not addon.db.global.enableMinimapRecolouredNodes then return end
     initDBIfEmpty()
 
+    libHBDPins:RemoveAllMinimapIcons(iconDB)
+    
     local mapID = C_Map.GetBestMapForUnit("player")
     
     for vignetteID, vignette in pairs(C_VignetteInfo.GetVignettes()) do
