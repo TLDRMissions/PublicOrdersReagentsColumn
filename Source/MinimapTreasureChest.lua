@@ -16,6 +16,7 @@ local DEFAULTS = {
 
 local initDBIfEmpty
 initDBIfEmpty = function()
+    -- luacheck: ignore
     for _ in pairs(addon.db.global.MinimapRecolouredNodes) do
         return
     end
