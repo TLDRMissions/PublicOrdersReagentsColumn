@@ -5,6 +5,46 @@ local reagentIconsPrimary, reagentIconsDuplicate = {}, {}
 local textFieldsPrimary, textFieldsDuplicate = {}, {}
 local errorTexturesPrimary, errorTexturesDuplicate = {}, {}
 local priorityTexturesPrimary, priorityTexturesDuplicate = {}, {}
+local buttonRegistered = {}
+
+function addon.getOneTimeUniqueID(row)
+    local data = row.rowData.option
+    return tostring(data.orderID)..data.expirationTime
+end
+
+function addon.markRowOneTimeHidden(row)
+    local uid = addon.getOneTimeUniqueID(row)
+    addon.db.profile.suppressedListingOneTime[uid] = true
+end
+
+function addon.unmarkRowOneTimeHidden(row)
+    local uid = addon.getOneTimeUniqueID(row)
+    addon.db.profile.suppressedListingOneTime[uid] = nil
+end
+
+function addon.getPermanentUniqueID(row)
+    local data = row.rowData.option
+    local itemID = data.itemID
+    local reagents = ""
+    for _, reagentData in ipairs(data.reagents) do
+        reagents = reagents..reagentData.reagentInfo.reagent.itemID
+    end
+    return itemID..reagents
+end
+
+function addon.markRowPermanentlyHidden(row)
+    local uid = addon.getPermanentUniqueID(row)
+    addon.db.profile.suppressedListingPermanent[uid] = true
+end
+
+function addon.unmarkRowPermanentlyHidden(row)
+    local uid = addon.getPermanentUniqueID(row)
+    addon.db.profile.suppressedListingPermanent[uid] = nil
+end
+
+function addon.isRowMarkedSuppressed(row) 
+    return addon.db.profile.suppressedListingOneTime[addon.getOneTimeUniqueID(row)] or addon.db.profile.suppressedListingPermanent[addon.getPermanentUniqueID(row)]
+end
 
 local function showGeneric(self, _, browseType)
     local rewardIcons = rewardIconsPrimary
@@ -67,7 +107,64 @@ local function showGeneric(self, _, browseType)
         end
     end
     
-    -- Public orders already have to provate all materials, so no need to show reagent icons or highlight them
+    -- Listen for right clicks on the name cell
+    for _, row in ipairs(rows) do
+        if not buttonRegistered[row] then
+            row:HookScript("OnClick", function(self, button)
+                if button ~= "RightButton" then return end
+                
+        		
+                -- Customized from Blizzard_ProfessionsCrafterOrderPage.lua, ProfessionsCrafterOrderListElementMixin:OnClick(button)
+                MenuUtil.CreateContextMenu(self, function(owner, rootDescription)
+        			rootDescription:SetTag("MENU_PROFESSIONS_CRAFTER_ORDER");
+
+        			local recipeID = self.option.spellID;
+        			local currentlyFavorite = C_TradeSkillUI.IsRecipeFavorite(recipeID);
+        			local text = currentlyFavorite and BATTLE_PET_UNFAVORITE or BATTLE_PET_FAVORITE;
+        			rootDescription:CreateButton(text, function()
+        				C_TradeSkillUI.SetRecipeFavorite(recipeID, not currentlyFavorite);
+        			end);
+
+        			if self.orderType == Enum.CraftingOrderType.Personal then
+        				rootDescription:CreateButton(PROFESSIONS_DECLINE_ORDER, function()
+        					local emptyRejectionNote = "";
+        					C_CraftingOrders.RejectOrder(self.option.orderID, emptyRejectionNote, self.professionInfo.profession);
+        				end);
+        			end
+                    
+                    if addon.isRowMarkedSuppressed(row) then
+                        rootDescription:CreateButton("Unfade listings like this", function()
+                            addon.unmarkRowOneTimeHidden(row)
+                            addon.unmarkRowPermanentlyHidden(row)
+                            row:SetAlpha(1)
+                        end)
+                    else
+                        rootDescription:CreateButton("Fade this listing (just this time)", function()
+                            addon.markRowOneTimeHidden(row)
+                            row:SetAlpha(0.2)
+                        end)
+                        
+                        rootDescription:CreateButton("Always fade listings like this (item + reagent combination)", function()
+                            addon.markRowPermanentlyHidden(row)
+                            row:SetAlpha(0.2)
+                        end)
+                    end
+        		end);
+            end)
+            buttonRegistered[row] = true
+        end
+    end
+    
+    for _, row in ipairs(rows) do
+        -- fade out rows we have marked hidden
+        if addon.isRowMarkedSuppressed(row) then
+            row:SetAlpha(0.2)
+        elseif math.floor(row:GetAlpha()*10) == 2 then
+            row:SetAlpha(1)
+        end
+    end
+    
+    -- Public orders already have to provide all materials, so no need to show reagent icons or highlight them
     if self.orderType == Enum.CraftingOrderType.Public then return end
     
     -- resize the commission and reagents columns

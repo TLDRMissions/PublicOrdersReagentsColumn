@@ -18,6 +18,10 @@ function addon:setupOptions()
             moveCreateButton = false,
             suppressNoWeeklyQuestWarning = false,
         },
+        profile = {
+            suppressedListingOneTime = {},
+            suppressedListingPermanent = {},
+        },
     }
         
     addon.db = LibStub("AceDB-3.0"):New("PublicOrdersReagentsColumnADB", defaults)
