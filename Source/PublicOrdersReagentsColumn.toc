@@ -35,27 +35,31 @@ libs\AceLocale-3.0\AceLocale-3.0.xml
 libs\AceConsole-3.0\AceConsole-3.0.xml
 libs\AceGUI-3.0\AceGUI-3.0.xml
 libs\AceConfig-3.0\AceConfig-3.0.xml
+libs\HereBeDragons\HereBeDragons-Pins-2.0.lua
 
 Locales\enus.lua
 Locales\zhCN.lua
 
-## Icons on crafting orders module
+# Icons on crafting orders module
 PublicOrdersReagentsColumn.lua
 
-## 'Offline' crafting orders module
+# 'Offline' crafting orders module
 TabHandler.lua
 DuplicateOrdersPage.lua
 DuplicateOrdersPage.xml
 
-## No weekly quest warning module
+# No weekly quest warning module
 NoWeeklyQuestWarning.xml
 NoWeeklyQuestWarning.lua
 
-## Tool flyout automation module
+# Tool flyout automation module
 ToolFlyoutButton.xml
 ToolFlyoutButton.lua
 ToolSelectionFrame.xml
 ToolSelectionFrame.lua
+
+# Recolour minimap treasure chest module
+MinimapTreasureChest.lua
 
 MoveCreateButton.lua
 SkillUpIcon.lua
