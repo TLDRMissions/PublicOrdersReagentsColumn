@@ -11,16 +11,14 @@ function addon:setupOptions()
     local defaults = {
         profile = {
             toolFlyout = true,
+            suppressedListingOneTime = {},
+            suppressedListingPermanent = {},
         },
         global = {
             toolFlyout = true,
             increasedPadding = 0,
             moveCreateButton = false,
             suppressNoWeeklyQuestWarning = false,
-        },
-        profile = {
-            suppressedListingOneTime = {},
-            suppressedListingPermanent = {},
         },
     }
         
