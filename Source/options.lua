@@ -7,6 +7,8 @@ function addon.getToolFlyoutEnabled()
     return addon.db.profile.toolFlyout
 end
 
+local inputEditText = ""
+
 function addon:setupOptions()
     local defaults = {
         profile = {
@@ -19,6 +21,8 @@ function addon:setupOptions()
             increasedPadding = 0,
             moveCreateButton = false,
             suppressNoWeeklyQuestWarning = false,
+            MinimapRecolouredNodes = {},
+            enableMinimapRecolouredNodes = false,
         },
     }
         
@@ -70,6 +74,68 @@ function addon:setupOptions()
                 set = function(_, v) addon.db.global.suppressNoWeeklyQuestWarning = v end,
                 get = function() return addon.db.global.suppressNoWeeklyQuestWarning end,
                 width = "full",
+            },
+            enableMinimapRecolouredNodes = {
+                name = "Enable Recolour Minimap Treasures Module",
+                desc = "This Module will recolour 'Junk' Treasures on your Minimap to red",
+                set = function(_, v) addon.db.global.enableMinimapRecolouredNodes = v end,
+                get = function() return addon.db.global.enableMinimapRecolouredNodes end,
+                width = "full",
+                type = "toggle",
+                order = 1,
+            },
+            dropdown = {
+                name = "Treasure Name",
+                type = "select",
+                values = function()
+                    local output = {}
+                    for name in pairs(addon.db.global.MinimapRecolouredNodes) do
+                        output[name] = name
+                    end
+                    return output
+                end,
+                set = function(_, v)
+                    inputEditText = v
+                end,
+                get = nop,
+                order = 2,
+            },
+            input = {
+                type = "input",
+                name = "Treasure Name",
+                get = function()
+                    return inputEditText
+                end,
+                set = function(_, v)
+                    inputEditText = v
+                end,
+                order = 3,
+            },
+            color = {
+                type = "color",
+                order = 4,
+                name = "Shade",
+                get = function()
+                    if addon.db.global.MinimapRecolouredNodes[inputEditText] then
+                        local data = addon.db.global.MinimapRecolouredNodes[inputEditText]
+                        return data.r, data.g, data.b
+                    end
+                    return 1, 0, 0
+                end,
+                set = function(_, r, g, b)
+                    if inputEditText == "" then return end
+                    addon.db.global.MinimapRecolouredNodes[inputEditText] = {
+                        r = r,
+                        g = g,
+                        b = b,
+                    }
+                end,
+            },
+            instructions = {
+                type = "description",
+                order = 5,
+                width = "full",
+                name = "Select a treasure from the dropdown to edit it, or type a treasure name into the edit box to add a new one. Changes are saved on selecting a new color",
             },
         },
     }
