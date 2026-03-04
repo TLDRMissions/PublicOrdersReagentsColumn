@@ -115,7 +115,7 @@ local function showGeneric(self, _, browseType)
                 
         		
                 -- Customized from Blizzard_ProfessionsCrafterOrderPage.lua, ProfessionsCrafterOrderListElementMixin:OnClick(button)
-                MenuUtil.CreateContextMenu(self, function(owner, rootDescription)
+                MenuUtil.CreateContextMenu(self, function(_, rootDescription)
         			rootDescription:SetTag("MENU_PROFESSIONS_CRAFTER_ORDER");
 
         			local recipeID = self.option.spellID;
