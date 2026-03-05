@@ -27,7 +27,18 @@ function addon.getPermanentUniqueID(row)
     local itemID = data.itemID
     local reagents = ""
     for _, reagentData in ipairs(data.reagents) do
-        reagents = reagents..reagentData.reagentInfo.reagent.itemID
+        local reagent = reagentData.reagentInfo.reagent
+        if reagent.itemID then
+            reagents = reagents..reagent.itemID
+        elseif reagent.currencyID then
+            reagents = reagents..reagent.currencyID
+        else
+            -- reagent is something besides a currency or an item?
+            print("NoMatsNoMake: getPermanentUniqueID error, notify author!")
+            for k, v in pairs(reagent) do
+                print(k, v)
+            end
+        end
     end
     return itemID..reagents
 end
