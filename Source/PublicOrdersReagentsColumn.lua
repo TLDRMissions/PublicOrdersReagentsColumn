@@ -117,7 +117,7 @@ local function showGeneric(self, _, browseType)
             errorTexture:Show()
         end
     end
-    
+
     -- Listen for right clicks on the name cell
     for _, row in ipairs(rows) do
         if not buttonRegistered[row] then
@@ -177,13 +177,34 @@ local function showGeneric(self, _, browseType)
     
     -- Public orders already have to provide all materials, so no need to show reagent icons or highlight them
     if self.orderType == Enum.CraftingOrderType.Public then return end
-    
+
     -- resize the commission and reagents columns
     local columns = self.tableBuilder:GetColumns()
-    local commissionColumn, reagentColumn = columns[3], columns[4]
-    commissionColumn.fixedWidth = 100
-    reagentColumn.fixedWidth = 130
-    self.tableBuilder:Arrange()
+    
+    -- This is the old, simple way. Unfortunately, as of 12.0 it spreads taint which eventually reaches GameTooltip and causes secret errors.
+    --local commissionColumn, reagentColumn = columns[3], columns[4]
+    --commissionColumn.fixedWidth = 100
+    --reagentColumn.fixedWidth = 130
+    --self.tableBuilder:Arrange()
+	
+    for columnIndex, column in ipairs(columns) do
+		local header = column.headerFrame
+        if columnIndex == 3 then
+            -- commission column
+            header:SetWidth(100)
+            
+            for _, row in pairs(column.table.rows) do
+                self.tableBuilder:ArrangeHorizontally(row.cells[3], row.cells[2], 100, "TOPLEFT", "TOPRIGHT", "BOTTOMLEFT", "BOTTOMRIGHT", -25)
+            end
+        elseif columnIndex == 4 then
+            -- reagent column
+            header:SetWidth(130)
+            for _, row in pairs(column.table.rows) do
+                self.tableBuilder:ArrangeHorizontally(row.cells[4], row.cells[3], 130, "TOPLEFT", "TOPRIGHT", "BOTTOMLEFT", "BOTTOMRIGHT", 25)
+            end
+        end   
+	end
+    
     
     local padding = addon.db.global.increasedPadding
     for rowID, row in ipairs(rows) do
