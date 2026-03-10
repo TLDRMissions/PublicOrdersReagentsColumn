@@ -10,6 +10,9 @@ local db = {
     TWW = {
         [3] = 84133, [1] = 84127, [7] = 84132, [8] = 84128, [12] = 84130, [2] = 84131, [13] = 84129,
     },
+    NOON = {
+        [1] = 93691, [2] = 93695, [3] = 93690, [7] = 93696, [8] = 93692, [12] = 93694, [13] = 93693,
+    },
 }
 
 local warningFrame = ProfessionsFrame.NoWeeklyQuestWarning
@@ -26,6 +29,8 @@ local function checkVisible()
         questID = db.DF[professionID]
     elseif GetExpansionLevel() == 10 then
         questID = db.TWW[professionID]
+    elseif GetExpansionLevel() == 11 then
+        questID = db.NOON[professionID]
     end
     if not questID then return end
     if C_QuestLog.IsOnQuest(questID) or C_QuestLog.IsQuestFlaggedCompleted(questID) then return end
