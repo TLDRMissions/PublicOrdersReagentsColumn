@@ -22,7 +22,7 @@ function addon.unmarkRowOneTimeHidden(row)
     addon.db.profile.suppressedListingOneTime[uid] = nil
 end
 
-function addon.getPermanentUniqueID(row)
+function addon.getPermanentUniqueID(row, withCommission)
     local data = row.rowData.option
     local itemID = data.itemID
     local reagents = ""
@@ -40,21 +40,43 @@ function addon.getPermanentUniqueID(row)
             end
         end
     end
-    return itemID..reagents
+    local commission = ""
+    if withCommission and data.npcOrderRewards then
+        for _, rewardData in ipairs(data.npcOrderRewards) do
+            if not rewardData.itemLink then
+                zzzz = rewardData
+            end
+            
+            if rewardData.currencyType then
+                commission = commission..rewardData.currencyType
+            elseif rewardData.itemLink then
+                commission = commission..rewardData.itemLink
+            end
+            
+            commission = commission..rewardData.count
+        end
+    end
+    return itemID..reagents..commission
 end
 
-function addon.markRowPermanentlyHidden(row)
-    local uid = addon.getPermanentUniqueID(row)
-    addon.db.profile.suppressedListingPermanent[uid] = true
+function addon.markRowPermanentlyHidden(row, withCommission)
+    local uid = addon.getPermanentUniqueID(row, withCommission)
+    if withCommission then
+        addon.db.profile.suppressedListingPermanentWithCommission[uid] = true
+    else
+        addon.db.profile.suppressedListingPermanent[uid] = true
+    end
 end
 
 function addon.unmarkRowPermanentlyHidden(row)
-    local uid = addon.getPermanentUniqueID(row)
+    local uid = addon.getPermanentUniqueID(row, true)
+    addon.db.profile.suppressedListingPermanentWithCommission[uid] = nil
+    uid = addon.getPermanentUniqueID(row)
     addon.db.profile.suppressedListingPermanent[uid] = nil
 end
 
 function addon.isRowMarkedSuppressed(row) 
-    return addon.db.profile.suppressedListingOneTime[addon.getOneTimeUniqueID(row)] or addon.db.profile.suppressedListingPermanent[addon.getPermanentUniqueID(row)]
+    return addon.db.profile.suppressedListingOneTime[addon.getOneTimeUniqueID(row)] or addon.db.profile.suppressedListingPermanent[addon.getPermanentUniqueID(row)] or addon.db.profile.suppressedListingPermanentWithCommission[addon.getPermanentUniqueID(row, true)]
 end
 
 local function showGeneric(self, _, browseType)
@@ -157,6 +179,11 @@ local function showGeneric(self, _, browseType)
                         
                         rootDescription:CreateButton("Always fade listings like this (item + reagent combination)", function()
                             addon.markRowPermanentlyHidden(row)
+                            row:SetAlpha(0.2)
+                        end)
+                        
+                        rootDescription:CreateButton("Always fade listings like this (item + reagent + commission combination)", function()
+                            addon.markRowPermanentlyHidden(row, true)
                             row:SetAlpha(0.2)
                         end)
                     end

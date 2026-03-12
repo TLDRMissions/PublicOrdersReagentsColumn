@@ -15,6 +15,7 @@ function addon:setupOptions()
             toolFlyout = true,
             suppressedListingOneTime = {},
             suppressedListingPermanent = {},
+            suppressedListingPermanentWithCommission = {},
         },
         global = {
             toolFlyout = true,
