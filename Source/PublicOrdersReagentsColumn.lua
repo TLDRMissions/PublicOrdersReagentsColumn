@@ -119,9 +119,17 @@ local function showGeneric(self, _, browseType)
         t:Hide()
     end
     
-    if browseType ~= 1 then return end
-    
     local rows = self.BrowseFrame.OrderList.ScrollBox:GetView().frames
+
+    if browseType ~= 1 then
+        -- if rows were previously faded out, and we have switched to category view, then fade the rows back in
+        for _, row in ipairs(rows) do
+            if math.floor(row:GetAlpha()*10) == 2 then
+                row:SetAlpha(1)
+            end
+        end
+        return
+    end
     
     for _, row in ipairs(rows) do
         -- highlight red rows with unlearned recipes
