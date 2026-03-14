@@ -72,7 +72,7 @@ function addon.skillUpIconHandler(self)
     				end
     			end
                 
-                cell.Icon:SetPoint("LEFT", cell, "LEFT", 20, 0)
+                cell.Icon:SetPoint("LEFT", cell, "LEFT", 28, 0)
                 skillUpButton:SetParent(cell)
                 skillUpButton:SetPoint("LEFT", cell, "LEFT", 0, 0)
     			skillUpButton:Show();
