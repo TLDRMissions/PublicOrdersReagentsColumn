@@ -43,3 +43,12 @@ ProfessionsFrame.OrdersPage.OrderView:HookScript("OnShow", function(self)
         wasEnabled = false
     end
 end)
+
+hooksecurefunc("StaticPopup_ShowCustomGenericConfirmation", function(data)
+    if issecrettable(data) then return end
+    if issecretvalue(data.text) then return end
+    if data.text ~= CRAFTING_ORDERS_OWN_REAGENTS_CONFIRMATION then return end
+    
+    StaticPopup1:ClearAllPoints()
+    StaticPopup1:SetPoint("BOTTOMLEFT", ProfessionsFrame.OrdersPage.OrderView.CreateButton, "BOTTOMLEFT", -80, -15)
+end)
