@@ -45,6 +45,7 @@ ProfessionsFrame.OrdersPage.OrderView:HookScript("OnShow", function(self)
 end)
 
 hooksecurefunc("StaticPopup_ShowCustomGenericConfirmation", function(data)
+    if not wasEnabled then return end
     if issecrettable(data) then return end
     if issecretvalue(data.text) then return end
     if data.text ~= CRAFTING_ORDERS_OWN_REAGENTS_CONFIRMATION then return end
