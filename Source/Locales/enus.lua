@@ -17,6 +17,12 @@ L["SUPPRESS_WEEKLY_QUEST_WARNING_DESC"] = ""
 L["NO_WEEKLY_QUEST_WARNING_TEXT"] = "Weekly Crafting Orders quest missing!"
 L["OFFLINE_WARNING_DISPLAY_TEXT"] = "Last known crafting orders"
 
+L["ENABLE_RECOLOR_MINIMAP_TREASURES_MODULE"] = "Enable Recolour Minimap Treasures Module"
+L["RECOLOR_MINIMAP_TREASURES_MODULE_DESC"] = "This Module will recolour 'Junk' Treasures on your Minimap to red"
+L["RECOLOR_MINIMAP_TREASURE_NAME"] = "Treasure Name"
+L["RECOLOR_MINIMAP_TREASURE_SHADE"] = "Shade"
+L["RECOLOR_MINIMAP_TREASURE_DESC"] = "Select a treasure from the dropdown to edit it, or type a treasure name into the edit box to add a new one. Changes are saved on selecting a new color"
+
 -- Tool Selection Frame
 L["TOOLTIP_EMPTY_BUTTON"] = "Drag your %s profession tool here to have that tool swapped in when relevant."
 L["TOOLTIP_RESOURCEFULNESS_DETAIL"] = "This tool will be swapped in for Work Orders, and recipes that don't use Multicraft."

@@ -77,8 +77,8 @@ function addon:setupOptions()
                 width = "full",
             },
             enableMinimapRecolouredNodes = {
-                name = "Enable Recolour Minimap Treasures Module",
-                desc = "This Module will recolour 'Junk' Treasures on your Minimap to red",
+                name = L["ENABLE_RECOLOR_MINIMAP_TREASURES_MODULE"],
+                desc = L["RECOLOR_MINIMAP_TREASURES_MODULE_DESC"],
                 set = function(_, v) addon.db.global.enableMinimapRecolouredNodes = v end,
                 get = function() return addon.db.global.enableMinimapRecolouredNodes end,
                 width = "full",
@@ -86,7 +86,7 @@ function addon:setupOptions()
                 order = 1,
             },
             dropdown = {
-                name = "Treasure Name",
+                name = L["RECOLOR_MINIMAP_TREASURE_NAME"],
                 type = "select",
                 values = function()
                     local output = {}
@@ -103,7 +103,7 @@ function addon:setupOptions()
             },
             input = {
                 type = "input",
-                name = "Treasure Name",
+                name = L["RECOLOR_MINIMAP_TREASURE_NAME"],
                 get = function()
                     return inputEditText
                 end,
@@ -115,7 +115,7 @@ function addon:setupOptions()
             color = {
                 type = "color",
                 order = 4,
-                name = "Shade",
+                name = L["RECOLOR_MINIMAP_TREASURE_SHADE"],
                 get = function()
                     if addon.db.global.MinimapRecolouredNodes[inputEditText] then
                         local data = addon.db.global.MinimapRecolouredNodes[inputEditText]
@@ -136,7 +136,7 @@ function addon:setupOptions()
                 type = "description",
                 order = 5,
                 width = "full",
-                name = "Select a treasure from the dropdown to edit it, or type a treasure name into the edit box to add a new one. Changes are saved on selecting a new color",
+                name = L["RECOLOR_MINIMAP_TREASURE_DESC"],
             },
         },
     }
