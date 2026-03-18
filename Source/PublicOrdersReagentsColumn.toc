@@ -2,6 +2,8 @@
 ## Title: No Mats; No Make
 ## Version: @project-version@
 ## Notes: NPC Orders - shows the reward icons without needing to mouse over
+## Notes-zhCN: NPC 订单 - 无需鼠标悬停即可显示奖励图标
+## Notes-zhTW: NPC 訂單 - 無需滑鼠懸停即可顯示獎勵圖示
 ## Author: Teelo
 ## X-Curse-Project-ID: 841061
 ## IconTexture: Interface\Icons\INV_Alchemy_90_Reagent_Blue
@@ -39,7 +41,9 @@ libs\HereBeDragons\HereBeDragons-2.0.lua
 libs\HereBeDragons\HereBeDragons-Pins-2.0.lua
 
 Locales\enus.lua
+Locales\ruRU.lua
 Locales\zhCN.lua
+Locales\zhTW.lua
 
 # Icons on crafting orders module
 PublicOrdersReagentsColumn.lua

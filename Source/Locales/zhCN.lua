@@ -3,17 +3,25 @@ local L = LibStub("AceLocale-3.0"):NewLocale(addonName, "zhCN")
 if not L then return end
 
 -- Options
-L["ENABLE_MODULE_CHARACTER"] = "Enable %s Module (This Character)"
-L["ENABLE_MODULE_ACCOUNT"] = "Enable %s Module (Account Wide)"
-L["TOOL_FLYOUT_MODULE_NAME"] = "Tool Flyout"
-L["INCREASED_PADDING_MODULE_NAME"] = "Increased Padding"
-L["MOVE_CRAFTING_ORDERS_MODULE_NAME"] = "Move Crafting Orders"
+L["ENABLE_MODULE_CHARACTER"] = "启用%s模块（本角色）"
+L["ENABLE_MODULE_ACCOUNT"] = "启用%s模块（账号通用）"
+L["TOOL_FLYOUT_MODULE_NAME"] = "工具弹出按钮"
+L["INCREASED_PADDING_MODULE_NAME"] = "增加行高填充"
 L["TOOL_FLYOUT_MODULE_DESC"] = "如果未选中，则覆盖所有特定于角色的设置"
-L["INCREASED_PADDING_MODULE_DESC"] = "使订单每一行加高"
+L["INCREASED_PADDING_MODULE_DESC"] = "使制作订单的行高增加"
+L["MOVE_CRAFTING_ORDERS_MODULE_NAME"] = "移动订单按钮"
 L["MOVE_CRAFTING_ORDERS_MODULE_DESC"] = "处理订单时，将各种按钮移动到始终位于同一位置，例如创建订单和开始订单"
+L["SUPPRESS_WEEKLY_QUEST_WARNING_NAME"] = "屏蔽“每周专业任务未接”警告"
+L["SUPPRESS_WEEKLY_QUEST_WARNING_DESC"] = ""
 
-L["NO_WEEKLY_QUEST_WARNING_TEXT"] = "每周专业任务没接!"
-L["OFFLINE_WARNING_DISPLAY_TEXT"] = "最近查看的订单"
+L["NO_WEEKLY_QUEST_WARNING_TEXT"] = "每周专业任务没接！"
+L["OFFLINE_WARNING_DISPLAY_TEXT"] = "最后已知的订单"
+
+L["ENABLE_RECOLOR_MINIMAP_TREASURES_MODULE"] = "启用小地图宝藏重新着色模块"
+L["RECOLOR_MINIMAP_TREASURES_MODULE_DESC"] = "此模块将把小地图上的“垃圾”宝藏重新着色为红色"
+L["RECOLOR_MINIMAP_TREASURE_NAME"] = "宝藏名称"
+L["RECOLOR_MINIMAP_TREASURE_SHADE"] = "色调"
+L["RECOLOR_MINIMAP_TREASURE_DESC"] = "从下拉菜单中选择一个宝藏进行编辑，或者在编辑框中输入宝藏名称以添加新的宝藏。选择新的颜色后更改将被保存"
 
 -- Tool Selection Frame
 L["TOOLTIP_EMPTY_BUTTON"] = "将您的%s专业工具拖动到此处，以方便交自动使用该工具"
