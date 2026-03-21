@@ -35,3 +35,11 @@ L["PRIORITY_BUTTON_TOOLTIP"] = "If selected, your assigned Ingenuity tool will b
 L["DISABLE_BUTTON_TEXT"] = "Disable auto-equipping"
 L["PRIORTY_BUTTON_SELECTED_TEXT"] = "Ingenuity over Multicraft"
 L["PRIORTY_BUTTON_DESELECTED_TEXT"] = "Multicraft over Ingenuity"
+
+-- Moxie Icon
+L["MOXIE_ICON_ACCOUNT_NAME"] = "Account-wide: enable moxie icon module"
+L["MOXIE_ICON_ACCOUNT_DESC"] = "Underneath the Concentration Icon, adds another icon that shows how much Moxie your profession has"
+L["MOXIE_ICON_CHARACTER_NAME"] = "Character-specific: enable moxie icon module"
+L["MOXIE_ICON_CHARACTER_DESC"] = "Same as the account-wide option, except overrides that choice for this character"
+L["MOXIE_ICON_OPTION_SHOW_AND_FLASH"] = "Show and flash while 600 or more"
+L["MOXIE_ICON_OPTION_USE_INHERITED"] = "Use selected account-wide option"

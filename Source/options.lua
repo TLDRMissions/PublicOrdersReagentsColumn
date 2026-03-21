@@ -16,6 +16,7 @@ function addon:setupOptions()
             suppressedListingOneTime = {},
             suppressedListingPermanent = {},
             suppressedListingPermanentWithCommission = {},
+            moxieIconTypeCharacterOverride = nil,
         },
         global = {
             toolFlyout = true,
@@ -24,6 +25,7 @@ function addon:setupOptions()
             suppressNoWeeklyQuestWarning = false,
             MinimapRecolouredNodes = {},
             enableMinimapRecolouredNodes = false,
+            moxieIconType = nil,
         },
     }
         
@@ -32,6 +34,32 @@ function addon:setupOptions()
     local options = {
         type = "group",
         args = {
+            moxieIconAccount = {
+                type = "select",
+                values = {
+                    [0] = DISABLE,
+                    [1] = SHOW,
+                    [2] = L["MOXIE_ICON_OPTION_SHOW_AND_FLASH"],
+                },
+                get = function() return addon.db.global.moxieIconType end,
+                set = function(_, v) addon.db.global.moxieIconType = v end,
+                name = L["MOXIE_ICON_ACCOUNT_NAME"],
+                desc = L["MOXIE_ICON_ACCOUNT_DESC"],
+                width = "full",
+            },
+            moxieIconCharacter = {
+                type = "select",
+                values = {
+                    [0] = L["MOXIE_ICON_OPTION_USE_INHERITED"],
+                    [1] = SHOW,
+                    [2] = L["MOXIE_ICON_OPTION_SHOW_AND_FLASH"],
+                },
+                get = function() return addon.db.profile.moxieIconTypeCharacterOverride end,
+                set = function(_, v) addon.db.profile.moxieIconTypeCharacterOverride = v end,
+                name = L["MOXIE_ICON_CHARACTER_NAME"],
+                desc = L["MOXIE_ICON_CHARACTER_DESC"],
+                width = "full",
+            },
             showCompleted = {
                 type = "toggle",
                 name = L["ENABLE_MODULE_CHARACTER"]:format(L["TOOL_FLYOUT_MODULE_NAME"]),

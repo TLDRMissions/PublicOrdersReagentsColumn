@@ -70,5 +70,9 @@ MoveCreateButton.lua
 SkillUpIcon.lua
 FirstCraftIcon.lua
 
+# Moxie Icon module
+MoxieIcon.lua
+MoxieIcon.xml
+
 options.lua
 init.lua

@@ -1,0 +1,48 @@
+<Ui>
+    <Frame name="NMNMMoxieCurrencyTemplate" inherits="ProfessionsCurrencyTemplate" mixin="NMNMMoxieCurrencyMixin" virtual="true" hidden="true">
+		<!--
+        <Size x="110" y="32"/>
+		<Layers>
+			<Layer level="ARTWORK">
+				<Texture parentKey="Icon">
+					<Anchors>
+						<Anchor point="LEFT"/>
+					</Anchors>
+					<Size x="24" y="24"/>
+				</Texture>
+				<FontString parentKey="Amount" inherits="GameFontNormal">
+					<Anchors>
+						<Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="6" y="2"/>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+        -->
+        <Frames>
+            <Frame parentKey="Flash" hidden="true">
+				<Anchors>
+					<Anchor point="TOPLEFT" x="-10" y="0"/>
+					<Anchor point="BOTTOMRIGHT" x="-30" y="9"/>
+				</Anchors>
+				<Layers>
+					<Layer level="ARTWORK">
+						<Texture parentKey="Flipbook" atlas="UI-HUD-ActionBar-GCD-Flipbook" alpha="0"/>
+					</Layer>
+				</Layers>
+				<Animations>
+					<AnimationGroup parentKey="FlashAnim">
+						<Alpha parentKey="HideAnim" childKey="Flipbook" duration="0" order="1" fromAlpha="0" toAlpha="0"/>
+						<Alpha parentKey="ShowAnim" childKey="Flipbook" duration="0" order="1" fromAlpha="1" toAlpha="1"/>
+						<FlipBook parentKey="PlayAnim" childKey="Flipbook" duration="0.75" order="1" flipBookRows="11" flipBookColumns="2" flipBookFrames="22" flipBookFrameWidth="0" flipBookFrameHeight="0"/>
+					</AnimationGroup>
+				</Animations>
+			</Frame>
+        </Frames>
+	</Frame>
+    
+    <Frame name="NMNMCraftingPageMoxieDisplay" inherits="NMNMMoxieCurrencyTemplate">
+    </Frame>
+    
+    <Frame name="NMNMOrdersPageMoxieDisplay" inherits="NMNMMoxieCurrencyTemplate">
+    </Frame>
+</Ui>
