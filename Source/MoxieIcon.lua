@@ -48,6 +48,8 @@ function NMNMMoxieCurrencyMixin:OnShow()
 	self:UpdateQuantity();
 end
 
+NMNMMoxieCurrencyMixin.OnEnter = nop
+
 RunNextFrame(function()
     NMNMCraftingPageMoxieDisplay:SetParent(ProfessionsFrame.CraftingPage)
     NMNMCraftingPageMoxieDisplay:SetPoint("TOPLEFT", ProfessionsFrame.CraftingPage.ConcentrationDisplay.Icon, "BOTTOMLEFT", 0, 5)
