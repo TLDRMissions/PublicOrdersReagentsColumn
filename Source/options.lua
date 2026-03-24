@@ -166,6 +166,15 @@ function addon:setupOptions()
                 width = "full",
                 name = L["RECOLOR_MINIMAP_TREASURE_DESC"],
             },
+            profileSelection = {
+                name = "Profile",
+                inline = true,
+                order = -1,
+                type = "group",
+                args = {
+                    profiles = LibStub("AceDBOptions-3.0"):GetOptionsTable(addon.db)
+                },
+            },
         },
     }
 
