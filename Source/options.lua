@@ -167,7 +167,7 @@ function addon:setupOptions()
                 name = L["RECOLOR_MINIMAP_TREASURE_DESC"],
             },
             profileSelection = {
-                name = "Profile",
+                name = L["PROFILE"],
                 inline = true,
                 order = -1,
                 type = "group",

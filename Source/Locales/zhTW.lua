@@ -23,6 +23,8 @@ L["RECOLOR_MINIMAP_TREASURE_NAME"] = "寶藏名稱"
 L["RECOLOR_MINIMAP_TREASURE_SHADE"] = "色調"
 L["RECOLOR_MINIMAP_TREASURE_DESC"] = "從下拉選單中選擇一個寶藏進行編輯，或者在編輯框中輸入寶藏名稱以新增新的寶藏。選擇新的顏色後更改將被儲存"
 
+L["PROFILE"] = "設定檔"
+
 -- Tool Selection Frame
 L["TOOLTIP_EMPTY_BUTTON"] = "在此處拖動%s的職業工具以使該工具在相關時交換。"
 L["TOOLTIP_RESOURCEFULNESS_DETAIL"] = "該工具將換成工作訂單，以及不使用複數製作的配方。"
@@ -35,3 +37,11 @@ L["PRIORITY_BUTTON_TOOLTIP"] = "如果選擇了，即使配方使用複數製作
 L["DISABLE_BUTTON_TEXT"] = "禁用自動裝備"
 L["PRIORTY_BUTTON_SELECTED_TEXT"] = "精明優先複數製作"
 L["PRIORTY_BUTTON_DESELECTED_TEXT"] = "複數製作優先精明"
+
+-- Moxie Icon
+L["MOXIE_ICON_ACCOUNT_NAME"] = "賬號通用：啟用專家級膽量圖示模組"
+L["MOXIE_ICON_ACCOUNT_DESC"] = "在專注圖示下方新增一個圖示，顯示你的專業技能有多少專家級膽量"
+L["MOXIE_ICON_CHARACTER_NAME"] = "角色特定：啟用專家級膽量圖示模組"
+L["MOXIE_ICON_CHARACTER_DESC"] = "與賬號通用選項相同，但會為此角色覆蓋該選項"
+L["MOXIE_ICON_OPTION_SHOW_AND_FLASH"] = "當600及以上時顯示並閃爍"
+L["MOXIE_ICON_OPTION_USE_INHERITED"] = "使用選定的賬號通用選項"
