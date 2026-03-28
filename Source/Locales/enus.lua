@@ -23,6 +23,8 @@ L["RECOLOR_MINIMAP_TREASURE_NAME"] = "Treasure Name"
 L["RECOLOR_MINIMAP_TREASURE_SHADE"] = "Shade"
 L["RECOLOR_MINIMAP_TREASURE_DESC"] = "Select a treasure from the dropdown to edit it, or type a treasure name into the edit box to add a new one. Changes are saved on selecting a new color"
 
+L["PROFILE"] = "Profile"
+
 -- Tool Selection Frame
 L["TOOLTIP_EMPTY_BUTTON"] = "Drag your %s profession tool here to have that tool swapped in when relevant."
 L["TOOLTIP_RESOURCEFULNESS_DETAIL"] = "This tool will be swapped in for Work Orders, and recipes that don't use Multicraft."

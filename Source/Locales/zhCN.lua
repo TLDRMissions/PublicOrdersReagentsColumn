@@ -23,6 +23,8 @@ L["RECOLOR_MINIMAP_TREASURE_NAME"] = "宝藏名称"
 L["RECOLOR_MINIMAP_TREASURE_SHADE"] = "色调"
 L["RECOLOR_MINIMAP_TREASURE_DESC"] = "从下拉菜单中选择一个宝藏进行编辑，或者在编辑框中输入宝藏名称以添加新的宝藏。选择新的颜色后更改将被保存"
 
+L["PROFILE"] = "配置文件"
+
 -- Tool Selection Frame
 L["TOOLTIP_EMPTY_BUTTON"] = "将您的%s专业工具拖动到此处，以方便交自动使用该工具"
 L["TOOLTIP_RESOURCEFULNESS_DETAIL"] = "这个工具将在做订单，并且不期望产生产能的情况下替换进去"
@@ -35,3 +37,11 @@ L["PRIORITY_BUTTON_TOOLTIP"] = "如果选中，即使配方期望产生产能，
 L["DISABLE_BUTTON_TEXT"] = "禁用自动装备"
 L["PRIORTY_BUTTON_SELECTED_TEXT"] = "奇思优先于产能"
 L["PRIORTY_BUTTON_DESELECTED_TEXT"] = "产能优先于奇思"
+
+-- Moxie Icon
+L["MOXIE_ICON_ACCOUNT_NAME"] = "账号通用：启用匠人之魄图标模块"
+L["MOXIE_ICON_ACCOUNT_DESC"] = "在专注图标下方添加一个图标，显示你的专业有多少匠人之魄"
+L["MOXIE_ICON_CHARACTER_NAME"] = "角色特定：启用匠人之魄图标模块"
+L["MOXIE_ICON_CHARACTER_DESC"] = "与账号通用选项相同，但会为此角色覆盖该选项"
+L["MOXIE_ICON_OPTION_SHOW_AND_FLASH"] = "当600及以上时显示并闪烁"
+L["MOXIE_ICON_OPTION_USE_INHERITED"] = "使用选定的账号通用选项"
