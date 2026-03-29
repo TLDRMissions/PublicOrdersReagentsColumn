@@ -69,10 +69,14 @@ RunNextFrame(function()
     end
     
     hooksecurefunc(ProfessionsFrame, "Refresh", function()
-        NMNMCraftingPageMoxieDisplay:Hide()
-        NMNMOrdersPageMoxieDisplay:Hide()
-        if not isEnabled() then return end
+        if not isEnabled() then
+            NMNMCraftingPageMoxieDisplay:Hide()
+            NMNMOrdersPageMoxieDisplay:Hide() 
+            return
+        end
         RunNextFrame(function()
+            NMNMCraftingPageMoxieDisplay:Hide()
+            NMNMOrdersPageMoxieDisplay:Hide()
             if ProfessionsFrame.professionInfo and ProfessionIDToCurrencyID[ProfessionsFrame.professionInfo.profession] then
                 NMNMCraftingPageMoxieDisplay:Show()
                 NMNMOrdersPageMoxieDisplay:Show()
