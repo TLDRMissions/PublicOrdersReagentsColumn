@@ -35,6 +35,8 @@ f:RegisterEvent("VIGNETTE_MINIMAP_UPDATED")
 f:RegisterEvent("VIGNETTES_UPDATED")
 f:SetScript("OnEvent", function()
     if not addon.db.global.enableMinimapRecolouredNodes then return end
+    if IsInInstance() then return end
+    
     initDBIfEmpty()
 
     libHBDPins:RemoveAllMinimapIcons(iconDB)
