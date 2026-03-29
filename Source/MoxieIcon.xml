@@ -1,23 +1,5 @@
 <Ui>
     <Frame name="NMNMMoxieCurrencyTemplate" inherits="ProfessionsCurrencyTemplate" mixin="NMNMMoxieCurrencyMixin" virtual="true" hidden="true">
-		<!--
-        <Size x="110" y="32"/>
-		<Layers>
-			<Layer level="ARTWORK">
-				<Texture parentKey="Icon">
-					<Anchors>
-						<Anchor point="LEFT"/>
-					</Anchors>
-					<Size x="24" y="24"/>
-				</Texture>
-				<FontString parentKey="Amount" inherits="GameFontNormal">
-					<Anchors>
-						<Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="6" y="2"/>
-					</Anchors>
-				</FontString>
-			</Layer>
-		</Layers>
-        -->
         <Frames>
             <Frame parentKey="Flash" hidden="true">
 				<Anchors>

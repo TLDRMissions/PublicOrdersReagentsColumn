@@ -50,6 +50,31 @@ end
 
 NMNMMoxieCurrencyMixin.OnEnter = nop
 
+function NMNMMoxieCurrencyMixin:SetCurrencyType(currencyType)
+	if self.currencyType == currencyType then
+		return;
+	end
+
+	self.currencyType = currencyType;
+
+	local currencyInfo = self:GetCurrencyInfo();
+	if not currencyInfo then
+		assertsafe(false, "Missing currency info for %d", currencyType);
+		return;
+	end
+
+	self.Icon:SetTexture(currencyInfo.iconFileID);
+
+	self:UpdateQuantity();
+	--CurrencyCallbackRegistry:RegisterCallback(tostring(currencyType), self.UpdateQuantity, self);
+
+	--if self.RechargeTicker then
+		--self.RechargeTicker:Cancel();
+	--end
+
+	--self.RechargeTicker = C_Timer.NewTicker(currencyInfo.rechargingCycleDurationMS / 1000, function() self:UpdateQuantity() end);
+end
+
 RunNextFrame(function()
     NMNMCraftingPageMoxieDisplay:SetParent(ProfessionsFrame.CraftingPage)
     NMNMCraftingPageMoxieDisplay:SetPoint("TOPLEFT", ProfessionsFrame.CraftingPage.ConcentrationDisplay.Icon, "BOTTOMLEFT", 0, 5)
