@@ -51,10 +51,6 @@ end
 NMNMMoxieCurrencyMixin.OnEnter = nop
 
 function NMNMMoxieCurrencyMixin:SetCurrencyType(currencyType)
-	if self.currencyType == currencyType then
-		return;
-	end
-
 	self.currencyType = currencyType;
 
 	local currencyInfo = self:GetCurrencyInfo();
