@@ -44,8 +44,8 @@ NMNMMoxieCurrencyMixin = CreateFromMixins(ProfessionsCurrencyWithLabelMixin)
 function NMNMMoxieCurrencyMixin:OnShow()
     if ProfessionsFrame.professionInfo then
         self:SetCurrencyType(ProfessionIDToCurrencyID[ProfessionsFrame.professionInfo.profession])
+        return
     end
-	self:UpdateQuantity();
 end
 
 NMNMMoxieCurrencyMixin.OnEnter = nop
@@ -59,7 +59,7 @@ function NMNMMoxieCurrencyMixin:SetCurrencyType(currencyType)
 
 	local currencyInfo = self:GetCurrencyInfo();
 	if not currencyInfo then
-		assertsafe(false, "Missing currency info for %d", currencyType);
+		--assertsafe(false, "Missing currency info for %d", currencyType);
 		return;
 	end
 
