@@ -3,7 +3,7 @@
         <Frames>
             <Frame parentKey="Flash" hidden="true">
 				<Anchors>
-					<Anchor point="TOPLEFT" x="-10" y="0"/>
+					<Anchor point="TOPLEFT" x="-10" y="-1"/>
 					<Anchor point="BOTTOMRIGHT" x="-30" y="9"/>
 				</Anchors>
 				<Layers>
@@ -12,7 +12,7 @@
 					</Layer>
 				</Layers>
 				<Animations>
-					<AnimationGroup parentKey="FlashAnim">
+					<AnimationGroup parentKey="FlashAnim" looping="REPEAT">
 						<Alpha parentKey="HideAnim" childKey="Flipbook" duration="0" order="1" fromAlpha="0" toAlpha="0"/>
 						<Alpha parentKey="ShowAnim" childKey="Flipbook" duration="0" order="1" fromAlpha="1" toAlpha="1"/>
 						<FlipBook parentKey="PlayAnim" childKey="Flipbook" duration="0.75" order="1" flipBookRows="11" flipBookColumns="2" flipBookFrames="22" flipBookFrameWidth="0" flipBookFrameHeight="0"/>
