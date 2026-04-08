@@ -26,6 +26,7 @@ function addon:setupOptions()
             MinimapRecolouredNodes = {},
             enableMinimapRecolouredNodes = false,
             moxieIconType = nil,
+            profitLossColumn = true,
         },
     }
         
@@ -174,6 +175,14 @@ function addon:setupOptions()
                 args = {
                     profiles = LibStub("AceDBOptions-3.0"):GetOptionsTable(addon.db)
                 },
+            },
+           enableProfitLossColumn = {
+                name = L["PROFIT_LOSS_OPTION"],
+                desc = L["PROFIT_LOSS_OPTION_DESC"],
+                width = "full",
+                type = "toggle",
+                set = function(_, v) addon.db.global.profitLossColumn = v end,
+                get = function() return addon.db.global.profitLossColumn end,
             },
         },
     }

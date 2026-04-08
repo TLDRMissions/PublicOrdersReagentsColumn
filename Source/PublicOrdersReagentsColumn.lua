@@ -1,5 +1,7 @@
 local addonName, addon = ...
 
+local L = LibStub("AceLocale-3.0"):GetLocale(addonName)
+
 local rewardIconsPrimary, rewardIconsDuplicate = {}, {}
 local reagentIconsPrimary, reagentIconsDuplicate = {}, {}
 local textFieldsPrimary, textFieldsDuplicate = {}, {}
@@ -148,13 +150,12 @@ local function showGeneric(self, _, browseType)
         end
     end
 
-    -- Listen for right clicks on the name cell
+    -- Listen for right clicks on the row
     for _, row in ipairs(rows) do
         if not buttonRegistered[row] then
             row:HookScript("OnClick", function(self, button)
                 if button ~= "RightButton" then return end
                 
-        		
                 -- Customized from Blizzard_ProfessionsCrafterOrderPage.lua, ProfessionsCrafterOrderListElementMixin:OnClick(button)
                 MenuUtil.CreateContextMenu(self, function(_, rootDescription)
         			rootDescription:SetTag("MENU_PROFESSIONS_CRAFTER_ORDER");
@@ -224,7 +225,12 @@ local function showGeneric(self, _, browseType)
 	
     for columnIndex, column in ipairs(columns) do
 		local header = column.headerFrame
-        if columnIndex == 3 then
+        if columnIndex == 2 then
+            -- name column
+            if C_AddOns.IsAddOnLoaded("Auctionator") and Auctionator and addon.db.global.profitLossColumn then
+                header:SetText(L["PROFIT_LOSS_HEADER"])
+            end
+        elseif columnIndex == 3 then
             -- commission column
             header:SetWidth(100)
             
@@ -243,6 +249,68 @@ local function showGeneric(self, _, browseType)
     
     local padding = addon.db.global.increasedPadding
     for rowID, row in ipairs(rows) do
+        if C_AddOns.IsAddOnLoaded("Auctionator") and Auctionator and addon.db.global.profitLossColumn then
+            -- usurp the name cell, converting it to a profit/loss column
+            local cell = row.cells[2]
+            local rowData = cell.rowData.option
+            local profit = rowData.tipAmount - rowData.consortiumCut
+            for _, reward in pairs(rowData.npcOrderRewards) do
+                if reward.itemLink then
+                    local auctionatorPrice = Auctionator.API.v1.GetAuctionPriceByItemLink(addonName, reward.itemLink) or 0
+                    profit = profit + (auctionatorPrice * reward.count)
+                end
+            end
+            
+            -- TODO: this is a duplicate code block from later on. Move and consolidate this.
+            local recipeSchematic = C_TradeSkillUI.GetRecipeSchematic(rowData.spellID, rowData.isRecraft)
+            local reagents = recipeSchematic.reagentSlotSchematics
+            for i = #reagents, 1, -1 do
+                local reagentData = reagents[i]
+                if not reagentData.required then
+                    table.remove(reagents, i)
+                else
+                    local found = false
+                    for _, reagentChoice in pairs(reagentData.reagents) do
+                        for _, providedReagentData in ipairs(rowData.reagents) do
+                            if providedReagentData.reagentInfo.reagent.itemID == reagentChoice.itemID then
+                                found = true
+                                break
+                            end
+                        end
+                        if found then break end
+                    end
+                    if found then
+                        table.remove(reagents, i)
+                    end
+                end
+            end
+            
+            for _, reagentData in ipairs(reagents) do
+                local auctionatorPrice = Auctionator.API.v1.GetAuctionPriceByItemID(addonName, reagentData.reagents[1].itemID)
+                profit = profit - (auctionatorPrice * reagentData.quantityRequired)
+            end
+            
+            local npcName = cell.Text:GetText()
+            profit = math.floor(profit/100)*100
+            local isPositive = profit > 0
+            
+            profit = C_CurrencyInfo.GetCoinTextureString(math.abs(profit))
+            
+            if not isPositive then
+                profit = "|cffff0000-"..profit.."|r"
+            end
+            
+            cell.Text:SetText(profit)
+            cell.Text:SetScript("OnEnter", function()
+                GameTooltip:SetOwner(cell)
+                GameTooltip:AddLine(npcName)
+                GameTooltip:Show()
+                if not InCombatLockdown() then
+                    cell.Text:SetPassThroughButtons("RightButton")
+                end
+            end)
+        end
+    
         if padding then
             row:SetHeight(row:GetHeight() + padding)
             if rowID > 1 then

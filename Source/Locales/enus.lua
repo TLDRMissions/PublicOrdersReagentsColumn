@@ -45,3 +45,8 @@ L["MOXIE_ICON_CHARACTER_NAME"] = "Character-specific: enable moxie icon module"
 L["MOXIE_ICON_CHARACTER_DESC"] = "Same as the account-wide option, except overrides that choice for this character"
 L["MOXIE_ICON_OPTION_SHOW_AND_FLASH"] = "Show and flash while 600 or more"
 L["MOXIE_ICON_OPTION_USE_INHERITED"] = "Use selected account-wide option"
+
+-- Profit / loss module
+L["PROFIT_LOSS_HEADER"] = "Profit / Loss"
+L["PROFIT_LOSS_OPTION"] = "Enable the Profit / Loss column."
+L["PROFIT_LOSS_OPTION_DESC"] = "Will replace the Patron Name column, moving that name into a mouseover tooltip."
