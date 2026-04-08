@@ -286,7 +286,7 @@ local function showGeneric(self, _, browseType)
             end
             
             for _, reagentData in ipairs(reagents) do
-                local auctionatorPrice = Auctionator.API.v1.GetAuctionPriceByItemID(addonName, reagentData.reagents[1].itemID)
+                local auctionatorPrice = Auctionator.API.v1.GetAuctionPriceByItemID(addonName, reagentData.reagents[1].itemID) or 0
                 profit = profit - (auctionatorPrice * reagentData.quantityRequired)
             end
             
