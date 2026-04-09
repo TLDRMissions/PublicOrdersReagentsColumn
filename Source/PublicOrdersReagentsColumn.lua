@@ -306,7 +306,7 @@ local function showGeneric(self, _, browseType)
                 GameTooltip:AddLine(npcName)
                 GameTooltip:Show()
                 if not InCombatLockdown() then
-                    cell.Text:SetPassThroughButtons("RightButton")
+                    cell.Text:SetPassThroughButtons("LeftButton", "RightButton", "MiddleButton", "Button4", "Button5")
                 end
             end)
         end
