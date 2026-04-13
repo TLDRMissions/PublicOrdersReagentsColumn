@@ -45,10 +45,6 @@ function addon.getPermanentUniqueID(row, withCommission)
     local commission = ""
     if withCommission and data.npcOrderRewards then
         for _, rewardData in ipairs(data.npcOrderRewards) do
-            if not rewardData.itemLink then
-                zzzz = rewardData
-            end
-            
             if rewardData.currencyType then
                 commission = commission..rewardData.currencyType
             elseif rewardData.itemLink then
@@ -399,7 +395,7 @@ local function showGeneric(self, _, browseType)
             for idx, reagentData in ipairs(reagents) do
                 local button = reagentIcons[rowID][idx]
                 if not button then
-                    button =  CreateFrame("ItemButton", nil, cell, "ProfessionsCrafterOrderRewardTemplate")
+                    button = CreateFrame("ItemButton", nil, cell, "ProfessionsCrafterOrderRewardTemplate")
                     reagentIcons[rowID][idx] = button
                     button:ClearNormalTexture()
                     button:ClearPushedTexture()
@@ -414,6 +410,20 @@ local function showGeneric(self, _, browseType)
                 button.Count:SetScale(1)
                 if reagentData.quantityRequired > 99 then
                     button.Count:SetScale(0.8)
+                end
+                
+                local numPossessed = ProfessionsUtil.GetReagentQuantityInPossession(reagentData.reagents[1], false)
+                if numPossessed > 0 then
+                    button.Icon:SetDesaturated(false)
+                    button.Icon:SetAlpha(1)
+                    button.IconBorder:Show()
+                else
+                    button.Icon:SetDesaturated(true)
+                    button.Icon:SetAlpha(0.5)
+                    button.IconBorder:Hide()
+                    RunNextFrame(function()
+                        button.IconBorder:Hide()
+                    end)
                 end
                 
                 if idx == 1 then
