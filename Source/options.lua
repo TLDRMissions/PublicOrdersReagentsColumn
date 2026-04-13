@@ -227,7 +227,7 @@ function addon:setupOptions()
 
     LibStub("AceConfigRegistry-3.0"):ValidateOptionsTable(options, addonTitle)
     LibStub("AceConfig-3.0"):RegisterOptionsTable(addonTitle, options, {"publicordersreagentscolumn"})
-    local optionsParent = LibStub("AceConfigDialog-3.0"):AddToBlizOptions(addonTitle)
+    LibStub("AceConfigDialog-3.0"):AddToBlizOptions(addonTitle)
     
     local profileOptions = LibStub("AceDBOptions-3.0"):GetOptionsTable(addon.db)
     
