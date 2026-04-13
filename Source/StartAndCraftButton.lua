@@ -31,6 +31,7 @@ local ticker
 ProfessionsFrame.OrdersPage.OrderView.CreateButton:HookScript("OnShow", function(self)
     if not addon.db.profile.moveCreateButtonToCursor then return end
     if ProfessionsFrame.OrdersPage.orderType ~= Enum.CraftingOrderType.Npc then return end
+    if not self:IsEnabled() then return end
     
     if ticker then ticker:Cancel() end
     
