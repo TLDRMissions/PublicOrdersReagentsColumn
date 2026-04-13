@@ -74,5 +74,8 @@ FirstCraftIcon.lua
 MoxieIcon.lua
 MoxieIcon.xml
 
+# All in one Start and Craft button module
+StartAndCraftButton.lua
+
 options.lua
 init.lua

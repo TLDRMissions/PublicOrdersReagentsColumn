@@ -17,6 +17,10 @@ function addon:setupOptions()
             suppressedListingPermanent = {},
             suppressedListingPermanentWithCommission = {},
             moxieIconTypeCharacterOverride = nil,
+            skipCompleteOrderButton = false,
+            skipOwnReagentConfiration = false,
+            skipStartOrderButton = false,
+            moveCreateButtonToCursor = false,
         },
         global = {
             toolFlyout = true,
@@ -167,15 +171,6 @@ function addon:setupOptions()
                 width = "full",
                 name = L["RECOLOR_MINIMAP_TREASURE_DESC"],
             },
-            profileSelection = {
-                name = L["PROFILE"],
-                inline = true,
-                order = -1,
-                type = "group",
-                args = {
-                    profiles = LibStub("AceDBOptions-3.0"):GetOptionsTable(addon.db)
-                },
-            },
            enableProfitLossColumn = {
                 name = L["PROFIT_LOSS_OPTION"],
                 desc = L["PROFIT_LOSS_OPTION_DESC"],
@@ -184,12 +179,61 @@ function addon:setupOptions()
                 set = function(_, v) addon.db.global.profitLossColumn = v end,
                 get = function() return addon.db.global.profitLossColumn end,
             },
+            startCraftSpeedupGroup = {
+                type = "group",
+                name = L["START_CRAFT_SPEEDUP_GROUP_NAME"],
+                inline = true,
+                args = {
+                    skipCompleteOrderButton = {
+                        type = "toggle",
+                        name = L["SKIP_COMPLETE_ORDER_NAME"],
+                        desc = L["SKIP_COMPLETE_ORDER_DESC"],
+                        set = function(_, v) addon.db.profile.skipCompleteOrderButton = v end,
+                        get = function() return addon.db.profile.skipCompleteOrderButton end,
+                        order = 3,
+                        width = 2,
+                    },
+                    skipOwnReagentConfiration = {
+                        type = "toggle",
+                        name = L["SKIP_OWN_REAGENT_NAME"],
+                        desc = L["SKIP_OWN_REAGENT_DESC"],
+                        set = function(_, v) addon.db.profile.skipOwnReagentConfiration = v end,
+                        get = function() return addon.db.profile.skipOwnReagentConfiration end,
+                        order = 2,
+                        width = 2,
+                    },
+                    skipStartOrderButton = {
+                        type = "toggle",
+                        name = L["SKIP_START_ORDER_NAME"],
+                        desc = L["SKIP_START_ORDER_DESC"],
+                        set = function(_, v) addon.db.profile.skipStartOrderButton = v end,
+                        get = function() return addon.db.profile.skipStartOrderButton end,
+                        order = 1,
+                        width = 2,
+                    },
+                    moveCreateButtonToCursor = {
+                        type = "toggle",
+                        name = L["MOVE_CREATE_TO_CURSOR_NAME"],
+                        desc = L["MOVE_CREATE_TO_CURSOR_DESC"],
+                        set = function(_, v) addon.db.profile.moveCreateButtonToCursor = v end,
+                        get = function() return addon.db.profile.moveCreateButtonToCursor end,
+                        order = 4,
+                        width = 2,
+                    },
+                },
+            },
         },
     }
 
     LibStub("AceConfigRegistry-3.0"):ValidateOptionsTable(options, addonTitle)
     LibStub("AceConfig-3.0"):RegisterOptionsTable(addonTitle, options, {"publicordersreagentscolumn"})
-    LibStub("AceConfigDialog-3.0"):AddToBlizOptions(addonTitle)
+    local optionsParent = LibStub("AceConfigDialog-3.0"):AddToBlizOptions(addonTitle)
+    
+    local profileOptions = LibStub("AceDBOptions-3.0"):GetOptionsTable(addon.db)
+    
+    LibStub("AceConfigRegistry-3.0"):ValidateOptionsTable(profileOptions, L["PROFILE"])
+    LibStub("AceConfig-3.0"):RegisterOptionsTable(addonTitle..L["PROFILE"], profileOptions, {"publicordersreagentscolumn-profile"})
+    LibStub("AceConfigDialog-3.0"):AddToBlizOptions(addonTitle..L["PROFILE"], L["PROFILE"], addonTitle)
     
     -- backward compatibility
     if addon.db.global.increasedPadding == true then
