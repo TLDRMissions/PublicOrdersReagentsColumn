@@ -7,6 +7,7 @@ local reagentIconsPrimary, reagentIconsDuplicate = {}, {}
 local textFieldsPrimary, textFieldsDuplicate = {}, {}
 local errorTexturesPrimary, errorTexturesDuplicate = {}, {}
 local priorityTexturesPrimary, priorityTexturesDuplicate = {}, {}
+local missingReagentTexturesPrimary, missingReagentTexturesDuplicate = {}, {}
 local buttonRegistered = {}
 
 function addon.getOneTimeUniqueID(row)
@@ -83,6 +84,7 @@ local function showGeneric(self, _, browseType)
     local textFields = textFieldsPrimary
     local errorTextures = errorTexturesPrimary
     local priorityTextures = priorityTexturesPrimary
+    local missingReagentTextures = missingReagentTexturesPrimary
     
     if self == ProfessionsFrame.OrdersPageOffline then
         rewardIcons = rewardIconsDuplicate
@@ -90,6 +92,7 @@ local function showGeneric(self, _, browseType)
         textFields = textFieldsDuplicate
         errorTextures = errorTexturesDuplicate
         priorityTextures = priorityTexturesDuplicate
+        missingReagentTextures = missingReagentTexturesDuplicate
     end
     
     for _, r in pairs(reagentIcons) do
@@ -114,6 +117,10 @@ local function showGeneric(self, _, browseType)
     end
     
     for t in pairs(priorityTextures) do
+        t:Hide()
+    end
+    
+    for t in pairs(missingReagentTextures) do
         t:Hide()
     end
     
@@ -364,6 +371,7 @@ local function showGeneric(self, _, browseType)
         end
         
         cell = row.cells[4]
+        cell:SetWidth(120)
         rowData = cell.rowData.option
         local textField = cell.Text
         textField:Hide()
@@ -389,6 +397,14 @@ local function showGeneric(self, _, browseType)
                     if found then
                         table.remove(reagents, i)
                     end
+                end
+            end
+            
+            local numUncollected = 0
+            for idx, reagentData in ipairs(reagents) do
+                local numPossessed = ProfessionsUtil.GetReagentQuantityInPossession(reagentData.reagents[1], false)
+                if numPossessed == 0 then
+                    numUncollected = numUncollected + 1
                 end
             end
             
@@ -424,6 +440,17 @@ local function showGeneric(self, _, browseType)
                     RunNextFrame(function()
                         button.IconBorder:Hide()
                     end)
+                    
+                    -- highlight the cell if player doesn't have all materials
+                    local skillLineAbilityID = row.rowData.option.skillLineAbilityID
+                    local recipeInfo = C_TradeSkillUI.GetRecipeInfoForSkillLineAbility(skillLineAbilityID)
+                    local missingReagentTexture = cell.missingReagentTexture or cell:CreateTexture(nil, "OVERLAY")
+                    cell.missingReagentTexture = missingReagentTexture
+                    missingReagentTexture:SetPoint("TOPLEFT", cell, "TOPLEFT")
+                    missingReagentTexture:SetPoint("BOTTOMRIGHT", cell, "BOTTOMRIGHT")
+                    missingReagentTextures[missingReagentTexture] = true
+                    missingReagentTexture:SetBlendMode("ADD")
+                    missingReagentTexture:SetColorTexture(1, 0, 0, 0.3)
                 end
                 
                 if idx == 1 then
