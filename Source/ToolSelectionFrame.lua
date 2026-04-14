@@ -28,6 +28,8 @@ local function getActiveToolSlotID()
         return 20
     elseif ProfessionsFrame.CraftingPage.Prof1ToolSlot:IsShown() then
         return 23
+    elseif ProfessionsFrame.CraftingPage.CookingToolSlot:IsShown() then
+        return 26
     end
 end
 
@@ -70,6 +72,8 @@ local function getItemLocation(itemLink)
         return 1, 20
     elseif escapeItemLink(GetInventoryItemLink("player", 23)) == itemLink then
         return 1, 23
+    elseif escapeItemLink(GetInventoryItemLink("player", 26)) == itemLink then
+        return 1, 26
     end
 
     for containerIndex = 0, 4 do
