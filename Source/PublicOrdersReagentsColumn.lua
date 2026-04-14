@@ -401,7 +401,7 @@ local function showGeneric(self, _, browseType)
             end
             
             local numUncollected = 0
-            for idx, reagentData in ipairs(reagents) do
+            for _, reagentData in ipairs(reagents) do
                 local numPossessed = ProfessionsUtil.GetReagentQuantityInPossession(reagentData.reagents[1], false)
                 if numPossessed == 0 then
                     numUncollected = numUncollected + 1
@@ -442,15 +442,14 @@ local function showGeneric(self, _, browseType)
                     end)
                     
                     -- highlight the cell if player doesn't have all materials
-                    local skillLineAbilityID = row.rowData.option.skillLineAbilityID
-                    local recipeInfo = C_TradeSkillUI.GetRecipeInfoForSkillLineAbility(skillLineAbilityID)
                     local missingReagentTexture = cell.missingReagentTexture or cell:CreateTexture(nil, "OVERLAY")
                     cell.missingReagentTexture = missingReagentTexture
-                    missingReagentTexture:SetPoint("TOPLEFT", cell, "TOPLEFT")
-                    missingReagentTexture:SetPoint("BOTTOMRIGHT", cell, "BOTTOMRIGHT")
+                    missingReagentTexture:SetPoint("TOPLEFT", cell, "TOPLEFT", -5, 0)
+                    missingReagentTexture:SetPoint("BOTTOMRIGHT", cell, "BOTTOMRIGHT", -5, 0)
                     missingReagentTextures[missingReagentTexture] = true
                     missingReagentTexture:SetBlendMode("ADD")
-                    missingReagentTexture:SetColorTexture(1, 0, 0, 0.3)
+                    missingReagentTexture:SetColorTexture(addon.db.global.reagentErrorColor.r, addon.db.global.reagentErrorColor.g, addon.db.global.reagentErrorColor.b, addon.db.global.reagentErrorColor.a)
+                    missingReagentTexture:Show()
                 end
                 
                 if idx == 1 then

@@ -25,6 +25,8 @@ L["RECOLOR_MINIMAP_TREASURE_DESC"] = "Select a treasure from the dropdown to edi
 
 L["PROFILE"] = "Profile"
 
+L["REAGENT_ERROR_SHADE"] = "Missing reagents background colour"
+
 -- Tool Selection Frame
 L["TOOLTIP_EMPTY_BUTTON"] = "Drag your %s profession tool here to have that tool swapped in when relevant."
 L["TOOLTIP_RESOURCEFULNESS_DETAIL"] = "This tool will be swapped in for Work Orders, and recipes that don't use Multicraft."

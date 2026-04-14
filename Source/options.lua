@@ -31,6 +31,12 @@ function addon:setupOptions()
             enableMinimapRecolouredNodes = false,
             moxieIconType = nil,
             profitLossColumn = true,
+            reagentErrorColor = {
+                r = 1,
+                g = 0,
+                b = 0,
+                a = 0.3,
+            },
         },
     }
         
@@ -221,6 +227,18 @@ function addon:setupOptions()
                         width = 2,
                     },
                 },
+            },
+            reagentErrorColor = {
+                type = "color",
+                name = L["REAGENT_ERROR_SHADE"],
+                width = "full",
+                hasAlpha = true,
+                get = function()
+                    return addon.db.global.reagentErrorColor.r, addon.db.global.reagentErrorColor.g, addon.db.global.reagentErrorColor.b, addon.db.global.reagentErrorColor.a
+                end,
+                set = function(_, r, g, b, a)
+                    addon.db.global.reagentErrorColor.r, addon.db.global.reagentErrorColor.g, addon.db.global.reagentErrorColor.b, addon.db.global.reagentErrorColor.a = r, g, b, a
+                end,
             },
         },
     }
