@@ -31,6 +31,7 @@ function addon:setupOptions()
             enableMinimapRecolouredNodes = false,
             moxieIconType = nil,
             profitLossColumn = true,
+            desaturateMissingReagents = true,
             reagentErrorColor = {
                 r = 1,
                 g = 0,
@@ -238,6 +239,17 @@ function addon:setupOptions()
                 end,
                 set = function(_, r, g, b, a)
                     addon.db.global.reagentErrorColor.r, addon.db.global.reagentErrorColor.g, addon.db.global.reagentErrorColor.b, addon.db.global.reagentErrorColor.a = r, g, b, a
+                end,
+            },
+            desaturateMissingReagents = {
+                type = "toggle",
+                name = "Desaturate missing reagents",
+                width = "full",
+                get = function()
+                    return addon.db.global.desaturateMissingReagents
+                end,
+                set = function(_, v)
+                    addon.db.global.desaturateMissingReagents = v
                 end,
             },
         },

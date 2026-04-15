@@ -434,12 +434,14 @@ local function showGeneric(self, _, browseType)
                     button.Icon:SetAlpha(1)
                     button.IconBorder:Show()
                 else
-                    button.Icon:SetDesaturated(true)
-                    button.Icon:SetAlpha(0.5)
-                    button.IconBorder:Hide()
-                    RunNextFrame(function()
+                    if addon.db.global.desaturateMissingReagents then
+                        button.Icon:SetDesaturated(true)
+                        button.Icon:SetAlpha(0.5)
                         button.IconBorder:Hide()
-                    end)
+                        RunNextFrame(function()
+                            button.IconBorder:Hide()
+                        end)
+                    end
                     
                     if not (row.ErrorTexture and row.ErrorTexture:IsShown()) then
                         -- highlight the cell if player doesn't have all materials
