@@ -429,7 +429,7 @@ local function showGeneric(self, _, browseType)
                 end
                 
                 local numPossessed = ProfessionsUtil.GetReagentQuantityInPossession(reagentData.reagents[1], false)
-                if numPossessed > 0 then
+                if numPossessed >= reagentData.quantityRequired then
                     button.Icon:SetDesaturated(false)
                     button.Icon:SetAlpha(1)
                     button.IconBorder:Show()
@@ -441,15 +441,17 @@ local function showGeneric(self, _, browseType)
                         button.IconBorder:Hide()
                     end)
                     
-                    -- highlight the cell if player doesn't have all materials
-                    local missingReagentTexture = cell.missingReagentTexture or cell:CreateTexture(nil, "OVERLAY")
-                    cell.missingReagentTexture = missingReagentTexture
-                    missingReagentTexture:SetPoint("TOPLEFT", cell, "TOPLEFT", -5, 0)
-                    missingReagentTexture:SetPoint("BOTTOMRIGHT", cell, "BOTTOMRIGHT", -5, 0)
-                    missingReagentTextures[missingReagentTexture] = true
-                    missingReagentTexture:SetBlendMode("ADD")
-                    missingReagentTexture:SetColorTexture(addon.db.global.reagentErrorColor.r, addon.db.global.reagentErrorColor.g, addon.db.global.reagentErrorColor.b, addon.db.global.reagentErrorColor.a)
-                    missingReagentTexture:Show()
+                    if not (row.ErrorTexture and row.ErrorTexture:IsShown()) then
+                        -- highlight the cell if player doesn't have all materials
+                        local missingReagentTexture = cell.missingReagentTexture or cell:CreateTexture(nil, "OVERLAY")
+                        cell.missingReagentTexture = missingReagentTexture
+                        missingReagentTexture:SetPoint("TOPLEFT", cell, "TOPLEFT", -5, 0)
+                        missingReagentTexture:SetPoint("BOTTOMRIGHT", cell, "BOTTOMRIGHT", -5, 0)
+                        missingReagentTextures[missingReagentTexture] = true
+                        missingReagentTexture:SetBlendMode("ADD")
+                        missingReagentTexture:SetColorTexture(addon.db.global.reagentErrorColor.r, addon.db.global.reagentErrorColor.g, addon.db.global.reagentErrorColor.b, addon.db.global.reagentErrorColor.a)
+                        missingReagentTexture:Show()
+                    end
                 end
                 
                 if idx == 1 then

@@ -25,7 +25,7 @@ L["RECOLOR_MINIMAP_TREASURE_DESC"] = "Select a treasure from the dropdown to edi
 
 L["PROFILE"] = "Profile"
 
-L["REAGENT_ERROR_SHADE"] = "Missing reagents background colour"
+L["REAGENT_ERROR_SHADE"] = "Missing rank 1 reagents background colour for patron orders"
 
 -- Tool Selection Frame
 L["TOOLTIP_EMPTY_BUTTON"] = "Drag your %s profession tool here to have that tool swapped in when relevant."
