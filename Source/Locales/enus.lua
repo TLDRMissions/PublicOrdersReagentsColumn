@@ -24,6 +24,9 @@ L["RECOLOR_MINIMAP_TREASURE_SHADE"] = "Shade"
 L["RECOLOR_MINIMAP_TREASURE_DESC"] = "Select a treasure from the dropdown to edit it, or type a treasure name into the edit box to add a new one. Changes are saved on selecting a new color"
 
 L["PROFILE"] = "Profile"
+L["TREASURES_GROUP_NAME"] = "Treasures"
+L["MOXIE_GROUP_NAME"] = "Moxie"
+L["TOOL_FLYOUT_GROUP_NAME"] = "Tool flyout"
 
 L["REAGENT_ERROR_SHADE"] = "Missing rank 1 reagents background colour for patron orders"
 

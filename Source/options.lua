@@ -46,145 +46,203 @@ function addon:setupOptions()
     local options = {
         type = "group",
         args = {
-            moxieIconAccount = {
-                type = "select",
-                values = {
-                    [0] = DISABLE,
-                    [1] = SHOW,
-                    [2] = L["MOXIE_ICON_OPTION_SHOW_AND_FLASH"],
+            otherModules = {
+                type = "group",
+                inline = true,
+                name = FACTION_OTHER,
+                args = {
+                    increasedPadding = {
+                        type = "range",
+                        name = L["ENABLE_MODULE_ACCOUNT"]:format(L["INCREASED_PADDING_MODULE_NAME"]),
+                        desc = L["INCREASED_PADDING_MODULE_DESC"],
+                        min = 0,
+                        max = 20,
+                        step = 1,
+                        set = function(_, v) addon.db.global.increasedPadding = v end,
+                        get = function()
+                            return addon.db.global.increasedPadding
+                        end,
+                        width = "full",
+                    },
+                    moveCreateButton = {
+                        type = "toggle",
+                        name = L["MOVE_CRAFTING_ORDERS_MODULE_NAME"],
+                        desc = L["MOVE_CRAFTING_ORDERS_MODULE_DESC"],
+                        set = function(_, v) addon.db.global.moveCreateButton = v end,
+                        get = function() return addon.db.global.moveCreateButton end,
+                        width = "full",
+                    },
+                    suppressNoWeeklyQuestWarning = {
+                        type = "toggle",
+                        name = L["SUPPRESS_WEEKLY_QUEST_WARNING_NAME"],
+                        desc = L["SUPPRESS_WEEKLY_QUEST_WARNING_DESC"],
+                        set = function(_, v) addon.db.global.suppressNoWeeklyQuestWarning = v end,
+                        get = function() return addon.db.global.suppressNoWeeklyQuestWarning end,
+                        width = "full",
+                    },
+                   enableProfitLossColumn = {
+                        name = L["PROFIT_LOSS_OPTION"],
+                        desc = L["PROFIT_LOSS_OPTION_DESC"],
+                        width = "full",
+                        type = "toggle",
+                        set = function(_, v) addon.db.global.profitLossColumn = v end,
+                        get = function() return addon.db.global.profitLossColumn end,
+                    },
                 },
-                get = function() return addon.db.global.moxieIconType end,
-                set = function(_, v) addon.db.global.moxieIconType = v end,
-                name = L["MOXIE_ICON_ACCOUNT_NAME"],
-                desc = L["MOXIE_ICON_ACCOUNT_DESC"],
-                width = "full",
             },
-            moxieIconCharacter = {
-                type = "select",
-                values = {
-                    [0] = L["MOXIE_ICON_OPTION_USE_INHERITED"],
-                    [1] = SHOW,
-                    [2] = L["MOXIE_ICON_OPTION_SHOW_AND_FLASH"],
+            toolFlyoutModule = {
+                type = "group",
+                inline = true,
+                name = L["TOOL_FLYOUT_GROUP_NAME"],
+                args = {
+                    showCompleted = {
+                        type = "toggle",
+                        name = L["ENABLE_MODULE_CHARACTER"]:format(L["TOOL_FLYOUT_MODULE_NAME"]),
+                        set = function(_, v) addon.db.profile.toolFlyout = v end,
+                        get = function() return addon.db.profile.toolFlyout end,
+                        width = "full",
+                    },
+                    accountWide = {
+                        type = "toggle",
+                        name = L["ENABLE_MODULE_ACCOUNT"]:format(L["TOOL_FLYOUT_MODULE_NAME"]),
+                        desc = L["TOOL_FLYOUT_MODULE_DESC"],
+                        set = function(_, v) addon.db.global.toolFlyout = v end,
+                        get = function() return addon.db.global.toolFlyout end,
+                        width = "full",
+                    },
                 },
-                get = function() return addon.db.profile.moxieIconTypeCharacterOverride end,
-                set = function(_, v) addon.db.profile.moxieIconTypeCharacterOverride = v end,
-                name = L["MOXIE_ICON_CHARACTER_NAME"],
-                desc = L["MOXIE_ICON_CHARACTER_DESC"],
-                width = "full",
             },
-            showCompleted = {
-                type = "toggle",
-                name = L["ENABLE_MODULE_CHARACTER"]:format(L["TOOL_FLYOUT_MODULE_NAME"]),
-                set = function(_, v) addon.db.profile.toolFlyout = v end,
-                get = function() return addon.db.profile.toolFlyout end,
-                width = "full",
+            treasuresModule = {
+                type = "group",
+                inline = true,
+                name = L["TREASURES_GROUP_NAME"],
+                args = {
+                    instructions = {
+                        type = "description",
+                        order = 5,
+                        width = "full",
+                        name = L["RECOLOR_MINIMAP_TREASURE_DESC"],
+                    },
+                    enableMinimapRecolouredNodes = {
+                        name = L["ENABLE_RECOLOR_MINIMAP_TREASURES_MODULE"],
+                        desc = L["RECOLOR_MINIMAP_TREASURES_MODULE_DESC"],
+                        set = function(_, v) addon.db.global.enableMinimapRecolouredNodes = v end,
+                        get = function() return addon.db.global.enableMinimapRecolouredNodes end,
+                        width = "full",
+                        type = "toggle",
+                        order = 1,
+                    },
+                    dropdown = {
+                        name = L["RECOLOR_MINIMAP_TREASURE_NAME"],
+                        type = "select",
+                        values = function()
+                            local output = {}
+                            for name in pairs(addon.db.global.MinimapRecolouredNodes) do
+                                output[name] = name
+                            end
+                            return output
+                        end,
+                        set = function(_, v)
+                            inputEditText = v
+                        end,
+                        get = nop,
+                        order = 2,
+                    },
+                    input = {
+                        type = "input",
+                        name = L["RECOLOR_MINIMAP_TREASURE_NAME"],
+                        get = function()
+                            return inputEditText
+                        end,
+                        set = function(_, v)
+                            inputEditText = v
+                        end,
+                        order = 3,
+                    },
+                    color = {
+                        type = "color",
+                        order = 4,
+                        name = L["RECOLOR_MINIMAP_TREASURE_SHADE"],
+                        get = function()
+                            if addon.db.global.MinimapRecolouredNodes[inputEditText] then
+                                local data = addon.db.global.MinimapRecolouredNodes[inputEditText]
+                                return data.r, data.g, data.b
+                            end
+                            return 1, 0, 0
+                        end,
+                        set = function(_, r, g, b)
+                            if inputEditText == "" then return end
+                            addon.db.global.MinimapRecolouredNodes[inputEditText] = {
+                                r = r,
+                                g = g,
+                                b = b,
+                            }
+                        end,
+                    },
+                },
             },
-            accountWide = {
-                type = "toggle",
-                name = L["ENABLE_MODULE_ACCOUNT"]:format(L["TOOL_FLYOUT_MODULE_NAME"]),
-                desc = L["TOOL_FLYOUT_MODULE_DESC"],
-                set = function(_, v) addon.db.global.toolFlyout = v end,
-                get = function() return addon.db.global.toolFlyout end,
-                width = "full",
+            moxieIconModule = {
+                type = "group",
+                inline = true,
+                name = L["MOXIE_GROUP_NAME"],
+                args = {
+                    moxieIconAccount = {
+                        type = "select",
+                        values = {
+                            [0] = DISABLE,
+                            [1] = SHOW,
+                            [2] = L["MOXIE_ICON_OPTION_SHOW_AND_FLASH"],
+                        },
+                        get = function() return addon.db.global.moxieIconType end,
+                        set = function(_, v) addon.db.global.moxieIconType = v end,
+                        name = L["MOXIE_ICON_ACCOUNT_NAME"],
+                        desc = L["MOXIE_ICON_ACCOUNT_DESC"],
+                        width = "full",
+                    },
+                    moxieIconCharacter = {
+                        type = "select",
+                        values = {
+                            [0] = L["MOXIE_ICON_OPTION_USE_INHERITED"],
+                            [1] = SHOW,
+                            [2] = L["MOXIE_ICON_OPTION_SHOW_AND_FLASH"],
+                        },
+                        get = function() return addon.db.profile.moxieIconTypeCharacterOverride end,
+                        set = function(_, v) addon.db.profile.moxieIconTypeCharacterOverride = v end,
+                        name = L["MOXIE_ICON_CHARACTER_NAME"],
+                        desc = L["MOXIE_ICON_CHARACTER_DESC"],
+                        width = "full",
+                    },
+                },
             },
-            increasedPadding = {
-                type = "range",
-                name = L["ENABLE_MODULE_ACCOUNT"]:format(L["INCREASED_PADDING_MODULE_NAME"]),
-                desc = L["INCREASED_PADDING_MODULE_DESC"],
-                min = 0,
-                max = 20,
-                step = 1,
-                set = function(_, v) addon.db.global.increasedPadding = v end,
-                get = function()
-                    return addon.db.global.increasedPadding
-                end,
-                width = "full",
-            },
-            moveCreateButton = {
-                type = "toggle",
-                name = L["MOVE_CRAFTING_ORDERS_MODULE_NAME"],
-                desc = L["MOVE_CRAFTING_ORDERS_MODULE_DESC"],
-                set = function(_, v) addon.db.global.moveCreateButton = v end,
-                get = function() return addon.db.global.moveCreateButton end,
-                width = "full",
-            },
-            suppressNoWeeklyQuestWarning = {
-                type = "toggle",
-                name = L["SUPPRESS_WEEKLY_QUEST_WARNING_NAME"],
-                desc = L["SUPPRESS_WEEKLY_QUEST_WARNING_DESC"],
-                set = function(_, v) addon.db.global.suppressNoWeeklyQuestWarning = v end,
-                get = function() return addon.db.global.suppressNoWeeklyQuestWarning end,
-                width = "full",
-            },
-            enableMinimapRecolouredNodes = {
-                name = L["ENABLE_RECOLOR_MINIMAP_TREASURES_MODULE"],
-                desc = L["RECOLOR_MINIMAP_TREASURES_MODULE_DESC"],
-                set = function(_, v) addon.db.global.enableMinimapRecolouredNodes = v end,
-                get = function() return addon.db.global.enableMinimapRecolouredNodes end,
-                width = "full",
-                type = "toggle",
-                order = 1,
-            },
-            dropdown = {
-                name = L["RECOLOR_MINIMAP_TREASURE_NAME"],
-                type = "select",
-                values = function()
-                    local output = {}
-                    for name in pairs(addon.db.global.MinimapRecolouredNodes) do
-                        output[name] = name
-                    end
-                    return output
-                end,
-                set = function(_, v)
-                    inputEditText = v
-                end,
-                get = nop,
-                order = 2,
-            },
-            input = {
-                type = "input",
-                name = L["RECOLOR_MINIMAP_TREASURE_NAME"],
-                get = function()
-                    return inputEditText
-                end,
-                set = function(_, v)
-                    inputEditText = v
-                end,
-                order = 3,
-            },
-            color = {
-                type = "color",
-                order = 4,
-                name = L["RECOLOR_MINIMAP_TREASURE_SHADE"],
-                get = function()
-                    if addon.db.global.MinimapRecolouredNodes[inputEditText] then
-                        local data = addon.db.global.MinimapRecolouredNodes[inputEditText]
-                        return data.r, data.g, data.b
-                    end
-                    return 1, 0, 0
-                end,
-                set = function(_, r, g, b)
-                    if inputEditText == "" then return end
-                    addon.db.global.MinimapRecolouredNodes[inputEditText] = {
-                        r = r,
-                        g = g,
-                        b = b,
-                    }
-                end,
-            },
-            instructions = {
-                type = "description",
-                order = 5,
-                width = "full",
-                name = L["RECOLOR_MINIMAP_TREASURE_DESC"],
-            },
-           enableProfitLossColumn = {
-                name = L["PROFIT_LOSS_OPTION"],
-                desc = L["PROFIT_LOSS_OPTION_DESC"],
-                width = "full",
-                type = "toggle",
-                set = function(_, v) addon.db.global.profitLossColumn = v end,
-                get = function() return addon.db.global.profitLossColumn end,
+            missingReagentsModule = {
+                type = "group",
+                inline = true,
+                name = ERR_SPELL_FAILED_REAGENTS_GENERIC,
+                args = {
+                    reagentErrorColor = {
+                        type = "color",
+                        name = L["REAGENT_ERROR_SHADE"],
+                        width = "full",
+                        hasAlpha = true,
+                        get = function()
+                            return addon.db.global.reagentErrorColor.r, addon.db.global.reagentErrorColor.g, addon.db.global.reagentErrorColor.b, addon.db.global.reagentErrorColor.a
+                        end,
+                        set = function(_, r, g, b, a)
+                            addon.db.global.reagentErrorColor.r, addon.db.global.reagentErrorColor.g, addon.db.global.reagentErrorColor.b, addon.db.global.reagentErrorColor.a = r, g, b, a
+                        end,
+                    },
+                    desaturateMissingReagents = {
+                        type = "toggle",
+                        name = "Desaturate missing reagents",
+                        width = "full",
+                        get = function()
+                            return addon.db.global.desaturateMissingReagents
+                        end,
+                        set = function(_, v)
+                            addon.db.global.desaturateMissingReagents = v
+                        end,
+                    },
+                },
             },
             startCraftSpeedupGroup = {
                 type = "group",
@@ -228,29 +286,6 @@ function addon:setupOptions()
                         width = 2,
                     },
                 },
-            },
-            reagentErrorColor = {
-                type = "color",
-                name = L["REAGENT_ERROR_SHADE"],
-                width = "full",
-                hasAlpha = true,
-                get = function()
-                    return addon.db.global.reagentErrorColor.r, addon.db.global.reagentErrorColor.g, addon.db.global.reagentErrorColor.b, addon.db.global.reagentErrorColor.a
-                end,
-                set = function(_, r, g, b, a)
-                    addon.db.global.reagentErrorColor.r, addon.db.global.reagentErrorColor.g, addon.db.global.reagentErrorColor.b, addon.db.global.reagentErrorColor.a = r, g, b, a
-                end,
-            },
-            desaturateMissingReagents = {
-                type = "toggle",
-                name = "Desaturate missing reagents",
-                width = "full",
-                get = function()
-                    return addon.db.global.desaturateMissingReagents
-                end,
-                set = function(_, v)
-                    addon.db.global.desaturateMissingReagents = v
-                end,
             },
         },
     }
