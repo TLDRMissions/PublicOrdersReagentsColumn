@@ -123,6 +123,7 @@ local function showGeneric(self, _, browseType)
     for t in pairs(missingReagentTextures) do
         t:Hide()
     end
+    wipe(missingReagentTextures)
     
     local rows = self.BrowseFrame.OrderList.ScrollBox:GetView().frames
 
