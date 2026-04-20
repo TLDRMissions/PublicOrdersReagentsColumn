@@ -285,6 +285,19 @@ function addon:setupOptions()
                         order = 4,
                         width = 2,
                     },
+                    enableAllButton = {
+                        type = "execute",
+                        name = L["START_CRAFT_BUTTON_NAME"],
+                        func = function()
+                            for profileKey in pairs(PublicOrdersReagentsColumnADB.profileKeys) do
+                                PublicOrdersReagentsColumnADB.profiles[profileKey].skipCompleteOrderButton = addon.db.profile.skipCompleteOrderButton
+                                PublicOrdersReagentsColumnADB.profiles[profileKey].skipOwnReagentConfiration = addon.db.profile.skipOwnReagentConfiration
+                                PublicOrdersReagentsColumnADB.profiles[profileKey].skipStartOrderButton = addon.db.profile.skipStartOrderButton
+                                PublicOrdersReagentsColumnADB.profiles[profileKey].moveCreateButtonToCursor = addon.db.profile.moveCreateButtonToCursor
+                            end
+                        end,
+                        width = "full",
+                    },
                 },
             },
         },
