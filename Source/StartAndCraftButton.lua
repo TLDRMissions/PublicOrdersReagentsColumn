@@ -52,3 +52,16 @@ ProfessionsFrame.OrdersPage.OrderView.CreateButton:HookScript("OnClick", functio
         ticker:Cancel()
     end
 end)
+
+-- the parent button isn't registered for Right Button
+-- rather than registering that, which will cause unexpected behaviour, create another invisible button overtop that intercepts right clicks
+-- this gives player a way to cancel the button movement by rightclicking
+local createButtonCover = CreateFrame("Button", nil, ProfessionsFrame.OrdersPage.OrderView.CreateButton)
+createButtonCover:SetAllPoints()
+createButtonCover:RegisterForClicks("RightButtonUp")
+createButtonCover:SetScript("OnClick", function()
+    if ticker then
+        ticker:Cancel()
+    end
+end)
+createButtonCover:SetPropagateMouseClicks(true)
