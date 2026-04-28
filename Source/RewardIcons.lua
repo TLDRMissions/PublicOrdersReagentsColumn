@@ -1,6 +1,6 @@
 local addonName, addon = ...
 
-function addon.handleRewardIcons(self, browseType)
+function addon.handleRewardIcons(self)
     local rewardIcons = self.NMNMRewardIcons or {}
     self.NMNMRewardIcons = rewardIcons
     

@@ -1,6 +1,6 @@
 local addonName, addon = ...
 
-function addon.handleReagentIcons(self, browseType)
+function addon.handleReagentIcons(self)
     local reagentIcons = self.NMNMReagentIcons or {}
     self.NMNMReagentIcons = reagentIcons
     zzzz = zzzz or reagentIcons

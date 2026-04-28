@@ -225,8 +225,8 @@ local function showGeneric(self, _, browseType)
         end   
 	end
     
-    addon.handleRewardIcons(self, browseType)
-    addon.handleReagentIcons(self, browseType)
+    addon.handleRewardIcons(self)
+    addon.handleReagentIcons(self)
     
     local padding = addon.db.global.increasedPadding
     for rowID, row in ipairs(rows) do
