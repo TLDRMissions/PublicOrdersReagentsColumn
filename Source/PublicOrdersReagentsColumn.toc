@@ -46,6 +46,8 @@ Locales\zhCN.lua
 Locales\zhTW.lua
 
 # Icons on crafting orders module
+RewardIcons.lua
+ReagentIcons.lua
 PublicOrdersReagentsColumn.lua
 
 # 'Offline' crafting orders module

@@ -38,6 +38,7 @@ function addon:setupOptions()
                 b = 0,
                 a = 0.3,
             },
+            highRankReagentsEnabled = false,
         },
     }
         
@@ -240,6 +241,18 @@ function addon:setupOptions()
                         end,
                         set = function(_, v)
                             addon.db.global.desaturateMissingReagents = v
+                        end,
+                    },
+                    highRankReagentsEnabled = {
+                        type = "toggle",
+                        name = L["HIGH_RANK_REAGENTS_NAME"],
+                        desc = L["HIGH_RANK_REAGENTS_DESC"],
+                        width = "full",
+                        get = function()
+                            return addon.db.global.highRankReagentsEnabled
+                        end,
+                        set = function(_, v)
+                            addon.db.global.highRankReagentsEnabled = v
                         end,
                     },
                 },

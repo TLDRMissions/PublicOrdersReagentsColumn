@@ -2,12 +2,9 @@ local addonName, addon = ...
 
 local L = LibStub("AceLocale-3.0"):GetLocale(addonName)
 
-local rewardIconsPrimary, rewardIconsDuplicate = {}, {}
-local reagentIconsPrimary, reagentIconsDuplicate = {}, {}
 local textFieldsPrimary, textFieldsDuplicate = {}, {}
 local errorTexturesPrimary, errorTexturesDuplicate = {}, {}
 local priorityTexturesPrimary, priorityTexturesDuplicate = {}, {}
-local missingReagentTexturesPrimary, missingReagentTexturesDuplicate = {}, {}
 local buttonRegistered = {}
 
 function addon.getOneTimeUniqueID(row)
@@ -79,31 +76,14 @@ function addon.isRowMarkedSuppressed(row)
 end
 
 local function showGeneric(self, _, browseType)
-    local rewardIcons = rewardIconsPrimary
-    local reagentIcons = reagentIconsPrimary
     local textFields = textFieldsPrimary
     local errorTextures = errorTexturesPrimary
     local priorityTextures = priorityTexturesPrimary
-    local missingReagentTextures = missingReagentTexturesPrimary
     
     if self == ProfessionsFrame.OrdersPageOffline then
-        rewardIcons = rewardIconsDuplicate
-        reagentIcons = reagentIconsDuplicate
         textFields = textFieldsDuplicate
         errorTextures = errorTexturesDuplicate
         priorityTextures = priorityTexturesDuplicate
-        missingReagentTextures = missingReagentTexturesDuplicate
-    end
-    
-    for _, r in pairs(reagentIcons) do
-        for _, s in pairs(r) do
-            s:Hide()
-        end
-    end
-    for _, r in pairs(rewardIcons) do
-        for _, s in pairs(r) do
-            s:Hide()
-        end
     end
     
     if self.orderType == Enum.CraftingOrderType.Public then
@@ -119,11 +99,6 @@ local function showGeneric(self, _, browseType)
     for t in pairs(priorityTextures) do
         t:Hide()
     end
-    
-    for t in pairs(missingReagentTextures) do
-        t:Hide()
-    end
-    wipe(missingReagentTextures)
     
     local rows = self.BrowseFrame.OrderList.ScrollBox:GetView().frames
 
@@ -250,6 +225,8 @@ local function showGeneric(self, _, browseType)
         end   
 	end
     
+    addon.handleRewardIcons(self, browseType)
+    addon.handleReagentIcons(self, browseType)
     
     local padding = addon.db.global.increasedPadding
     for rowID, row in ipairs(rows) do
@@ -322,157 +299,14 @@ local function showGeneric(self, _, browseType)
                 row:SetPoint(a,b,c,d,e - (padding * (rowID-1)))
             end
         end
-        
-        if not rewardIcons[rowID] then
-            rewardIcons[rowID] = {}
-        end
-        if not reagentIcons[rowID] then
-            reagentIcons[rowID] = {}
-        end
-        
-        local cell = row.cells[3]
-        if not cell.RewardIcon then return end
-        local rowData = cell.rowData.option.npcOrderRewards
-        for idx, reward in ipairs(rowData) do
-            local itemLink = reward.itemLink
-            
-            local button = rewardIcons[rowID][idx] 
-            if not button then
-                button = CreateFrame("ItemButton", nil, cell, "ProfessionsCrafterOrderRewardTemplate")
-                rewardIcons[rowID][idx] = button
-                button:ClearNormalTexture()
-                button:ClearPushedTexture()
-                button:ClearHighlightTexture()
-            end
-            
-            button:SetSize(19+padding, 19+padding)
-            button:SetParent(cell)
-            
-            if idx == 1 then
-                button:SetPoint("TOPRIGHT", cell, "TOPRIGHT", -35, 0)
-                cell.RewardIcon:Hide()
-            else
-                button:SetPoint("TOPRIGHT", rewardIcons[rowID][idx-1], "TOPLEFT")
-            end
-            button:SetReward(reward)
-            button:SetScript("OnClick", function()
-                if IsModifiedClick("CHATLINK") then
-                    if itemLink then
-                        -- the itemlink in the reward table doesn't always have the item name loaded - have to refetch the item link from the item ID
-                        local item = Item:CreateFromItemLink(itemLink)
-                        item:ContinueOnItemLoad(function()
-                            item = Item:CreateFromItemID(item:GetItemID())
-                            item:ContinueOnItemLoad(function()
-                                ChatEdit_InsertLink(item:GetItemLink())
-                            end)
-                        end)
-                    end
-                end
-            end)
-        end
-        
-        cell = row.cells[4]
+   
+        local cell = row.cells[4]
         cell:SetWidth(120)
         rowData = cell.rowData.option
         local textField = cell.Text
         textField:Hide()
         textFields[textField] = true
-        if rowData.reagentState ~= Enum.CraftingOrderReagentsType.All then
-            local recipeSchematic = C_TradeSkillUI.GetRecipeSchematic(rowData.spellID, rowData.isRecraft)
-            local reagents = recipeSchematic.reagentSlotSchematics
-            for i = #reagents, 1, -1 do
-                local reagentData = reagents[i]
-                if not reagentData.required then
-                    table.remove(reagents, i)
-                else
-                    local found = false
-                    for _, reagentChoice in pairs(reagentData.reagents) do
-                        for _, providedReagentData in ipairs(rowData.reagents) do
-                            if providedReagentData.reagentInfo.reagent.itemID == reagentChoice.itemID then
-                                found = true
-                                break
-                            end
-                        end
-                        if found then break end
-                    end
-                    if found then
-                        table.remove(reagents, i)
-                    end
-                end
-            end
-            
-            local numUncollected = 0
-            for _, reagentData in ipairs(reagents) do
-                local numPossessed = ProfessionsUtil.GetReagentQuantityInPossession(reagentData.reagents[1], false)
-                if numPossessed == 0 then
-                    numUncollected = numUncollected + 1
-                end
-            end
-            
-            for idx, reagentData in ipairs(reagents) do
-                local button = reagentIcons[rowID][idx]
-                if not button then
-                    button = CreateFrame("ItemButton", nil, cell, "ProfessionsCrafterOrderRewardTemplate")
-                    reagentIcons[rowID][idx] = button
-                    button:ClearNormalTexture()
-                    button:ClearPushedTexture()
-                    button:ClearHighlightTexture()
-                    button.noProfessionQualityOverlay = true
-                end
-                
-                button:SetSize(19+padding, 19+padding)
-                button:SetParent(cell)
-                reagentIcons[rowID][idx] = button
-                
-                button.Count:SetScale(1)
-                if reagentData.quantityRequired > 99 then
-                    button.Count:SetScale(0.8)
-                end
-                
-                local numPossessed = ProfessionsUtil.GetReagentQuantityInPossession(reagentData.reagents[1], false)
-                if numPossessed >= reagentData.quantityRequired then
-                    button.Icon:SetDesaturated(false)
-                    button.Icon:SetAlpha(1)
-                    button.IconBorder:Show()
-                else
-                    if addon.db.global.desaturateMissingReagents then
-                        button.Icon:SetDesaturated(true)
-                        button.Icon:SetAlpha(0.5)
-                        button.IconBorder:Hide()
-                        RunNextFrame(function()
-                            button.IconBorder:Hide()
-                        end)
-                    end
-                    
-                    if not (row.ErrorTexture and row.ErrorTexture:IsShown()) then
-                        -- highlight the cell if player doesn't have all materials
-                        local missingReagentTexture = cell.missingReagentTexture or cell:CreateTexture(nil, "OVERLAY")
-                        cell.missingReagentTexture = missingReagentTexture
-                        missingReagentTexture:SetPoint("TOPLEFT", cell, "TOPLEFT", -5, 0)
-                        missingReagentTexture:SetPoint("BOTTOMRIGHT", cell, "BOTTOMRIGHT", -5, 0)
-                        missingReagentTextures[missingReagentTexture] = true
-                        missingReagentTexture:SetBlendMode("ADD")
-                        missingReagentTexture:SetColorTexture(addon.db.global.reagentErrorColor.r, addon.db.global.reagentErrorColor.g, addon.db.global.reagentErrorColor.b, addon.db.global.reagentErrorColor.a)
-                        missingReagentTexture:Show()
-                    end
-                end
-                
-                if idx == 1 then
-                    button:SetPoint("TOPLEFT", textField, "TOPLEFT")
-                else
-                    button:SetPoint("TOPLEFT", reagentIcons[rowID][idx-1], "TOPRIGHT")
-                end
-                button:SetReward({count = reagentData.quantityRequired, itemLink = "|cff0070dd|Hitem:"..reagentData.reagents[1].itemID.."|h[]|h|r"})
-                button:SetScript("OnClick", function()
-                    if IsModifiedClick("CHATLINK") then
-                        item = Item:CreateFromItemID(reagentData.reagents[1].itemID)
-                        item:ContinueOnItemLoad(function()
-                            ChatEdit_InsertLink(item:GetItemLink())
-                        end)
-                    end
-                end)
-            end
-        else
+        if rowData.reagentState == Enum.CraftingOrderReagentsType.All then
             -- if recipe has all materials provided, highlight it
             -- don't highlight it as priority if its already highlighted as error
             if (not row.ErrorTexture) or (not row.ErrorTexture:IsShown()) then
