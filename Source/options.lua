@@ -303,6 +303,9 @@ function addon:setupOptions()
                         name = L["START_CRAFT_BUTTON_NAME"],
                         func = function()
                             for profileKey in pairs(PublicOrdersReagentsColumnADB.profileKeys) do
+                                if not PublicOrdersReagentsColumnADB.profiles[profileKey] then
+                                    PublicOrdersReagentsColumnADB.profiles[profileKey] = {}
+                                end
                                 PublicOrdersReagentsColumnADB.profiles[profileKey].skipCompleteOrderButton = addon.db.profile.skipCompleteOrderButton
                                 PublicOrdersReagentsColumnADB.profiles[profileKey].skipOwnReagentConfiration = addon.db.profile.skipOwnReagentConfiration
                                 PublicOrdersReagentsColumnADB.profiles[profileKey].skipStartOrderButton = addon.db.profile.skipStartOrderButton
