@@ -239,6 +239,7 @@ local function showGeneric(self, _, browseType)
                 if reward.itemLink then
                     local auctionatorPrice = Auctionator.API.v1.GetAuctionPriceByItemLink(addonName, reward.itemLink) or 0
                     profit = profit + (auctionatorPrice * reward.count)
+                    profit = profit + (addon.db.global.customItemValues[C_Item.GetItemInfoInstant(reward.itemLink)] * 10000)
                 end
             end
             
@@ -267,7 +268,8 @@ local function showGeneric(self, _, browseType)
             end
             
             for _, reagentData in ipairs(reagents) do
-                local auctionatorPrice = Auctionator.API.v1.GetAuctionPriceByItemID(addonName, reagentData.reagents[1].itemID) or 0
+                local itemID = reagentData.reagents[1].itemID
+                local auctionatorPrice = Auctionator.API.v1.GetAuctionPriceByItemID(addonName, itemID) or 0
                 profit = profit - (auctionatorPrice * reagentData.quantityRequired)
             end
             

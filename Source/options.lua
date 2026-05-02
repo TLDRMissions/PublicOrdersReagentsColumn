@@ -32,6 +32,9 @@ function addon:setupOptions()
             moxieIconType = nil,
             profitLossColumn = true,
             desaturateMissingReagents = true,
+            customItemValues = {
+                ['*'] = 0,
+            },
             reagentErrorColor = {
                 r = 1,
                 g = 0,
@@ -81,14 +84,87 @@ function addon:setupOptions()
                         get = function() return addon.db.global.suppressNoWeeklyQuestWarning end,
                         width = "full",
                     },
-                   enableProfitLossColumn = {
+                },
+            },
+            profitLossModule = {
+                type = "group",
+                inline = true,
+                name = L["PROFIT_LOSS_OPTION"],
+                args = {
+                    enableProfitLossColumn = {
                         name = L["PROFIT_LOSS_OPTION"],
                         desc = L["PROFIT_LOSS_OPTION_DESC"],
                         width = "full",
                         type = "toggle",
                         set = function(_, v) addon.db.global.profitLossColumn = v end,
                         get = function() return addon.db.global.profitLossColumn end,
+                        order = 1,
                     },
+                    customValuesDropdown = {
+                        name = L["PROFIT_LOSS_DROPDOWN_DESC"],
+                        width = 1.5,
+                        type = "select",
+                        values = function()
+                            local values = {}
+                            for itemID, value in pairs(addon.db.global.customItemValues) do
+                                values[itemID] = C_Item.GetItemNameByID(itemID) or itemID
+                            end
+                            return values
+                        end,
+                        set = function(_, v)
+                            addon.currentlySelectedCustomValue = v
+                        end,
+                        get = function()
+                            return addon.currentlySelectedCustomValue
+                        end,
+                        order = 3,
+                    },
+                    customValuesItemIDInput = {
+                        name = L["Item ID"],
+                        width = 0.8,
+                        type = "input",
+                        get = function()
+                            if not addon.currentlySelectedCustomValue then return "" end
+                            return addon.currentlySelectedCustomValue .. ""
+                        end,
+                        set = function(_, v)
+                            addon.currentlySelectedCustomValue = tonumber(v)
+                        end,
+                        order = 4,
+                        pattern = "^%d+$",
+                        usage = L["Numbers Only!"],
+                    },
+                    customValuesPriceInput = {
+                        name = L["Custom Price"],
+                        width = 0.8,
+                        type = "input",
+                        get = function()
+                            if not addon.currentlySelectedCustomValue then return "" end
+                            return addon.db.global.customItemValues[addon.currentlySelectedCustomValue] .. ""
+                        end,
+                        set = function(_, v)
+                            if not addon.currentlySelectedCustomValue then return end
+                            addon.db.global.customItemValues[addon.currentlySelectedCustomValue] = tonumber(v)
+                        end,
+                        order = 5,
+                        pattern = "^%d+$",
+                        usage = L["Numbers Only!"],
+                    },
+                    customValuesDelete = {
+                        name = "",
+                        type = "execute",
+                        func = function()
+                            if not addon.currentlySelectedCustomValue then return end
+                            addon.db.global.customItemValues[addon.currentlySelectedCustomValue] = nil
+                            addon.currentlySelectedCustomValue = nil
+                        end,
+                        image = "interface/auctionframe/auctionhouse.blp",
+                        order = order,
+                        width = 0.2,
+                        imageCoords = {963/1024, 1009/1024, 1/1024, 47/1024},
+                        imageWidth = 23,
+                        imageHeight = 23,
+                    }
                 },
             },
             toolFlyoutModule = {
