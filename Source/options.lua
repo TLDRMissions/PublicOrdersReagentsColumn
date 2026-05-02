@@ -121,7 +121,7 @@ function addon:setupOptions()
                         type = "select",
                         values = function()
                             local values = {}
-                            for itemID, value in pairs(addon.db.global.customItemValues) do
+                            for itemID in pairs(addon.db.global.customItemValues) do
                                 values[itemID] = C_Item.GetItemNameByID(itemID) or itemID
                             end
                             return values
