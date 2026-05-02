@@ -28,6 +28,8 @@ L["TREASURES_GROUP_NAME"] = "Treasures"
 L["MOXIE_GROUP_NAME"] = "Moxie"
 L["TOOL_FLYOUT_GROUP_NAME"] = "Tool flyout"
 
+L["CUSTOM_EXPIRY_TIME_NAME"] = "Shade expiry time red if order expires sooner than this many hours"
+
 -- Reagents Column
 L["REAGENT_ERROR_SHADE"] = "Missing rank 1 reagents background colour for patron orders"
 L["HIGH_RANK_REAGENTS_NAME"] = "Accept higher rank reagents"

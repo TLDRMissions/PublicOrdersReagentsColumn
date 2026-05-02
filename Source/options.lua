@@ -32,6 +32,7 @@ function addon:setupOptions()
             moxieIconType = nil,
             profitLossColumn = true,
             desaturateMissingReagents = true,
+            customExpiryTime = nil,
             customItemValues = {
                 ['*'] = 0,
             },
@@ -83,6 +84,20 @@ function addon:setupOptions()
                         set = function(_, v) addon.db.global.suppressNoWeeklyQuestWarning = v end,
                         get = function() return addon.db.global.suppressNoWeeklyQuestWarning end,
                         width = "full",
+                    },
+                    customExpiryTime = {
+                        name = L["CUSTOM_EXPIRY_TIME_NAME"],
+                        width = "full",
+                        type = "range",
+                        min = Constants.ProfessionConsts.PUBLIC_CRAFTING_ORDER_STALE_THRESHOLD / 3600,
+                        max = 168,
+                        step = 1,
+                        get = function()
+                            return addon.db.global.customExpiryTime
+                        end,
+                        set = function(_, v)
+                            addon.db.global.customExpiryTime = v
+                        end,
                     },
                 },
             },

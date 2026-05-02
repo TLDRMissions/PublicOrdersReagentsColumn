@@ -102,6 +102,17 @@ local function showGeneric(self, _, browseType)
     
     local rows = self.BrowseFrame.OrderList.ScrollBox:GetView().frames
 
+    -- custom expiry time set
+    if addon.db.global.customExpiryTime then
+        for _, row in ipairs(rows) do
+            local cell = row.cells[5]
+            local remainingTime = Professions.GetCraftingOrderRemainingTime(row.rowData.option.expirationTime)
+            if (remainingTime > Constants.ProfessionConsts.PUBLIC_CRAFTING_ORDER_STALE_THRESHOLD) and (remainingTime <= (addon.db.global.customExpiryTime * 3600)) then
+                ProfessionsTableCellTextMixin.SetText(cell, ERROR_COLOR:WrapTextInColorCode(Professions.OrderTimeLeftFormatter:Format(remainingTime)))
+            end
+        end
+    end
+    
     if browseType ~= 1 then
         -- if rows were previously faded out, and we have switched to category view, then fade the rows back in
         for _, row in ipairs(rows) do
