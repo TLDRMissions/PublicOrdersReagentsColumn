@@ -1,9 +1,8 @@
 local addonName, addon = ...
 
-function addon.handleReagentIcons(self)
+function addon.handleReagentIcons(self, browseType)
     local reagentIcons = self.NMNMReagentIcons or {}
     self.NMNMReagentIcons = reagentIcons
-    zzzz = zzzz or reagentIcons
     
     local missingReagentTextures = self.NMNMMissingReagentTextures or {}
     self.NMNMMissingReagentTextures = missingReagentTextures
@@ -18,6 +17,8 @@ function addon.handleReagentIcons(self)
         t:Hide()
     end
     wipe(missingReagentTextures)
+    
+    if browseType ~= 1 then return end
     
     local rows = self.BrowseFrame.OrderList.ScrollBox:GetView().frames
     local padding = addon.db.global.increasedPadding

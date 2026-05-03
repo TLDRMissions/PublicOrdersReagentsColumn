@@ -1,6 +1,6 @@
 local addonName, addon = ...
 
-function addon.handleRewardIcons(self)
+function addon.handleRewardIcons(self, browseType)
     local rewardIcons = self.NMNMRewardIcons or {}
     self.NMNMRewardIcons = rewardIcons
     
@@ -9,6 +9,8 @@ function addon.handleRewardIcons(self)
             s:Hide()
         end
     end
+    
+    if browseType ~= 1 then return end
     
     local rows = self.BrowseFrame.OrderList.ScrollBox:GetView().frames
     local padding = addon.db.global.increasedPadding

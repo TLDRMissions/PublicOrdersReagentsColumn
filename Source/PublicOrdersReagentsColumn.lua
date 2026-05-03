@@ -113,6 +113,9 @@ local function showGeneric(self, _, browseType)
         end
     end
     
+    addon.handleRewardIcons(self, browseType)
+    addon.handleReagentIcons(self, browseType)
+    
     if browseType ~= 1 then
         -- if rows were previously faded out, and we have switched to category view, then fade the rows back in
         for _, row in ipairs(rows) do
@@ -235,9 +238,6 @@ local function showGeneric(self, _, browseType)
             end
         end   
 	end
-    
-    addon.handleRewardIcons(self)
-    addon.handleReagentIcons(self)
     
     local padding = addon.db.global.increasedPadding
     for rowID, row in ipairs(rows) do
