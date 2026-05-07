@@ -2,6 +2,23 @@ local addonName, addon = ...
 
 local L = LibStub("AceLocale-3.0"):GetLocale(addonName)
 
+local function doesOrderRequireConcentration(order)
+    local recipeID = order.spellID
+    local orderID = order.orderID
+    local reagents = {}
+    for _, reagent in ipairs(order.reagents) do
+        table.insert(reagents, reagent.reagentInfo)
+    end
+    
+    local withoutConcentration = C_TradeSkillUI.GetCraftingOperationInfoForOrder(recipeID, reagents, orderID, false)
+    --local withConcentration = C_TradeSkillUI.GetCraftingOperationInfoForOrder(recipeID, reagents, orderID, true)
+    local minQuality = order.minQuality
+    
+    if not withoutConcentration then return end
+    if withoutConcentration.quality >= minQuality then return end
+    return true
+end
+
 local textFieldsPrimary, textFieldsDuplicate = {}, {}
 local errorTexturesPrimary, errorTexturesDuplicate = {}, {}
 local priorityTexturesPrimary, priorityTexturesDuplicate = {}, {}
@@ -329,7 +346,11 @@ local function showGeneric(self, _, browseType)
                 priorityTexture:SetPoint("BOTTOMRIGHT", row, "BOTTOMRIGHT")
                 priorityTextures[priorityTexture] = true
                 priorityTexture:SetBlendMode("ADD")
-                priorityTexture:SetColorTexture(0, 1, 0, 0.15)
+                if doesOrderRequireConcentration(rowData) then
+                    priorityTexture:SetColorTexture(0, 0.8, 0.5, 0.15)
+                else
+                    priorityTexture:SetColorTexture(0, 1, 0, 0.15)
+                end
                 priorityTexture:Show()
             end
         end
