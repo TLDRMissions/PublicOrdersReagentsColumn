@@ -43,6 +43,7 @@ function addon:setupOptions()
                 a = 0.3,
             },
             highRankReagentsEnabled = false,
+            preferredExternalAuctionAddon = "Auctionator",
         },
     }
         
@@ -114,6 +115,30 @@ function addon:setupOptions()
                         set = function(_, v) addon.db.global.profitLossColumn = v end,
                         get = function() return addon.db.global.profitLossColumn end,
                         order = 1,
+                    },
+                    preferredExternalAuctionAddon = {
+                        name = L["PREFERRED_AUCTION_ADDON"],
+                        width = 2,
+                        type = "select",
+                        values = function()
+                            local values = {}
+                            if C_AddOns.IsAddOnLoaded("Auctionator") then
+                                values["Auctionator"] = "Auctionator"
+                            end
+                            if C_AddOns.IsAddOnLoaded("TradeSkillMaster") then
+                                values["Trade Skill Master"] = "TSM"
+                            end
+                            return values
+                        end,
+                        disabled = function()
+                            return not (C_AddOns.IsAddOnLoaded("Auctionator") or C_AddOns.IsAddOnLoaded("TradeSkillMaster"))
+                        end,
+                        set = function(_, v)
+                            addon.db.global.preferredExternalAuctionAddon = v
+                        end,
+                        get = function()
+                            return addon.db.global.preferredExternalAuctionAddon
+                        end,
                     },
                     customValuesDropdown = {
                         name = L["PROFIT_LOSS_DROPDOWN_DESC"],

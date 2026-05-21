@@ -231,7 +231,7 @@ local function showGeneric(self, _, browseType)
 		local header = column.headerFrame
         if columnIndex == 2 then
             -- name column
-            if C_AddOns.IsAddOnLoaded("Auctionator") and Auctionator and addon.db.global.profitLossColumn then
+            if addon:isExternalAuctionAddonAvailable() and addon.db.global.profitLossColumn then
                 header:SetText(L["PROFIT_LOSS_HEADER"])
             end
         elseif columnIndex == 3 then
@@ -252,15 +252,15 @@ local function showGeneric(self, _, browseType)
     
     local padding = addon.db.global.increasedPadding
     for rowID, row in ipairs(rows) do
-        if C_AddOns.IsAddOnLoaded("Auctionator") and Auctionator and addon.db.global.profitLossColumn then
+        if addon:isExternalAuctionAddonAvailable() and addon.db.global.profitLossColumn then
             -- usurp the name cell, converting it to a profit/loss column
             local cell = row.cells[2]
             local rowData = cell.rowData.option
             local profit = rowData.tipAmount - rowData.consortiumCut
             for _, reward in pairs(rowData.npcOrderRewards) do
                 if reward.itemLink then
-                    local auctionatorPrice = Auctionator.API.v1.GetAuctionPriceByItemLink(addonName, reward.itemLink) or 0
-                    profit = profit + (auctionatorPrice * reward.count)
+                    local auctionPrice = addon:getExternalAddonAuctionPrice(reward.itemLink)
+                    profit = profit + (auctionPrice * reward.count)
                     profit = profit + (addon.db.global.customItemValues[C_Item.GetItemInfoInstant(reward.itemLink)] * 10000)
                 end
             end
@@ -291,8 +291,8 @@ local function showGeneric(self, _, browseType)
             
             for _, reagentData in ipairs(reagents) do
                 local itemID = reagentData.reagents[1].itemID
-                local auctionatorPrice = Auctionator.API.v1.GetAuctionPriceByItemID(addonName, itemID) or 0
-                profit = profit - (auctionatorPrice * reagentData.quantityRequired)
+                local auctionPrice = addon:getExternalAddonAuctionPrice(itemID)
+                profit = profit - (auctionPrice * reagentData.quantityRequired)
             end
             
             local npcName = cell.Text:GetText()

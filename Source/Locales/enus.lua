@@ -28,6 +28,8 @@ L["TREASURES_GROUP_NAME"] = "Treasures"
 L["MOXIE_GROUP_NAME"] = "Moxie"
 L["TOOL_FLYOUT_GROUP_NAME"] = "Tool flyout"
 
+L["PREFERRED_AUCTION_ADDON"] = "Preferred Auction Database Addon"
+
 L["CUSTOM_EXPIRY_TIME_NAME"] = "Shade expiry time red if order expires sooner than this many hours"
 
 -- Reagents Column
