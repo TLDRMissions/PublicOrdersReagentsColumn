@@ -79,5 +79,7 @@ MoxieIcon.xml
 # All in one Start and Craft button module
 StartAndCraftButton.lua
 
+ExternalPriceAPIs.lua
+
 options.lua
 init.lua
