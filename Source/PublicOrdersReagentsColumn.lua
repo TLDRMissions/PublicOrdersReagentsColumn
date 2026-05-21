@@ -10,7 +10,7 @@ local function doesOrderRequireConcentration(order)
     local minQuality = order.minQuality
     
     if withoutConcentration.quality >= minQuality then return end
-    return true
+    return withoutConcentration.concentrationCost
 end
 
 local textFieldsPrimary, textFieldsDuplicate = {}, {}
@@ -251,10 +251,37 @@ local function showGeneric(self, _, browseType)
 	end
     
     local padding = addon.db.global.increasedPadding
+    
+    local concentrationRequiredTextures = self.NMNMConcentrationRequiredTextures or {}
+    self.NMNMConcentrationRequiredTextures = concentrationRequiredTextures
+    for t in pairs(concentrationRequiredTextures) do
+        t:Hide()
+    end
+    wipe(concentrationRequiredTextures)
+    
     for rowID, row in ipairs(rows) do
+        -- update name cell: add concentration cost if required
+        local cell = row.cells[1]
+        local concentrationRequired = doesOrderRequireConcentration(cell.rowData.option)
+        if concentrationRequired and (concentrationRequired > 0) then
+            local concentrationRequiredTexture = cell.concentrationRequiredTexture or cell:CreateTexture(nil, "OVERLAY")
+            cell.concentrationRequiredTexture = concentrationRequiredTexture
+            concentrationRequiredTextures[concentrationRequiredTexture] = true
+            concentrationRequiredTexture:SetPoint("TOPRIGHT", cell, "TOPRIGHT", -10, 0)
+            concentrationRequiredTexture:SetSize(22, 22)
+            concentrationRequiredTexture:SetTexture("Interface\\ICONS\\UI_Concentration")
+            concentrationRequiredTexture:Show()
+            local price = concentrationRequiredTexture.price or cell:CreateFontString(nil, "OVERLAY", "GameTooltipText")
+            concentrationRequiredTexture.price = price
+            concentrationRequiredTextures[price] = true
+            price:SetPoint("RIGHT", concentrationRequiredTexture, "LEFT")
+            price:SetText(concentrationRequired)
+            price:Show()
+        end
+        
         if addon:isExternalAuctionAddonAvailable() and addon.db.global.profitLossColumn then
-            -- usurp the name cell, converting it to a profit/loss column
-            local cell = row.cells[2]
+            -- usurp the patron name cell, converting it to a profit/loss column
+            cell = row.cells[2]
             local rowData = cell.rowData.option
             local profit = rowData.tipAmount - rowData.consortiumCut
             for _, reward in pairs(rowData.npcOrderRewards) do
@@ -324,7 +351,7 @@ local function showGeneric(self, _, browseType)
             end
         end
    
-        local cell = row.cells[4]
+        cell = row.cells[4]
         cell:SetWidth(120)
         rowData = cell.rowData.option
         local textField = cell.Text
@@ -340,7 +367,7 @@ local function showGeneric(self, _, browseType)
                 priorityTexture:SetPoint("BOTTOMRIGHT", row, "BOTTOMRIGHT")
                 priorityTextures[priorityTexture] = true
                 priorityTexture:SetBlendMode("ADD")
-                if doesOrderRequireConcentration(rowData) then
+                if concentrationRequired then
                     priorityTexture:SetColorTexture(0, 0.8, 0.5, 0.15)
                 else
                     priorityTexture:SetColorTexture(0, 1, 0, 0.15)
