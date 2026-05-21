@@ -12,7 +12,7 @@ local function getTSMPrice(itemLink)
     if type(itemLink) == "number" then
         itemLink = "i:"..itemLink
     end
-    return TSM_API.GetCustomPriceValue("first(DBRecent, DBMinbuyout)", TSM_API.ToItemString(itemLink)) or 0
+    return TSM_API.GetCustomPriceValue(addon.db.global.TSMPriceString, TSM_API.ToItemString(itemLink)) or 0
 end
 
 local function getSearchFunc()

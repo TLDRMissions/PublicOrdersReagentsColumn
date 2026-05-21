@@ -33,6 +33,7 @@ function addon:setupOptions()
             profitLossColumn = true,
             desaturateMissingReagents = true,
             customExpiryTime = nil,
+            TSMPriceString = "first(DBRecent, DBMinbuyout)",
             customItemValues = {
                 ['*'] = 0,
             },
@@ -138,6 +139,20 @@ function addon:setupOptions()
                         end,
                         get = function()
                             return addon.db.global.preferredExternalAuctionAddon
+                        end,
+                    },
+                    TSMPriceString = {
+                        name = L["TSM_PRICE_STRING"],
+                        width = 1.5,
+                        type = "input",
+                        get = function()
+                            return addon.db.global.TSMPriceString
+                        end,
+                        set = function(_, v)
+                            addon.db.global.TSMPriceString = v
+                        end,
+                        hidden = function()
+                            return not C_AddOns.IsAddOnLoaded("TradeSkillMaster")
                         end,
                     },
                     customValuesDropdown = {
