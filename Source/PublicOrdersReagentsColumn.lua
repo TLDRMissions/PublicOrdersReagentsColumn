@@ -271,10 +271,10 @@ local function showGeneric(self, _, browseType)
             concentrationRequiredTexture:SetSize(22, 22)
             concentrationRequiredTexture:SetTexture("Interface\\ICONS\\UI_Concentration")
             concentrationRequiredTexture:Show()
-            local price = concentrationRequiredTexture.price or cell:CreateFontString(nil, "OVERLAY", "GameTooltipText")
+            local price = concentrationRequiredTexture.price or cell:CreateFontString(nil, "OVERLAY", "NumberFontNormal")
             concentrationRequiredTexture.price = price
             concentrationRequiredTextures[price] = true
-            price:SetPoint("RIGHT", concentrationRequiredTexture, "LEFT")
+            price:SetPoint("CENTER", concentrationRequiredTexture, "CENTER")
             price:SetText(concentrationRequired)
             price:Show()
         end
