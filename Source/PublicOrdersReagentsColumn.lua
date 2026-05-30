@@ -8,10 +8,17 @@ local function doesOrderRequireConcentration(order)
     local reagents = {}
     for _, expectedReagent in pairs(schematic.reagentSlotSchematics) do
         if expectedReagent.dataSlotType == Enum.TradeskillSlotDataType.ModifiedReagent then
+            local wasProvided
             for _, providedReagent in pairs(order.reagents) do
                 if providedReagent.slotIndex == expectedReagent.slotIndex then
                     table.insert(reagents, Professions.CreateCraftingReagentInfo(providedReagent.reagentInfo.reagent, providedReagent.reagentInfo.dataSlotIndex, providedReagent.reagentInfo.quantity))
+                    wasProvided = true
                     break
+                end
+            end
+            if not wasProvided then
+                if expectedReagent.reagentType ~= Enum.CraftingReagentType.Finishing then
+                    table.insert(reagents, Professions.CreateCraftingReagentInfo(expectedReagent.reagents[1], expectedReagent.dataSlotIndex, expectedReagent.quantityRequired))
                 end
             end
         end
