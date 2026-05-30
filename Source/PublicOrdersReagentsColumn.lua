@@ -263,7 +263,7 @@ local function showGeneric(self, _, browseType)
         -- update name cell: add concentration cost if required
         local cell = row.cells[1]
         local concentrationRequired = doesOrderRequireConcentration(cell.rowData.option)
-        if concentrationRequired and (concentrationRequired > 0) then
+        if addon.db.global.showConcentrationRequired and concentrationRequired and (concentrationRequired > 0) then
             local concentrationRequiredTexture = cell.concentrationRequiredTexture or cell:CreateTexture(nil, "OVERLAY")
             cell.concentrationRequiredTexture = concentrationRequiredTexture
             concentrationRequiredTextures[concentrationRequiredTexture] = true

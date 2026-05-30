@@ -34,6 +34,7 @@ function addon:setupOptions()
             desaturateMissingReagents = true,
             customExpiryTime = nil,
             TSMPriceString = "first(DBRecent, DBMinbuyout)",
+            showConcentrationRequired = true,
             customItemValues = {
                 ['*'] = 0,
             },
@@ -100,6 +101,13 @@ function addon:setupOptions()
                         set = function(_, v)
                             addon.db.global.customExpiryTime = v
                         end,
+                    },
+                    showConcentrationRequired = {
+                        name = "Show Concentration Required",
+                        width = "full",
+                        type = "toggle",
+                        set = function(_, v) addon.db.global.showConcentrationRequired = v end,
+                        get = function() return addon.db.global.showConcentrationRequired end,
                     },
                 },
             },
