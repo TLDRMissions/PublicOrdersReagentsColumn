@@ -4,7 +4,6 @@ local L = LibStub("AceLocale-3.0"):GetLocale(addonName)
 
 local function doesOrderRequireConcentration(order)
     local recipeID = order.spellID
-    local orderID = order.orderID
     local schematic = C_TradeSkillUI.GetRecipeSchematic(recipeID, order.isRecraft)
     local reagents = {}
     for _, expectedReagent in pairs(schematic.reagentSlotSchematics) do
