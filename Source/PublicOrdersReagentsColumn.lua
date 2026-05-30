@@ -5,8 +5,20 @@ local L = LibStub("AceLocale-3.0"):GetLocale(addonName)
 local function doesOrderRequireConcentration(order)
     local recipeID = order.spellID
     local orderID = order.orderID
+    local schematic = C_TradeSkillUI.GetRecipeSchematic(recipeID, order.isRecraft)
+    local reagents = {}
+    for _, expectedReagent in pairs(schematic.reagentSlotSchematics) do
+        if expectedReagent.dataSlotType == Enum.TradeskillSlotDataType.ModifiedReagent then
+            for _, providedReagent in pairs(order.reagents) do
+                if providedReagent.slotIndex == expectedReagent.slotIndex then
+                    table.insert(reagents, Professions.CreateCraftingReagentInfo(providedReagent.reagentInfo.reagent, providedReagent.reagentInfo.dataSlotIndex, providedReagent.reagentInfo.quantity))
+                    break
+                end
+            end
+        end
+    end
     
-    local withoutConcentration = C_TradeSkillUI.GetCraftingOperationInfoForOrder(recipeID, {}, orderID, false)
+    local withoutConcentration = C_TradeSkillUI.GetCraftingOperationInfo(recipeID, reagents, nil, false)
     local minQuality = order.minQuality
     
     if withoutConcentration.quality >= minQuality then return end
