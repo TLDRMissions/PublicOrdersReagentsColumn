@@ -44,6 +44,18 @@ function addon:setupOptions()
                 b = 0,
                 a = 0.3,
             },
+            concentrationRequiredPriorityColor = {
+                r = 0,
+                g = 0.8,
+                b = 0.5,
+                a = 0.15,
+            },
+            priorityColor = {
+                r = 0,
+                g = 1,
+                b = 0,
+                a = 0.15,
+            },
             highRankReagentsEnabled = false,
             preferredExternalAuctionAddon = "Auctionator",
         },
@@ -108,6 +120,30 @@ function addon:setupOptions()
                         type = "toggle",
                         set = function(_, v) addon.db.global.showConcentrationRequired = v end,
                         get = function() return addon.db.global.showConcentrationRequired end,
+                    },
+                    concentrationRequiredPriorityColor = {
+                        type = "color",
+                        name = "Shade row this colour if all materials are provided, but concentration is needed",
+                        width = "full",
+                        hasAlpha = true,
+                        get = function()
+                            return addon.db.global.concentrationRequiredPriorityColor.r, addon.db.global.concentrationRequiredPriorityColor.g, addon.db.global.concentrationRequiredPriorityColor.b, addon.db.global.concentrationRequiredPriorityColor.a
+                        end,
+                        set = function(_, r, g, b, a)
+                            addon.db.global.concentrationRequiredPriorityColor.r, addon.db.global.concentrationRequiredPriorityColor.g, addon.db.global.concentrationRequiredPriorityColor.b, addon.db.global.concentrationRequiredPriorityColor.a = r, g, b, a
+                        end,
+                    },
+                    priorityColor = {
+                        type = "color",
+                        name = "Shade row this colour if all materials are provided",
+                        width = "full",
+                        hasAlpha = true,
+                        get = function()
+                            return addon.db.global.priorityColor.r, addon.db.global.priorityColor.g, addon.db.global.priorityColor.b, addon.db.global.priorityColor.a
+                        end,
+                        set = function(_, r, g, b, a)
+                            addon.db.global.priorityColor.r, addon.db.global.priorityColor.g, addon.db.global.priorityColor.b, addon.db.global.priorityColor.a = r, g, b, a
+                        end,
                     },
                 },
             },

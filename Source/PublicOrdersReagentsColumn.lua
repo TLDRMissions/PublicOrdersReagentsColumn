@@ -386,9 +386,9 @@ local function showGeneric(self, _, browseType)
                 priorityTextures[priorityTexture] = true
                 priorityTexture:SetBlendMode("ADD")
                 if concentrationRequired then
-                    priorityTexture:SetColorTexture(0, 0.8, 0.5, 0.15)
+                    priorityTexture:SetColorTexture(addon.db.global.concentrationRequiredPriorityColor.r, addon.db.global.concentrationRequiredPriorityColor.g, addon.db.global.concentrationRequiredPriorityColor.b, addon.db.global.concentrationRequiredPriorityColor.a)--0, 0.8, 0.5, 0.15)
                 else
-                    priorityTexture:SetColorTexture(0, 1, 0, 0.15)
+                    priorityTexture:SetColorTexture(addon.db.global.priorityColor.r, addon.db.global.priorityColor.g, addon.db.global.priorityColor.b, addon.db.global.priorityColor.a)--0, 1, 0, 0.15)
                 end
                 priorityTexture:Show()
             end
