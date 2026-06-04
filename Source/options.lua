@@ -21,6 +21,7 @@ function addon:setupOptions()
             skipOwnReagentConfiration = false,
             skipStartOrderButton = false,
             moveCreateButtonToCursor = false,
+            blockMoveCreateButtonIfBestQualitySelected = false,
         },
         global = {
             toolFlyout = true,
@@ -473,6 +474,15 @@ function addon:setupOptions()
                         order = 4,
                         width = 2,
                     },
+                    blockMoveCreateButtonIfBestQualitySelected = {
+                        type = "toggle",
+                        name = L["BLOCK_MOVE_CREATE_TO_CURSOR_NAME"],
+                        desc = L["BLOCK_MOVE_CREATE_TO_CURSOR_DESC"],
+                        set = function(_, v) addon.db.profile.blockMoveCreateButtonIfBestQualitySelected = v end,
+                        get = function() return addon.db.profile.blockMoveCreateButtonIfBestQualitySelected end,
+                        order = 4,
+                        width = 2,
+                    },
                     enableAllButton = {
                         type = "execute",
                         name = L["START_CRAFT_BUTTON_NAME"],
@@ -485,6 +495,7 @@ function addon:setupOptions()
                                 PublicOrdersReagentsColumnADB.profiles[profileKey].skipOwnReagentConfiration = addon.db.profile.skipOwnReagentConfiration
                                 PublicOrdersReagentsColumnADB.profiles[profileKey].skipStartOrderButton = addon.db.profile.skipStartOrderButton
                                 PublicOrdersReagentsColumnADB.profiles[profileKey].moveCreateButtonToCursor = addon.db.profile.moveCreateButtonToCursor
+                                PublicOrdersReagentsColumnADB.profiles[profileKey].blockMoveCreateButtonIfBestQualitySelected = addon.db.profile.blockMoveCreateButtonIfBestQualitySelected
                             end
                         end,
                         width = "full",
