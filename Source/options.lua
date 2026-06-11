@@ -39,6 +39,9 @@ function addon:setupOptions()
             customItemValues = {
                 ['*'] = 0,
             },
+            customCurrencyValues = {
+                ['*'] = 0,
+            },
             reagentErrorColor = {
                 r = 1,
                 g = 0,
@@ -259,12 +262,78 @@ function addon:setupOptions()
                             addon.currentlySelectedCustomValue = nil
                         end,
                         image = "interface/auctionframe/auctionhouse.blp",
-                        order = order,
+                        order = 6,
                         width = 0.2,
                         imageCoords = {963/1024, 1009/1024, 1/1024, 47/1024},
                         imageWidth = 23,
                         imageHeight = 23,
-                    }
+                    },
+                    customCurrencyValuesDropdown = {
+                        name = L["PROFIT_LOSS_CURRENCY_DROPDOWN_DESC"],
+                        width = 1.5,
+                        type = "select",
+                        values = function()
+                            local values = {}
+                            for currencyID in pairs(addon.db.global.customCurrencyValues) do
+                                local info = C_CurrencyInfo.GetCurrencyInfo(currencyID)
+                                values[currencyID] = info and info.name or currencyID
+                            end
+                            return values
+                        end,
+                        set = function(_, v)
+                            addon.currentlySelectedCustomCurrencyValue = v
+                        end,
+                        get = function()
+                            return addon.currentlySelectedCustomCurrencyValue
+                        end,
+                        order = 7,
+                    },
+                    customValuesCurrencyIDInput = {
+                        name = L["Currency ID"],
+                        width = 0.8,
+                        type = "input",
+                        get = function()
+                            if not addon.currentlySelectedCustomCurrencyValue then return "" end
+                            return addon.currentlySelectedCustomCurrencyValue .. ""
+                        end,
+                        set = function(_, v)
+                            addon.currentlySelectedCustomCurrencyValue = tonumber(v)
+                        end,
+                        order = 8,
+                        pattern = "^%d+$",
+                        usage = L["Numbers Only!"],
+                    },
+                    customCurrencyValuesPriceInput = {
+                        name = L["Custom Price"],
+                        width = 0.8,
+                        type = "input",
+                        get = function()
+                            if not addon.currentlySelectedCustomCurrencyValue then return "" end
+                            return addon.db.global.customCurrencyValues[addon.currentlySelectedCustomCurrencyValue] .. ""
+                        end,
+                        set = function(_, v)
+                            if not addon.currentlySelectedCustomCurrencyValue then return end
+                            addon.db.global.customCurrencyValues[addon.currentlySelectedCustomCurrencyValue] = tonumber(v)
+                        end,
+                        order = 9,
+                        pattern = "^%d+$",
+                        usage = L["Numbers Only!"],
+                    },
+                    customCurrencyValuesDelete = {
+                        name = "",
+                        type = "execute",
+                        func = function()
+                            if not addon.currentlySelectedCustomCurrencyValue then return end
+                            addon.db.global.customCurrencyValues[addon.currentlySelectedCustomCurrencyValue] = nil
+                            addon.currentlySelectedCustomCurrencyValue = nil
+                        end,
+                        image = "interface/auctionframe/auctionhouse.blp",
+                        order = 10,
+                        width = 0.2,
+                        imageCoords = {963/1024, 1009/1024, 1/1024, 47/1024},
+                        imageWidth = 23,
+                        imageHeight = 23,
+                    },
                 },
             },
             toolFlyoutModule = {

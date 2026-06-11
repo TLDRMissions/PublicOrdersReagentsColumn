@@ -64,9 +64,11 @@ L["PROFIT_LOSS_HEADER"] = "Profit / Loss"
 L["PROFIT_LOSS_OPTION"] = "Enable the Profit / Loss column."
 L["PROFIT_LOSS_OPTION_DESC"] = "Will replace the Patron Name column, moving that name into a mouseover tooltip."
 L["Item ID"] = true
+L["Currency ID"] = true
 L["Numbers Only!"] = true
 L["Custom Price"] = true
 L["PROFIT_LOSS_DROPDOWN_DESC"] = "Set custom values for soulbound items here"
+L["PROFIT_LOSS_CURRENCY_DROPDOWN_DESC"] = "Set custom values for currencies here"
 
 -- Patron order patrial automation module
 L["START_CRAFT_SPEEDUP_GROUP_NAME"] = "Patron Order button skipping"

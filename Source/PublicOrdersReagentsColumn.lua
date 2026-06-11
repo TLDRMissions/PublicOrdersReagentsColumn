@@ -307,6 +307,10 @@ local function showGeneric(self, _, browseType)
                     local auctionPrice = addon:getExternalAddonAuctionPrice(reward.itemLink)
                     profit = profit + (auctionPrice * reward.count)
                     profit = profit + (addon.db.global.customItemValues[C_Item.GetItemInfoInstant(reward.itemLink)] * 10000)
+                elseif reward.currencyType then
+                    profit = profit + (addon.db.global.customCurrencyValues[reward.currencyType] * 10000)
+                else
+                    print("NMNM: unknown reward type, contact author!")
                 end
             end
             
