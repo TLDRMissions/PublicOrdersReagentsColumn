@@ -72,43 +72,58 @@ function NMNMMoxieCurrencyMixin:SetCurrencyType(currencyType)
 end
 
 EventUtil.ContinueOnAddOnLoaded(addonName, function()
-    NMNMCraftingPageMoxieDisplay:SetParent(ProfessionsFrame.CraftingPage)
-    NMNMCraftingPageMoxieDisplay:SetPoint("TOPLEFT", ProfessionsFrame.CraftingPage.ConcentrationDisplay.Icon, "BOTTOMLEFT", 0, 5)
-    
-    NMNMOrdersPageMoxieDisplay:SetParent(ProfessionsFrame.OrdersPage.OrderView)
-    NMNMOrdersPageMoxieDisplay:SetPoint("TOPLEFT", ProfessionsFrame.OrdersPage.OrderView.ConcentrationDisplay.Icon, "BOTTOMLEFT", 0, 5)
-    
-    if isEnabled() then
-        ProfessionsFrame.CraftingPage.ConcentrationDisplay:SetPoint("TOPLEFT", 120, -25)
-        ProfessionsFrame.OrdersPage.OrderView.ConcentrationDisplay:SetPoint("TOPLEFT", 120, -25)
-        RunNextFrame(function()
-            if ProfessionsFrame.professionInfo and ProfessionIDToCurrencyID[ProfessionsFrame.professionInfo.profession] then
-                NMNMCraftingPageMoxieDisplay:Show()
-                NMNMOrdersPageMoxieDisplay:Show()
+    local function initMoxieIcon()
+        NMNMCraftingPageMoxieDisplay:SetParent(ProfessionsFrame.CraftingPage)
+        NMNMCraftingPageMoxieDisplay:SetPoint("TOPLEFT", ProfessionsFrame.CraftingPage.ConcentrationDisplay.Icon, "BOTTOMLEFT", 0, 5)
+        
+        NMNMOrdersPageMoxieDisplay:SetParent(ProfessionsFrame.OrdersPage.OrderView)
+        NMNMOrdersPageMoxieDisplay:SetPoint("TOPLEFT", ProfessionsFrame.OrdersPage.OrderView.ConcentrationDisplay.Icon, "BOTTOMLEFT", 0, 5)
+        
+        if isEnabled() then
+            ProfessionsFrame.CraftingPage.ConcentrationDisplay:SetPoint("TOPLEFT", 120, -25)
+            ProfessionsFrame.OrdersPage.OrderView.ConcentrationDisplay:SetPoint("TOPLEFT", 120, -25)
+            RunNextFrame(function()
+                if ProfessionsFrame.professionInfo and ProfessionIDToCurrencyID[ProfessionsFrame.professionInfo.profession] then
+                    NMNMCraftingPageMoxieDisplay:Show()
+                    NMNMOrdersPageMoxieDisplay:Show()
+                end
+            end)
+        end
+        
+        hooksecurefunc(ProfessionsFrame, "Refresh", function()
+            if not isEnabled() then
+                NMNMCraftingPageMoxieDisplay:Hide()
+                NMNMOrdersPageMoxieDisplay:Hide() 
+                return
             end
+            RunNextFrame(function()
+                NMNMCraftingPageMoxieDisplay:Hide()
+                NMNMOrdersPageMoxieDisplay:Hide()
+                if ProfessionsFrame.professionInfo and ProfessionIDToCurrencyID[ProfessionsFrame.professionInfo.profession] then
+                    NMNMCraftingPageMoxieDisplay:Show()
+                    NMNMOrdersPageMoxieDisplay:Show()
+                end
+            end)
+        end)
+        
+        hooksecurefunc(ProfessionsFrame.CraftingPage, "Refresh", function()
+            if not isEnabled() then return end
+            ProfessionsFrame.CraftingPage.ConcentrationDisplay:SetPoint("TOPLEFT", 120, -25)
         end)
     end
     
-    hooksecurefunc(ProfessionsFrame, "Refresh", function()
-        if not isEnabled() then
-            NMNMCraftingPageMoxieDisplay:Hide()
-            NMNMOrdersPageMoxieDisplay:Hide() 
-            return
-        end
+    -- workaround for issues with variables not yet being loaded when addon is loaded in some situations
+    local deferredLoad
+    deferredLoad = function()
         RunNextFrame(function()
-            NMNMCraftingPageMoxieDisplay:Hide()
-            NMNMOrdersPageMoxieDisplay:Hide()
-            if ProfessionsFrame.professionInfo and ProfessionIDToCurrencyID[ProfessionsFrame.professionInfo.profession] then
-                NMNMCraftingPageMoxieDisplay:Show()
-                NMNMOrdersPageMoxieDisplay:Show()
+            if addon.db then
+                initMoxieIcon()
+            else
+                deferredLoad()
             end
         end)
-    end)
-    
-    hooksecurefunc(ProfessionsFrame.CraftingPage, "Refresh", function()
-        if not isEnabled() then return end
-        ProfessionsFrame.CraftingPage.ConcentrationDisplay:SetPoint("TOPLEFT", 120, -25)
-    end)
+    end
+    deferredLoad()
 end)
 
 function NMNMMoxieCurrencyMixin:OnQuantityChanged(currencyInfo)
