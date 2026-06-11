@@ -71,7 +71,7 @@ function NMNMMoxieCurrencyMixin:SetCurrencyType(currencyType)
 	--self.RechargeTicker = C_Timer.NewTicker(currencyInfo.rechargingCycleDurationMS / 1000, function() self:UpdateQuantity() end);
 end
 
-RunNextFrame(function()
+EventUtil.ContinueOnAddOnLoaded(addonName, function()
     NMNMCraftingPageMoxieDisplay:SetParent(ProfessionsFrame.CraftingPage)
     NMNMCraftingPageMoxieDisplay:SetPoint("TOPLEFT", ProfessionsFrame.CraftingPage.ConcentrationDisplay.Icon, "BOTTOMLEFT", 0, 5)
     
