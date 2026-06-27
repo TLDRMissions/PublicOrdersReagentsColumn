@@ -178,6 +178,24 @@ local function showGeneric(self, _, browseType)
             row:HookScript("OnClick", function(self, button)
                 if button ~= "RightButton" then return end
                 
+                if IsShiftKeyDown() then
+                    addon.markRowOneTimeHidden(row)
+                    row:SetAlpha(0.2)
+                    return
+                end
+                
+                if IsControlKeyDown() then
+                    addon.markRowPermanentlyHidden(row)
+                    row:SetAlpha(0.2)
+                    return
+                end
+                
+                if IsAltKeyDown() then
+                    addon.markRowPermanentlyHidden(row, true)
+                    row:SetAlpha(0.2)
+                    return
+                end
+                
                 -- Customized from Blizzard_ProfessionsCrafterOrderPage.lua, ProfessionsCrafterOrderListElementMixin:OnClick(button)
                 MenuUtil.CreateContextMenu(self, function(_, rootDescription)
         			rootDescription:SetTag("MENU_PROFESSIONS_CRAFTER_ORDER");
@@ -203,17 +221,17 @@ local function showGeneric(self, _, browseType)
                             row:SetAlpha(1)
                         end)
                     else
-                        rootDescription:CreateButton("Fade this listing (just this time)", function()
+                        rootDescription:CreateButton("Fade this listing (just this time) [shortcut: shift+rightclick]", function()
                             addon.markRowOneTimeHidden(row)
                             row:SetAlpha(0.2)
                         end)
                         
-                        rootDescription:CreateButton("Always fade listings like this (item + reagent combination)", function()
+                        rootDescription:CreateButton("Always fade listings like this (item + reagent combination) [shortcut: ctrl+rightclick]", function()
                             addon.markRowPermanentlyHidden(row)
                             row:SetAlpha(0.2)
                         end)
                         
-                        rootDescription:CreateButton("Always fade listings like this (item + reagent + commission combination)", function()
+                        rootDescription:CreateButton("Always fade listings like this (item + reagent + commission combination) [shortcut: alt+rightclick]", function()
                             addon.markRowPermanentlyHidden(row, true)
                             row:SetAlpha(0.2)
                         end)
