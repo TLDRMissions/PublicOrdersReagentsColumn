@@ -28,6 +28,7 @@ function addon:setupOptions()
             increasedPadding = 0,
             moveCreateButton = false,
             suppressNoWeeklyQuestWarning = false,
+            makeNoWeeklyQuestWarningReallyAnnoying = false,
             MinimapRecolouredNodes = {},
             enableMinimapRecolouredNodes = false,
             moxieIconType = nil,
@@ -96,14 +97,6 @@ function addon:setupOptions()
                         get = function() return addon.db.global.moveCreateButton end,
                         width = "full",
                     },
-                    suppressNoWeeklyQuestWarning = {
-                        type = "toggle",
-                        name = L["SUPPRESS_WEEKLY_QUEST_WARNING_NAME"],
-                        desc = L["SUPPRESS_WEEKLY_QUEST_WARNING_DESC"],
-                        set = function(_, v) addon.db.global.suppressNoWeeklyQuestWarning = v end,
-                        get = function() return addon.db.global.suppressNoWeeklyQuestWarning end,
-                        width = "full",
-                    },
                     customExpiryTime = {
                         name = L["CUSTOM_EXPIRY_TIME_NAME"],
                         width = "full",
@@ -148,6 +141,31 @@ function addon:setupOptions()
                         set = function(_, r, g, b, a)
                             addon.db.global.priorityColor.r, addon.db.global.priorityColor.g, addon.db.global.priorityColor.b, addon.db.global.priorityColor.a = r, g, b, a
                         end,
+                    },
+                },
+            },
+            noWeeklyQuestModule = {
+                type = "group",
+                inline = true,
+                name = "No Weekly Quest",
+                args = {
+                    suppressNoWeeklyQuestWarning = {
+                        type = "toggle",
+                        name = L["SUPPRESS_WEEKLY_QUEST_WARNING_NAME"],
+                        desc = L["SUPPRESS_WEEKLY_QUEST_WARNING_DESC"],
+                        set = function(_, v) addon.db.global.suppressNoWeeklyQuestWarning = v end,
+                        get = function() return addon.db.global.suppressNoWeeklyQuestWarning end,
+                        width = "full",
+                        order = 1,
+                    },
+                    makeNoWeeklyQuestWarningReallyAnnoying = {
+                        type = "toggle",
+                        name = L["WEEKLY_QUEST_WARNING_ANNOYING_NAME"],
+                        desc = L["WEEKLY_QUEST_WARNING_ANNOYING_DESC"],
+                        set = function(_, v) addon.db.global.makeNoWeeklyQuestWarningReallyAnnoying = v end,
+                        get = function() return addon.db.global.makeNoWeeklyQuestWarningReallyAnnoying end,
+                        width = "full",
+                        order = 2,
                     },
                 },
             },

@@ -12,4 +12,30 @@
         	</Layer>
         </Layers>
     </Frame>
+    <Frame parentKey="NoWeeklyQuestAnnoyingBottomLeft" parent="ProfessionsFrame" hidden="true" inherits="BackdropTemplate" enableMouse="true">
+        <Size x="250" y="30"/>
+        <Layers>
+        	<Layer level="ARTWORK">
+        		<FontString parentKey="Text" inherits="GameFontNormalLeftRed" justifyV="MIDDLE" justifyH="CENTER">
+        			<Size x="0" y="30"/>
+        			<Anchors>
+        				<Anchor point="CENTER"/>
+        			</Anchors>
+        		</FontString>
+        	</Layer>
+        </Layers>
+    </Frame>
+    <Frame parentKey="NoWeeklyQuestAnnoyingBottomRight" parent="ProfessionsFrame" hidden="true" inherits="BackdropTemplate" enableMouse="true">
+        <Size x="250" y="30"/>
+        <Layers>
+        	<Layer level="ARTWORK">
+        		<FontString parentKey="Text" inherits="GameFontNormalLeftRed" justifyV="MIDDLE" justifyH="CENTER">
+        			<Size x="0" y="30"/>
+        			<Anchors>
+        				<Anchor point="CENTER"/>
+        			</Anchors>
+        		</FontString>
+        	</Layer>
+        </Layers>
+    </Frame>
 </Ui>

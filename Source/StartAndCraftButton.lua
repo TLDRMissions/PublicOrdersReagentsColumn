@@ -30,6 +30,7 @@ end)
 local ticker
 ProfessionsFrame.OrdersPage.OrderView.CreateButton:HookScript("OnShow", function(self)
     if not addon.db.profile.moveCreateButtonToCursor then return end
+    if ProfessionsFrame.NoWeeklyQuestAnnoyingBottomLeft:IsVisible() then return end
     
     if addon.db.profile.blockMoveCreateButtonIfBestQualitySelected and ProfessionsFrame.OrdersPage.OrderView.OrderDetails.SchematicForm.AllocateBestQualityCheckbox:GetChecked() then return end
     
