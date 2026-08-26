@@ -47,6 +47,7 @@ annoyingFrame2:SetBackdrop({
 annoyingFrame2:SetBackdropColor(0, 0, 0, 1)
 
 local function checkVisible()
+    if addon.db.global.suppressNoWeeklyQuestWarning then return end
     warningFrame:Hide()
     local professionID = ProfessionsFrame.professionInfo.profession
     if not professionID then return end
@@ -68,7 +69,6 @@ ProfessionsFrame.OrdersPage:HookScript("OnShow", checkVisible)
 ProfessionsFrame:HookScript("OnShow", function()
     annoyingFrame1:Hide()
     annoyingFrame2:Hide()
-    if addon.db.global.suppressNoWeeklyQuestWarning then return end
     if ProfessionsFrame.tabSystem.selectedTabID == ProfessionsFrame.craftingOrdersTabID then
         RunNextFrame(checkVisible)
     end
