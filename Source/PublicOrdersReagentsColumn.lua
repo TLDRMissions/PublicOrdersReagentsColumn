@@ -134,10 +134,12 @@ local function showGeneric(self, _, browseType)
     -- custom expiry time set
     if addon.db.global.customExpiryTime then
         for _, row in ipairs(rows) do
-            local cell = row.cells[5]
-            local remainingTime = Professions.GetCraftingOrderRemainingTime(row.rowData.option.expirationTime)
-            if (remainingTime > Constants.ProfessionConsts.PUBLIC_CRAFTING_ORDER_STALE_THRESHOLD) and (remainingTime <= (addon.db.global.customExpiryTime * 3600)) then
-                ProfessionsTableCellTextMixin.SetText(cell, ERROR_COLOR:WrapTextInColorCode(Professions.OrderTimeLeftFormatter:Format(remainingTime)))
+            if row.rowData.option.expirationTime then
+                local cell = row.cells[5]
+                local remainingTime = Professions.GetCraftingOrderRemainingTime(row.rowData.option.expirationTime)
+                if (remainingTime > Constants.ProfessionConsts.PUBLIC_CRAFTING_ORDER_STALE_THRESHOLD) and (remainingTime <= (addon.db.global.customExpiryTime * 3600)) then
+                    ProfessionsTableCellTextMixin.SetText(cell, ERROR_COLOR:WrapTextInColorCode(Professions.OrderTimeLeftFormatter:Format(remainingTime)))
+                end
             end
         end
     end
