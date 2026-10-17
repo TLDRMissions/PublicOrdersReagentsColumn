@@ -49,7 +49,6 @@ function PublicOrdersReagentsColumnProfessionsCraftingOrderPageMixin:InitOrderTy
 
 			-- Show NEW feature label on NPC tab until first clicked
 			if typeTab.orderType == Enum.CraftingOrderType.Npc then
-				SetCVarBitfield("closedInfoFramesAccountWide", LE_FRAME_TUTORIAL_ACCOUNT_NPC_CRAFTING_ORDER_TAB_NEW, true);
 				self.BrowseFrame.NpcOrdersNewFeature:SetShown(false);
 			end
 		end);
