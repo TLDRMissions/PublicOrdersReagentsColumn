@@ -79,7 +79,9 @@ MoxieIcon.xml
 # All in one Start and Craft button module
 StartAndCraftButton.lua
 
+# Profit/Loss module
 ExternalPriceAPIs.lua
+MoxieBagValueEstimates.lua
 
 options.lua
 init.lua

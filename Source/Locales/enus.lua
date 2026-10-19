@@ -73,6 +73,8 @@ L["Numbers Only!"] = true
 L["Custom Price"] = true
 L["PROFIT_LOSS_DROPDOWN_DESC"] = "Set custom values for soulbound items here"
 L["PROFIT_LOSS_CURRENCY_DROPDOWN_DESC"] = "Set custom values for currencies here"
+L["MOXIE_VALUE_ESTIMATES"] = "Include estimated value of Moxie"
+L["MOXIE_VALUE_ESTIMATES_DESC"] = "Estimates the value of Moxie currency rewards using the CraftSim algorithm"
 
 -- Patron order patrial automation module
 L["START_CRAFT_SPEEDUP_GROUP_NAME"] = "Patron Order button skipping"

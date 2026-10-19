@@ -328,7 +328,13 @@ local function showGeneric(self, _, browseType)
                     profit = profit + (auctionPrice * reward.count)
                     profit = profit + (addon.db.global.customItemValues[C_Item.GetItemInfoInstant(reward.itemLink)] * 10000)
                 elseif reward.currencyType then
-                    profit = profit + (addon.db.global.customCurrencyValues[reward.currencyType] * 10000)
+                    if addon.db.global.estimateMoxieValue then
+                        local currencyProfit = addon.ComputeCopperPerMoxie(reward.currencyType)
+                        if currencyProfit then
+                            currencyProfit = currencyProfit * reward.count
+                            profit = profit + currencyProfit
+                        end
+                    end
                 else
                     print("NMNM: unknown reward type, contact author!")
                 end

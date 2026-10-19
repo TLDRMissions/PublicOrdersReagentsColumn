@@ -40,9 +40,7 @@ function addon:setupOptions()
             customItemValues = {
                 ['*'] = 0,
             },
-            customCurrencyValues = {
-                ['*'] = 0,
-            },
+            estimateMoxieValue = false,
             reagentErrorColor = {
                 r = 1,
                 g = 0,
@@ -206,6 +204,7 @@ function addon:setupOptions()
                         get = function()
                             return addon.db.global.preferredExternalAuctionAddon
                         end,
+                        order = 2,
                     },
                     TSMPriceString = {
                         name = L["TSM_PRICE_STRING"],
@@ -220,137 +219,16 @@ function addon:setupOptions()
                         hidden = function()
                             return not C_AddOns.IsAddOnLoaded("TradeSkillMaster")
                         end,
-                    },
-                    customValuesDropdown = {
-                        name = L["PROFIT_LOSS_DROPDOWN_DESC"],
-                        width = 1.5,
-                        type = "select",
-                        values = function()
-                            local values = {}
-                            for itemID in pairs(addon.db.global.customItemValues) do
-                                values[itemID] = C_Item.GetItemNameByID(itemID) or itemID
-                            end
-                            return values
-                        end,
-                        set = function(_, v)
-                            addon.currentlySelectedCustomValue = v
-                        end,
-                        get = function()
-                            return addon.currentlySelectedCustomValue
-                        end,
                         order = 3,
                     },
-                    customValuesItemIDInput = {
-                        name = L["Item ID"],
-                        width = 0.8,
-                        type = "input",
-                        get = function()
-                            if not addon.currentlySelectedCustomValue then return "" end
-                            return addon.currentlySelectedCustomValue .. ""
-                        end,
-                        set = function(_, v)
-                            addon.currentlySelectedCustomValue = tonumber(v)
-                        end,
+                    enableMoxieValueEstimates = {
+                        name = L["MOXIE_VALUE_ESTIMATES"],
+                        desc = L["MOXIE_VALUE_ESTIMATES_DESC"],
+                        width = "full",
+                        type = "toggle",
+                        set = function(_, v) addon.db.global.estimateMoxieValue  = v end,
+                        get = function() return addon.db.global.estimateMoxieValue  end,
                         order = 4,
-                        pattern = "^%d+$",
-                        usage = L["Numbers Only!"],
-                    },
-                    customValuesPriceInput = {
-                        name = L["Custom Price"],
-                        width = 0.8,
-                        type = "input",
-                        get = function()
-                            if not addon.currentlySelectedCustomValue then return "" end
-                            return addon.db.global.customItemValues[addon.currentlySelectedCustomValue] .. ""
-                        end,
-                        set = function(_, v)
-                            if not addon.currentlySelectedCustomValue then return end
-                            addon.db.global.customItemValues[addon.currentlySelectedCustomValue] = tonumber(v)
-                        end,
-                        order = 5,
-                        pattern = "^%d+$",
-                        usage = L["Numbers Only!"],
-                    },
-                    customValuesDelete = {
-                        name = "",
-                        type = "execute",
-                        func = function()
-                            if not addon.currentlySelectedCustomValue then return end
-                            addon.db.global.customItemValues[addon.currentlySelectedCustomValue] = nil
-                            addon.currentlySelectedCustomValue = nil
-                        end,
-                        image = "interface/auctionframe/auctionhouse.blp",
-                        order = 6,
-                        width = 0.2,
-                        imageCoords = {963/1024, 1009/1024, 1/1024, 47/1024},
-                        imageWidth = 23,
-                        imageHeight = 23,
-                    },
-                    customCurrencyValuesDropdown = {
-                        name = L["PROFIT_LOSS_CURRENCY_DROPDOWN_DESC"],
-                        width = 1.5,
-                        type = "select",
-                        values = function()
-                            local values = {}
-                            for currencyID in pairs(addon.db.global.customCurrencyValues) do
-                                local info = C_CurrencyInfo.GetCurrencyInfo(currencyID)
-                                values[currencyID] = info and info.name or currencyID
-                            end
-                            return values
-                        end,
-                        set = function(_, v)
-                            addon.currentlySelectedCustomCurrencyValue = v
-                        end,
-                        get = function()
-                            return addon.currentlySelectedCustomCurrencyValue
-                        end,
-                        order = 7,
-                    },
-                    customValuesCurrencyIDInput = {
-                        name = L["Currency ID"],
-                        width = 0.8,
-                        type = "input",
-                        get = function()
-                            if not addon.currentlySelectedCustomCurrencyValue then return "" end
-                            return addon.currentlySelectedCustomCurrencyValue .. ""
-                        end,
-                        set = function(_, v)
-                            addon.currentlySelectedCustomCurrencyValue = tonumber(v)
-                        end,
-                        order = 8,
-                        pattern = "^%d+$",
-                        usage = L["Numbers Only!"],
-                    },
-                    customCurrencyValuesPriceInput = {
-                        name = L["Custom Price"],
-                        width = 0.8,
-                        type = "input",
-                        get = function()
-                            if not addon.currentlySelectedCustomCurrencyValue then return "" end
-                            return addon.db.global.customCurrencyValues[addon.currentlySelectedCustomCurrencyValue] .. ""
-                        end,
-                        set = function(_, v)
-                            if not addon.currentlySelectedCustomCurrencyValue then return end
-                            addon.db.global.customCurrencyValues[addon.currentlySelectedCustomCurrencyValue] = tonumber(v)
-                        end,
-                        order = 9,
-                        pattern = "^%d+$",
-                        usage = L["Numbers Only!"],
-                    },
-                    customCurrencyValuesDelete = {
-                        name = "",
-                        type = "execute",
-                        func = function()
-                            if not addon.currentlySelectedCustomCurrencyValue then return end
-                            addon.db.global.customCurrencyValues[addon.currentlySelectedCustomCurrencyValue] = nil
-                            addon.currentlySelectedCustomCurrencyValue = nil
-                        end,
-                        image = "interface/auctionframe/auctionhouse.blp",
-                        order = 10,
-                        width = 0.2,
-                        imageCoords = {963/1024, 1009/1024, 1/1024, 47/1024},
-                        imageWidth = 23,
-                        imageHeight = 23,
                     },
                 },
             },
