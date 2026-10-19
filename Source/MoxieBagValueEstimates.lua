@@ -79,37 +79,6 @@ local specsByCurrencyID = {
     [3266] = SURPLUS_BAG_TAILORING,
 }
 
---- Vendor "Master … Surplus Reagent(s)" bag item ID -> storage currency id (same grouping as Craft Queue Moxie values).
---- Midnight vendor surplus bags; item IDs confirmed in-game / Wowhead (no item 260535).
-local surplusVendorBagItemToStorageCurrency = {
-    [260534] = 3256, -- Master Alchemist's (alchemy / herb / inscription group)
-    [260536] = 3257, -- Master Smith's
-    [260537] = 3258, -- Master Enchanter's
-    [260538] = 3257, -- Master Engineer's
-    [260539] = 3256, -- Master Herbalist's
-    [260540] = 3256, -- Master Scribe's (inscription)
-    [260541] = 3257, -- Master Jewelcrafter's
-    [260542] = 3263, -- Master Leatherworker's
-    [260543] = 3257, -- Master Miner's
-    [260544] = 3263, -- Master Skinner's
-    [260545] = 3266, -- Master Tailor's
-}
-
-local storageCurrencyIDByCurrencyID = {
-    -- Shared bag/value groups should use one storage key.
-    [3256] = 3256, -- alchemy/herbalism/inscription
-    [3260] = 3256,
-    [3261] = 3256,
-    [3257] = 3257, -- blacksmithing/engineering/jewelcrafting/mining
-    [3259] = 3257,
-    [3262] = 3257,
-    [3264] = 3257,
-    [3263] = 3263, -- leatherworking/skinning
-    [3265] = 3263,
-    [3258] = 3258, -- enchanting
-    [3266] = 3266, -- tailoring
-}
-
 local function GetExpectedMoxie(currencyID)
     local entries = specsByCurrencyID[currencyID]
     if not entries then
