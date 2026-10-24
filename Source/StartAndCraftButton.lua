@@ -3,6 +3,7 @@ local addonName, addon = ...
 ProfessionsFrame.OrdersPage.OrderView.CompleteOrderButton:HookScript("OnShow", function(self)
     if not addon.db.profile.skipCompleteOrderButton then return end
     if ProfessionsFrame.OrdersPage.orderType ~= Enum.CraftingOrderType.Npc then return end
+    if not C_TradeSkillUI.GetChildProfessionInfo().profession then return end
     
     self:Click()
 end)
